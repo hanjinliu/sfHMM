@@ -1,7 +1,8 @@
 from .sfhmm import sfHMM
 from .multi_sfhmm import Multi_sfHMM
+from .sampling import hmm_sampling
 
-__all__ = ["sfHMM", "Multi_sfHMM"]
+__all__ = ["sfHMM", "Multi_sfHMM", "hmm_sampling"]
 
 __doc__ = \
 r"""
@@ -63,4 +64,3 @@ Multi_sfHMM because you don't need to run filtering function for every trajector
 >>> sf.plot()
 
 """
-
