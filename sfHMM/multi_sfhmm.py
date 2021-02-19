@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 from .func import *
 from .sfhmm import sfHMM, GaussStep, PoissonStep
 from .base import Base_sfHMM
-from .gmm import GMMn, DPGMM
 
 class Multi_sfHMM(Base_sfHMM):
     """

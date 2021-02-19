@@ -1,11 +1,6 @@
 import numpy as np
 from sklearn import mixture
 
-__doc__ = \
-r"""
-GMM clustering based on AIC/BIC minimization, or Dirichlet process.
-"""
-
 class GMM1:
     def __init__(self, n_components):
         self.n_components = n_components
@@ -20,8 +15,10 @@ class GMM1:
         return self
     
     def fit(self, data, n_init=1, random_state=0):
-        gmm = mixture.GaussianMixture(n_components=self.n_components, covariance_type="spherical",
-                                      n_init=n_init, random_state=random_state)
+        gmm = mixture.GaussianMixture(n_components=self.n_components,
+                                      covariance_type="spherical",
+                                      n_init=n_init,
+                                      random_state=random_state)
         gmm.fit(data)
         wt_ = gmm.weights_
         mu_ = gmm.means_.flatten()

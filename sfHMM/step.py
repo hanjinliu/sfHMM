@@ -1,10 +1,9 @@
 import numpy as np
-from typing import List
 
 __doc__ =\
 r"""
 Python coded step finding algorithm, in case step_ext does not work.
-These takes 10-20 times longer time than C++ coded ones.
+These takes 10-20 times longer time than the C++ coded ones.
 """
 
 def _make_bool_mat(n):
@@ -41,7 +40,7 @@ class Base(object):
         self.len = length
         self.arr123 = np.arange(length)+1
         self.n_step = 1
-        self.step_list: List[int] = [0, length]
+        self.step_list = [0, length]
         self.fit = np.full(length, np.mean(data0))
         self.mat0, self.mat1 = _make_bool_mat(self.len)
 
