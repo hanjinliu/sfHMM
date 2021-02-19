@@ -7,6 +7,9 @@ import os
 
 class build_ext(base_build_ext):
     def finalize_options(self):
+        """
+        Let pyd file be generated in a right place.
+        """
         sourcefiles = ["stepc.pyx", "StepFinder.cpp"]
         sourcefiles = [os.path.join("sfHMM", "step_ext", f) for f in sourcefiles]
         ext = Extension("sfHMM.step_ext.stepc", 
