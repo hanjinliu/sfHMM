@@ -1,11 +1,14 @@
 # sfHMM
 Step finding based HMM.
 sfHMM is composed of four steps:
+
 - `step_finding()`
 - `denoising()`
 - `gmmfit()`
 - `hmmfit()`
+
 Other functions:
+
 - `plot()` = visualize the result of sfHMM analysis.
 - `do_all()` = conduct all the four steps.
 - `tdp()` = show the results in pseude transition density plot.
@@ -27,7 +30,7 @@ sf.do_all()
 from sfHMM import Multi_sfHMM, hmm_sampling
 msf = Multi_sfHMM()
 for i in range(10):
-    data = hmm_sampling()
+    data = hmm_sampling(num_of_data=100)
     msf.append(data)
 msf.do_all()
 ```
