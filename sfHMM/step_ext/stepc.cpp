@@ -4,16 +4,18 @@
 {
     "distutils": {
         "depends": [
-            "StepFinder.h"
+            "sfHMM\\step_ext\\StepFinder.h"
+        ],
+        "include_dirs": [
+            "sfHMM\\step_ext"
         ],
         "language": "c++",
-        "name": "stepc",
+        "name": "sfHMM.step_ext.stepc",
         "sources": [
-            "stepc.pyx",
-            "StepFinder.cpp"
+            "sfHMM\\step_ext\\stepc.pyx"
         ]
     },
-    "module_name": "stepc"
+    "module_name": "sfHMM.step_ext.stepc"
 }
 END: Cython Metadata */
 
@@ -633,8 +635,8 @@ static CYTHON_INLINE float __PYX_NAN() {
   #endif
 #endif
 
-#define __PYX_HAVE__stepc
-#define __PYX_HAVE_API__stepc
+#define __PYX_HAVE__sfHMM__step_ext__stepc
+#define __PYX_HAVE_API__sfHMM__step_ext__stepc
 /* Early includes */
 #include "ios"
 #include "new"
@@ -644,6 +646,9 @@ static CYTHON_INLINE float __PYX_NAN() {
 #include <string.h>
 #include <stdio.h>
 #include "numpy/arrayobject.h"
+#include "numpy/ndarrayobject.h"
+#include "numpy/ndarraytypes.h"
+#include "numpy/arrayscalars.h"
 #include "numpy/ufuncobject.h"
 
     /* NumPy API declarations from "numpy/__init__.pxd" */
@@ -880,7 +885,7 @@ static const char *__pyx_filename;
 
 static const char *__pyx_f[] = {
   "stringsource",
-  "stepc.pyx",
+  "sfHMM\\step_ext\\stepc.pyx",
   "__init__.pxd",
   "type.pxd",
 };
@@ -921,7 +926,7 @@ typedef struct {
 } __Pyx_BufFmt_Context;
 
 
-/* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":689
+/* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":690
  * # in Cython to enable them only on the right systems.
  * 
  * ctypedef npy_int8       int8_t             # <<<<<<<<<<<<<<
@@ -930,7 +935,7 @@ typedef struct {
  */
 typedef npy_int8 __pyx_t_5numpy_int8_t;
 
-/* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":690
+/* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":691
  * 
  * ctypedef npy_int8       int8_t
  * ctypedef npy_int16      int16_t             # <<<<<<<<<<<<<<
@@ -939,7 +944,7 @@ typedef npy_int8 __pyx_t_5numpy_int8_t;
  */
 typedef npy_int16 __pyx_t_5numpy_int16_t;
 
-/* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":691
+/* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":692
  * ctypedef npy_int8       int8_t
  * ctypedef npy_int16      int16_t
  * ctypedef npy_int32      int32_t             # <<<<<<<<<<<<<<
@@ -948,7 +953,7 @@ typedef npy_int16 __pyx_t_5numpy_int16_t;
  */
 typedef npy_int32 __pyx_t_5numpy_int32_t;
 
-/* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":692
+/* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":693
  * ctypedef npy_int16      int16_t
  * ctypedef npy_int32      int32_t
  * ctypedef npy_int64      int64_t             # <<<<<<<<<<<<<<
@@ -957,7 +962,7 @@ typedef npy_int32 __pyx_t_5numpy_int32_t;
  */
 typedef npy_int64 __pyx_t_5numpy_int64_t;
 
-/* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":696
+/* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":697
  * #ctypedef npy_int128     int128_t
  * 
  * ctypedef npy_uint8      uint8_t             # <<<<<<<<<<<<<<
@@ -966,7 +971,7 @@ typedef npy_int64 __pyx_t_5numpy_int64_t;
  */
 typedef npy_uint8 __pyx_t_5numpy_uint8_t;
 
-/* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":697
+/* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":698
  * 
  * ctypedef npy_uint8      uint8_t
  * ctypedef npy_uint16     uint16_t             # <<<<<<<<<<<<<<
@@ -975,7 +980,7 @@ typedef npy_uint8 __pyx_t_5numpy_uint8_t;
  */
 typedef npy_uint16 __pyx_t_5numpy_uint16_t;
 
-/* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":698
+/* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":699
  * ctypedef npy_uint8      uint8_t
  * ctypedef npy_uint16     uint16_t
  * ctypedef npy_uint32     uint32_t             # <<<<<<<<<<<<<<
@@ -984,7 +989,7 @@ typedef npy_uint16 __pyx_t_5numpy_uint16_t;
  */
 typedef npy_uint32 __pyx_t_5numpy_uint32_t;
 
-/* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":699
+/* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":700
  * ctypedef npy_uint16     uint16_t
  * ctypedef npy_uint32     uint32_t
  * ctypedef npy_uint64     uint64_t             # <<<<<<<<<<<<<<
@@ -993,7 +998,7 @@ typedef npy_uint32 __pyx_t_5numpy_uint32_t;
  */
 typedef npy_uint64 __pyx_t_5numpy_uint64_t;
 
-/* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":703
+/* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":704
  * #ctypedef npy_uint128    uint128_t
  * 
  * ctypedef npy_float32    float32_t             # <<<<<<<<<<<<<<
@@ -1002,7 +1007,7 @@ typedef npy_uint64 __pyx_t_5numpy_uint64_t;
  */
 typedef npy_float32 __pyx_t_5numpy_float32_t;
 
-/* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":704
+/* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":705
  * 
  * ctypedef npy_float32    float32_t
  * ctypedef npy_float64    float64_t             # <<<<<<<<<<<<<<
@@ -1011,7 +1016,7 @@ typedef npy_float32 __pyx_t_5numpy_float32_t;
  */
 typedef npy_float64 __pyx_t_5numpy_float64_t;
 
-/* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":713
+/* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":714
  * # The int types are mapped a bit surprising --
  * # numpy.int corresponds to 'l' and numpy.long to 'q'
  * ctypedef npy_long       int_t             # <<<<<<<<<<<<<<
@@ -1020,7 +1025,7 @@ typedef npy_float64 __pyx_t_5numpy_float64_t;
  */
 typedef npy_long __pyx_t_5numpy_int_t;
 
-/* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":714
+/* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":715
  * # numpy.int corresponds to 'l' and numpy.long to 'q'
  * ctypedef npy_long       int_t
  * ctypedef npy_longlong   long_t             # <<<<<<<<<<<<<<
@@ -1029,7 +1034,7 @@ typedef npy_long __pyx_t_5numpy_int_t;
  */
 typedef npy_longlong __pyx_t_5numpy_long_t;
 
-/* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":715
+/* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":716
  * ctypedef npy_long       int_t
  * ctypedef npy_longlong   long_t
  * ctypedef npy_longlong   longlong_t             # <<<<<<<<<<<<<<
@@ -1038,7 +1043,7 @@ typedef npy_longlong __pyx_t_5numpy_long_t;
  */
 typedef npy_longlong __pyx_t_5numpy_longlong_t;
 
-/* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":717
+/* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":718
  * ctypedef npy_longlong   longlong_t
  * 
  * ctypedef npy_ulong      uint_t             # <<<<<<<<<<<<<<
@@ -1047,7 +1052,7 @@ typedef npy_longlong __pyx_t_5numpy_longlong_t;
  */
 typedef npy_ulong __pyx_t_5numpy_uint_t;
 
-/* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":718
+/* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":719
  * 
  * ctypedef npy_ulong      uint_t
  * ctypedef npy_ulonglong  ulong_t             # <<<<<<<<<<<<<<
@@ -1056,7 +1061,7 @@ typedef npy_ulong __pyx_t_5numpy_uint_t;
  */
 typedef npy_ulonglong __pyx_t_5numpy_ulong_t;
 
-/* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":719
+/* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":720
  * ctypedef npy_ulong      uint_t
  * ctypedef npy_ulonglong  ulong_t
  * ctypedef npy_ulonglong  ulonglong_t             # <<<<<<<<<<<<<<
@@ -1065,7 +1070,7 @@ typedef npy_ulonglong __pyx_t_5numpy_ulong_t;
  */
 typedef npy_ulonglong __pyx_t_5numpy_ulonglong_t;
 
-/* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":721
+/* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":722
  * ctypedef npy_ulonglong  ulonglong_t
  * 
  * ctypedef npy_intp       intp_t             # <<<<<<<<<<<<<<
@@ -1074,7 +1079,7 @@ typedef npy_ulonglong __pyx_t_5numpy_ulonglong_t;
  */
 typedef npy_intp __pyx_t_5numpy_intp_t;
 
-/* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":722
+/* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":723
  * 
  * ctypedef npy_intp       intp_t
  * ctypedef npy_uintp      uintp_t             # <<<<<<<<<<<<<<
@@ -1083,7 +1088,7 @@ typedef npy_intp __pyx_t_5numpy_intp_t;
  */
 typedef npy_uintp __pyx_t_5numpy_uintp_t;
 
-/* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":724
+/* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":725
  * ctypedef npy_uintp      uintp_t
  * 
  * ctypedef npy_double     float_t             # <<<<<<<<<<<<<<
@@ -1092,7 +1097,7 @@ typedef npy_uintp __pyx_t_5numpy_uintp_t;
  */
 typedef npy_double __pyx_t_5numpy_float_t;
 
-/* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":725
+/* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":726
  * 
  * ctypedef npy_double     float_t
  * ctypedef npy_double     double_t             # <<<<<<<<<<<<<<
@@ -1101,7 +1106,7 @@ typedef npy_double __pyx_t_5numpy_float_t;
  */
 typedef npy_double __pyx_t_5numpy_double_t;
 
-/* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":726
+/* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":727
  * ctypedef npy_double     float_t
  * ctypedef npy_double     double_t
  * ctypedef npy_longdouble longdouble_t             # <<<<<<<<<<<<<<
@@ -1135,10 +1140,10 @@ static CYTHON_INLINE __pyx_t_double_complex __pyx_t_double_complex_from_parts(do
 
 
 /*--- Type declarations ---*/
-struct __pyx_obj_5stepc_PyGaussStep;
-struct __pyx_obj_5stepc_PyPoissonStep;
+struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep;
+struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep;
 
-/* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":728
+/* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":729
  * ctypedef npy_longdouble longdouble_t
  * 
  * ctypedef npy_cfloat      cfloat_t             # <<<<<<<<<<<<<<
@@ -1147,7 +1152,7 @@ struct __pyx_obj_5stepc_PyPoissonStep;
  */
 typedef npy_cfloat __pyx_t_5numpy_cfloat_t;
 
-/* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":729
+/* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":730
  * 
  * ctypedef npy_cfloat      cfloat_t
  * ctypedef npy_cdouble     cdouble_t             # <<<<<<<<<<<<<<
@@ -1156,7 +1161,7 @@ typedef npy_cfloat __pyx_t_5numpy_cfloat_t;
  */
 typedef npy_cdouble __pyx_t_5numpy_cdouble_t;
 
-/* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":730
+/* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":731
  * ctypedef npy_cfloat      cfloat_t
  * ctypedef npy_cdouble     cdouble_t
  * ctypedef npy_clongdouble clongdouble_t             # <<<<<<<<<<<<<<
@@ -1165,7 +1170,7 @@ typedef npy_cdouble __pyx_t_5numpy_cdouble_t;
  */
 typedef npy_clongdouble __pyx_t_5numpy_clongdouble_t;
 
-/* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":732
+/* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":733
  * ctypedef npy_clongdouble clongdouble_t
  * 
  * ctypedef npy_cdouble     complex_t             # <<<<<<<<<<<<<<
@@ -1174,27 +1179,27 @@ typedef npy_clongdouble __pyx_t_5numpy_clongdouble_t;
  */
 typedef npy_cdouble __pyx_t_5numpy_complex_t;
 
-/* "stepc.pyx":56
+/* "sfHMM/step_ext/stepc.pyx":56
  * 
  * 
  * cdef class PyGaussStep:             # <<<<<<<<<<<<<<
  *     cdef GaussStep* thisptr
  * 
  */
-struct __pyx_obj_5stepc_PyGaussStep {
+struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep {
   PyObject_HEAD
   stepc::GaussStep *thisptr;
 };
 
 
-/* "stepc.pyx":100
+/* "sfHMM/step_ext/stepc.pyx":100
  *         return self.thisptr.step_size_list
  * 
  * cdef class PyPoissonStep:             # <<<<<<<<<<<<<<
  *     cdef PoissonStep* thisptr
  * 
  */
-struct __pyx_obj_5stepc_PyPoissonStep {
+struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep {
   PyObject_HEAD
   stepc::PoissonStep *thisptr;
 };
@@ -1765,20 +1770,30 @@ static PyTypeObject *__pyx_ptype_5numpy_dtype = 0;
 static PyTypeObject *__pyx_ptype_5numpy_flatiter = 0;
 static PyTypeObject *__pyx_ptype_5numpy_broadcast = 0;
 static PyTypeObject *__pyx_ptype_5numpy_ndarray = 0;
+static PyTypeObject *__pyx_ptype_5numpy_generic = 0;
+static PyTypeObject *__pyx_ptype_5numpy_number = 0;
+static PyTypeObject *__pyx_ptype_5numpy_integer = 0;
+static PyTypeObject *__pyx_ptype_5numpy_signedinteger = 0;
+static PyTypeObject *__pyx_ptype_5numpy_unsignedinteger = 0;
+static PyTypeObject *__pyx_ptype_5numpy_inexact = 0;
+static PyTypeObject *__pyx_ptype_5numpy_floating = 0;
+static PyTypeObject *__pyx_ptype_5numpy_complexfloating = 0;
+static PyTypeObject *__pyx_ptype_5numpy_flexible = 0;
+static PyTypeObject *__pyx_ptype_5numpy_character = 0;
 static PyTypeObject *__pyx_ptype_5numpy_ufunc = 0;
 
-/* Module declarations from 'stepc' */
-static PyTypeObject *__pyx_ptype_5stepc_PyGaussStep = 0;
-static PyTypeObject *__pyx_ptype_5stepc_PyPoissonStep = 0;
+/* Module declarations from 'sfHMM.step_ext.stepc' */
+static PyTypeObject *__pyx_ptype_5sfHMM_8step_ext_5stepc_PyGaussStep = 0;
+static PyTypeObject *__pyx_ptype_5sfHMM_8step_ext_5stepc_PyPoissonStep = 0;
 static std::vector<double>  __pyx_convert_vector_from_py_double(PyObject *); /*proto*/
 static PyObject *__pyx_convert_vector_to_py_double(const std::vector<double>  &); /*proto*/
 static PyObject *__pyx_convert_vector_to_py_int(const std::vector<int>  &); /*proto*/
 static __Pyx_TypeInfo __Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t = { "float64_t", NULL, sizeof(__pyx_t_5numpy_float64_t), { 0 }, 0, 'R', 0, 0 };
-#define __Pyx_MODULE_NAME "stepc"
-extern int __pyx_module_is_main_stepc;
-int __pyx_module_is_main_stepc = 0;
+#define __Pyx_MODULE_NAME "sfHMM.step_ext.stepc"
+extern int __pyx_module_is_main_sfHMM__step_ext__stepc;
+int __pyx_module_is_main_sfHMM__step_ext__stepc = 0;
 
-/* Implementation of 'stepc' */
+/* Implementation of 'sfHMM.step_ext.stepc' */
 static PyObject *__pyx_builtin_TypeError;
 static PyObject *__pyx_builtin_ValueError;
 static PyObject *__pyx_builtin_ImportError;
@@ -1833,34 +1848,34 @@ static PyObject *__pyx_n_s_reduce_ex;
 static PyObject *__pyx_n_s_setstate;
 static PyObject *__pyx_n_s_setstate_cython;
 static PyObject *__pyx_n_s_test;
-static int __pyx_pf_5stepc_11PyGaussStep___cinit__(struct __pyx_obj_5stepc_PyGaussStep *__pyx_v_self, PyArrayObject *__pyx_v_data, double __pyx_v_p); /* proto */
-static void __pyx_pf_5stepc_11PyGaussStep_2__dealloc__(struct __pyx_obj_5stepc_PyGaussStep *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_5stepc_11PyGaussStep_4multi_step_finding(struct __pyx_obj_5stepc_PyGaussStep *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_5stepc_11PyGaussStep_4data___get__(struct __pyx_obj_5stepc_PyGaussStep *__pyx_v_self); /* proto */
-static int __pyx_pf_5stepc_11PyGaussStep_4data_2__set__(struct __pyx_obj_5stepc_PyGaussStep *__pyx_v_self, PyObject *__pyx_v_data_); /* proto */
-static PyObject *__pyx_pf_5stepc_11PyGaussStep_3fit___get__(struct __pyx_obj_5stepc_PyGaussStep *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_5stepc_11PyGaussStep_6n_step___get__(struct __pyx_obj_5stepc_PyGaussStep *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_5stepc_11PyGaussStep_9step_list___get__(struct __pyx_obj_5stepc_PyGaussStep *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_5stepc_11PyGaussStep_7mu_list___get__(struct __pyx_obj_5stepc_PyGaussStep *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_5stepc_11PyGaussStep_8len_list___get__(struct __pyx_obj_5stepc_PyGaussStep *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_5stepc_11PyGaussStep_14step_size_list___get__(struct __pyx_obj_5stepc_PyGaussStep *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_5stepc_11PyGaussStep_6__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_5stepc_PyGaussStep *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_5stepc_11PyGaussStep_8__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_5stepc_PyGaussStep *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state); /* proto */
-static int __pyx_pf_5stepc_13PyPoissonStep___cinit__(struct __pyx_obj_5stepc_PyPoissonStep *__pyx_v_self, PyArrayObject *__pyx_v_data, double __pyx_v_p); /* proto */
-static void __pyx_pf_5stepc_13PyPoissonStep_2__dealloc__(struct __pyx_obj_5stepc_PyPoissonStep *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_5stepc_13PyPoissonStep_4multi_step_finding(struct __pyx_obj_5stepc_PyPoissonStep *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_5stepc_13PyPoissonStep_4data___get__(struct __pyx_obj_5stepc_PyPoissonStep *__pyx_v_self); /* proto */
-static int __pyx_pf_5stepc_13PyPoissonStep_4data_2__set__(struct __pyx_obj_5stepc_PyPoissonStep *__pyx_v_self, PyObject *__pyx_v_data_); /* proto */
-static PyObject *__pyx_pf_5stepc_13PyPoissonStep_3fit___get__(struct __pyx_obj_5stepc_PyPoissonStep *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_5stepc_13PyPoissonStep_6n_step___get__(struct __pyx_obj_5stepc_PyPoissonStep *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_5stepc_13PyPoissonStep_9step_list___get__(struct __pyx_obj_5stepc_PyPoissonStep *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_5stepc_13PyPoissonStep_7mu_list___get__(struct __pyx_obj_5stepc_PyPoissonStep *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_5stepc_13PyPoissonStep_8len_list___get__(struct __pyx_obj_5stepc_PyPoissonStep *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_5stepc_13PyPoissonStep_14step_size_list___get__(struct __pyx_obj_5stepc_PyPoissonStep *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_5stepc_13PyPoissonStep_6__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_5stepc_PyPoissonStep *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_5stepc_13PyPoissonStep_8__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_5stepc_PyPoissonStep *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state); /* proto */
-static PyObject *__pyx_tp_new_5stepc_PyGaussStep(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
-static PyObject *__pyx_tp_new_5stepc_PyPoissonStep(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
+static int __pyx_pf_5sfHMM_8step_ext_5stepc_11PyGaussStep___cinit__(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep *__pyx_v_self, PyArrayObject *__pyx_v_data, double __pyx_v_p); /* proto */
+static void __pyx_pf_5sfHMM_8step_ext_5stepc_11PyGaussStep_2__dealloc__(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5sfHMM_8step_ext_5stepc_11PyGaussStep_4multi_step_finding(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5sfHMM_8step_ext_5stepc_11PyGaussStep_4data___get__(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep *__pyx_v_self); /* proto */
+static int __pyx_pf_5sfHMM_8step_ext_5stepc_11PyGaussStep_4data_2__set__(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep *__pyx_v_self, PyObject *__pyx_v_data_); /* proto */
+static PyObject *__pyx_pf_5sfHMM_8step_ext_5stepc_11PyGaussStep_3fit___get__(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5sfHMM_8step_ext_5stepc_11PyGaussStep_6n_step___get__(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5sfHMM_8step_ext_5stepc_11PyGaussStep_9step_list___get__(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5sfHMM_8step_ext_5stepc_11PyGaussStep_7mu_list___get__(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5sfHMM_8step_ext_5stepc_11PyGaussStep_8len_list___get__(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5sfHMM_8step_ext_5stepc_11PyGaussStep_14step_size_list___get__(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5sfHMM_8step_ext_5stepc_11PyGaussStep_6__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5sfHMM_8step_ext_5stepc_11PyGaussStep_8__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state); /* proto */
+static int __pyx_pf_5sfHMM_8step_ext_5stepc_13PyPoissonStep___cinit__(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep *__pyx_v_self, PyArrayObject *__pyx_v_data, double __pyx_v_p); /* proto */
+static void __pyx_pf_5sfHMM_8step_ext_5stepc_13PyPoissonStep_2__dealloc__(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5sfHMM_8step_ext_5stepc_13PyPoissonStep_4multi_step_finding(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5sfHMM_8step_ext_5stepc_13PyPoissonStep_4data___get__(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep *__pyx_v_self); /* proto */
+static int __pyx_pf_5sfHMM_8step_ext_5stepc_13PyPoissonStep_4data_2__set__(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep *__pyx_v_self, PyObject *__pyx_v_data_); /* proto */
+static PyObject *__pyx_pf_5sfHMM_8step_ext_5stepc_13PyPoissonStep_3fit___get__(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5sfHMM_8step_ext_5stepc_13PyPoissonStep_6n_step___get__(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5sfHMM_8step_ext_5stepc_13PyPoissonStep_9step_list___get__(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5sfHMM_8step_ext_5stepc_13PyPoissonStep_7mu_list___get__(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5sfHMM_8step_ext_5stepc_13PyPoissonStep_8len_list___get__(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5sfHMM_8step_ext_5stepc_13PyPoissonStep_14step_size_list___get__(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5sfHMM_8step_ext_5stepc_13PyPoissonStep_6__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5sfHMM_8step_ext_5stepc_13PyPoissonStep_8__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state); /* proto */
+static PyObject *__pyx_tp_new_5sfHMM_8step_ext_5stepc_PyGaussStep(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
+static PyObject *__pyx_tp_new_5sfHMM_8step_ext_5stepc_PyPoissonStep(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static PyObject *__pyx_int_0;
 static PyObject *__pyx_tuple_;
 static PyObject *__pyx_tuple__2;
@@ -1871,7 +1886,7 @@ static PyObject *__pyx_tuple__6;
 static PyObject *__pyx_tuple__7;
 /* Late includes */
 
-/* "stepc.pyx":59
+/* "sfHMM/step_ext/stepc.pyx":59
  *     cdef GaussStep* thisptr
  * 
  *     def __cinit__(self, np.ndarray[np.float64_t, ndim=1] data, double p=0):             # <<<<<<<<<<<<<<
@@ -1880,8 +1895,8 @@ static PyObject *__pyx_tuple__7;
  */
 
 /* Python wrapper */
-static int __pyx_pw_5stepc_11PyGaussStep_1__cinit__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static int __pyx_pw_5stepc_11PyGaussStep_1__cinit__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static int __pyx_pw_5sfHMM_8step_ext_5stepc_11PyGaussStep_1__cinit__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static int __pyx_pw_5sfHMM_8step_ext_5stepc_11PyGaussStep_1__cinit__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyArrayObject *__pyx_v_data = 0;
   double __pyx_v_p;
   int __pyx_lineno = 0;
@@ -1939,12 +1954,12 @@ static int __pyx_pw_5stepc_11PyGaussStep_1__cinit__(PyObject *__pyx_v_self, PyOb
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("__cinit__", 0, 1, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(1, 59, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("stepc.PyGaussStep.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("sfHMM.step_ext.stepc.PyGaussStep.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return -1;
   __pyx_L4_argument_unpacking_done:;
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_data), __pyx_ptype_5numpy_ndarray, 1, "data", 0))) __PYX_ERR(1, 59, __pyx_L1_error)
-  __pyx_r = __pyx_pf_5stepc_11PyGaussStep___cinit__(((struct __pyx_obj_5stepc_PyGaussStep *)__pyx_v_self), __pyx_v_data, __pyx_v_p);
+  __pyx_r = __pyx_pf_5sfHMM_8step_ext_5stepc_11PyGaussStep___cinit__(((struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep *)__pyx_v_self), __pyx_v_data, __pyx_v_p);
 
   /* function exit code */
   goto __pyx_L0;
@@ -1955,7 +1970,7 @@ static int __pyx_pw_5stepc_11PyGaussStep_1__cinit__(PyObject *__pyx_v_self, PyOb
   return __pyx_r;
 }
 
-static int __pyx_pf_5stepc_11PyGaussStep___cinit__(struct __pyx_obj_5stepc_PyGaussStep *__pyx_v_self, PyArrayObject *__pyx_v_data, double __pyx_v_p) {
+static int __pyx_pf_5sfHMM_8step_ext_5stepc_11PyGaussStep___cinit__(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep *__pyx_v_self, PyArrayObject *__pyx_v_data, double __pyx_v_p) {
   __Pyx_LocalBuf_ND __pyx_pybuffernd_data;
   __Pyx_Buffer __pyx_pybuffer_data;
   int __pyx_r;
@@ -1977,7 +1992,7 @@ static int __pyx_pf_5stepc_11PyGaussStep___cinit__(struct __pyx_obj_5stepc_PyGau
   }
   __pyx_pybuffernd_data.diminfo[0].strides = __pyx_pybuffernd_data.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_data.diminfo[0].shape = __pyx_pybuffernd_data.rcbuffer->pybuffer.shape[0];
 
-  /* "stepc.pyx":60
+  /* "sfHMM/step_ext/stepc.pyx":60
  * 
  *     def __cinit__(self, np.ndarray[np.float64_t, ndim=1] data, double p=0):
  *         self.thisptr = new GaussStep(list(data), p)             # <<<<<<<<<<<<<<
@@ -1996,7 +2011,7 @@ static int __pyx_pf_5stepc_11PyGaussStep___cinit__(struct __pyx_obj_5stepc_PyGau
   }
   __pyx_v_self->thisptr = __pyx_t_3;
 
-  /* "stepc.pyx":59
+  /* "sfHMM/step_ext/stepc.pyx":59
  *     cdef GaussStep* thisptr
  * 
  *     def __cinit__(self, np.ndarray[np.float64_t, ndim=1] data, double p=0):             # <<<<<<<<<<<<<<
@@ -2015,7 +2030,7 @@ static int __pyx_pf_5stepc_11PyGaussStep___cinit__(struct __pyx_obj_5stepc_PyGau
     __Pyx_ErrFetch(&__pyx_type, &__pyx_value, &__pyx_tb);
     __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_data.rcbuffer->pybuffer);
   __Pyx_ErrRestore(__pyx_type, __pyx_value, __pyx_tb);}
-  __Pyx_AddTraceback("stepc.PyGaussStep.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("sfHMM.step_ext.stepc.PyGaussStep.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   goto __pyx_L2;
   __pyx_L0:;
@@ -2025,7 +2040,7 @@ static int __pyx_pf_5stepc_11PyGaussStep___cinit__(struct __pyx_obj_5stepc_PyGau
   return __pyx_r;
 }
 
-/* "stepc.pyx":62
+/* "sfHMM/step_ext/stepc.pyx":62
  *         self.thisptr = new GaussStep(list(data), p)
  * 
  *     def __dealloc__(self):             # <<<<<<<<<<<<<<
@@ -2034,21 +2049,21 @@ static int __pyx_pf_5stepc_11PyGaussStep___cinit__(struct __pyx_obj_5stepc_PyGau
  */
 
 /* Python wrapper */
-static void __pyx_pw_5stepc_11PyGaussStep_3__dealloc__(PyObject *__pyx_v_self); /*proto*/
-static void __pyx_pw_5stepc_11PyGaussStep_3__dealloc__(PyObject *__pyx_v_self) {
+static void __pyx_pw_5sfHMM_8step_ext_5stepc_11PyGaussStep_3__dealloc__(PyObject *__pyx_v_self); /*proto*/
+static void __pyx_pw_5sfHMM_8step_ext_5stepc_11PyGaussStep_3__dealloc__(PyObject *__pyx_v_self) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__dealloc__ (wrapper)", 0);
-  __pyx_pf_5stepc_11PyGaussStep_2__dealloc__(((struct __pyx_obj_5stepc_PyGaussStep *)__pyx_v_self));
+  __pyx_pf_5sfHMM_8step_ext_5stepc_11PyGaussStep_2__dealloc__(((struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
 }
 
-static void __pyx_pf_5stepc_11PyGaussStep_2__dealloc__(struct __pyx_obj_5stepc_PyGaussStep *__pyx_v_self) {
+static void __pyx_pf_5sfHMM_8step_ext_5stepc_11PyGaussStep_2__dealloc__(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep *__pyx_v_self) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__dealloc__", 0);
 
-  /* "stepc.pyx":63
+  /* "sfHMM/step_ext/stepc.pyx":63
  * 
  *     def __dealloc__(self):
  *         del self.thisptr             # <<<<<<<<<<<<<<
@@ -2057,7 +2072,7 @@ static void __pyx_pf_5stepc_11PyGaussStep_2__dealloc__(struct __pyx_obj_5stepc_P
  */
   delete __pyx_v_self->thisptr;
 
-  /* "stepc.pyx":62
+  /* "sfHMM/step_ext/stepc.pyx":62
  *         self.thisptr = new GaussStep(list(data), p)
  * 
  *     def __dealloc__(self):             # <<<<<<<<<<<<<<
@@ -2069,7 +2084,7 @@ static void __pyx_pf_5stepc_11PyGaussStep_2__dealloc__(struct __pyx_obj_5stepc_P
   __Pyx_RefNannyFinishContext();
 }
 
-/* "stepc.pyx":65
+/* "sfHMM/step_ext/stepc.pyx":65
  *         del self.thisptr
  * 
  *     def multi_step_finding(self):             # <<<<<<<<<<<<<<
@@ -2078,19 +2093,19 @@ static void __pyx_pf_5stepc_11PyGaussStep_2__dealloc__(struct __pyx_obj_5stepc_P
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5stepc_11PyGaussStep_5multi_step_finding(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static PyObject *__pyx_pw_5stepc_11PyGaussStep_5multi_step_finding(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
+static PyObject *__pyx_pw_5sfHMM_8step_ext_5stepc_11PyGaussStep_5multi_step_finding(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static PyObject *__pyx_pw_5sfHMM_8step_ext_5stepc_11PyGaussStep_5multi_step_finding(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("multi_step_finding (wrapper)", 0);
-  __pyx_r = __pyx_pf_5stepc_11PyGaussStep_4multi_step_finding(((struct __pyx_obj_5stepc_PyGaussStep *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5sfHMM_8step_ext_5stepc_11PyGaussStep_4multi_step_finding(((struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5stepc_11PyGaussStep_4multi_step_finding(struct __pyx_obj_5stepc_PyGaussStep *__pyx_v_self) {
+static PyObject *__pyx_pf_5sfHMM_8step_ext_5stepc_11PyGaussStep_4multi_step_finding(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -2099,7 +2114,7 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_4multi_step_finding(struct __pyx_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("multi_step_finding", 0);
 
-  /* "stepc.pyx":66
+  /* "sfHMM/step_ext/stepc.pyx":66
  * 
  *     def multi_step_finding(self):
  *         return self.thisptr.MultiStepFinding()             # <<<<<<<<<<<<<<
@@ -2113,7 +2128,7 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_4multi_step_finding(struct __pyx_
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "stepc.pyx":65
+  /* "sfHMM/step_ext/stepc.pyx":65
  *         del self.thisptr
  * 
  *     def multi_step_finding(self):             # <<<<<<<<<<<<<<
@@ -2124,7 +2139,7 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_4multi_step_finding(struct __pyx_
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("stepc.PyGaussStep.multi_step_finding", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("sfHMM.step_ext.stepc.PyGaussStep.multi_step_finding", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -2132,7 +2147,7 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_4multi_step_finding(struct __pyx_
   return __pyx_r;
 }
 
-/* "stepc.pyx":69
+/* "sfHMM/step_ext/stepc.pyx":69
  * 
  *     @property
  *     def data(self):             # <<<<<<<<<<<<<<
@@ -2141,19 +2156,19 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_4multi_step_finding(struct __pyx_
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5stepc_11PyGaussStep_4data_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_5stepc_11PyGaussStep_4data_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_5sfHMM_8step_ext_5stepc_11PyGaussStep_4data_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5sfHMM_8step_ext_5stepc_11PyGaussStep_4data_1__get__(PyObject *__pyx_v_self) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_5stepc_11PyGaussStep_4data___get__(((struct __pyx_obj_5stepc_PyGaussStep *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5sfHMM_8step_ext_5stepc_11PyGaussStep_4data___get__(((struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5stepc_11PyGaussStep_4data___get__(struct __pyx_obj_5stepc_PyGaussStep *__pyx_v_self) {
+static PyObject *__pyx_pf_5sfHMM_8step_ext_5stepc_11PyGaussStep_4data___get__(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -2162,7 +2177,7 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_4data___get__(struct __pyx_obj_5s
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "stepc.pyx":70
+  /* "sfHMM/step_ext/stepc.pyx":70
  *     @property
  *     def data(self):
  *         return self.thisptr.data             # <<<<<<<<<<<<<<
@@ -2176,7 +2191,7 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_4data___get__(struct __pyx_obj_5s
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "stepc.pyx":69
+  /* "sfHMM/step_ext/stepc.pyx":69
  * 
  *     @property
  *     def data(self):             # <<<<<<<<<<<<<<
@@ -2187,7 +2202,7 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_4data___get__(struct __pyx_obj_5s
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("stepc.PyGaussStep.data.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("sfHMM.step_ext.stepc.PyGaussStep.data.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -2195,7 +2210,7 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_4data___get__(struct __pyx_obj_5s
   return __pyx_r;
 }
 
-/* "stepc.pyx":73
+/* "sfHMM/step_ext/stepc.pyx":73
  * 
  *     @data.setter
  *     def data(self, data_):             # <<<<<<<<<<<<<<
@@ -2204,19 +2219,19 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_4data___get__(struct __pyx_obj_5s
  */
 
 /* Python wrapper */
-static int __pyx_pw_5stepc_11PyGaussStep_4data_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_data_); /*proto*/
-static int __pyx_pw_5stepc_11PyGaussStep_4data_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_data_) {
+static int __pyx_pw_5sfHMM_8step_ext_5stepc_11PyGaussStep_4data_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_data_); /*proto*/
+static int __pyx_pw_5sfHMM_8step_ext_5stepc_11PyGaussStep_4data_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_data_) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_5stepc_11PyGaussStep_4data_2__set__(((struct __pyx_obj_5stepc_PyGaussStep *)__pyx_v_self), ((PyObject *)__pyx_v_data_));
+  __pyx_r = __pyx_pf_5sfHMM_8step_ext_5stepc_11PyGaussStep_4data_2__set__(((struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep *)__pyx_v_self), ((PyObject *)__pyx_v_data_));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static int __pyx_pf_5stepc_11PyGaussStep_4data_2__set__(struct __pyx_obj_5stepc_PyGaussStep *__pyx_v_self, PyObject *__pyx_v_data_) {
+static int __pyx_pf_5sfHMM_8step_ext_5stepc_11PyGaussStep_4data_2__set__(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep *__pyx_v_self, PyObject *__pyx_v_data_) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   std::vector<double>  __pyx_t_1;
@@ -2225,7 +2240,7 @@ static int __pyx_pf_5stepc_11PyGaussStep_4data_2__set__(struct __pyx_obj_5stepc_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__set__", 0);
 
-  /* "stepc.pyx":74
+  /* "sfHMM/step_ext/stepc.pyx":74
  *     @data.setter
  *     def data(self, data_):
  *         self.thisptr.data = data_             # <<<<<<<<<<<<<<
@@ -2235,7 +2250,7 @@ static int __pyx_pf_5stepc_11PyGaussStep_4data_2__set__(struct __pyx_obj_5stepc_
   __pyx_t_1 = __pyx_convert_vector_from_py_double(__pyx_v_data_); if (unlikely(PyErr_Occurred())) __PYX_ERR(1, 74, __pyx_L1_error)
   __pyx_v_self->thisptr->data = __pyx_t_1;
 
-  /* "stepc.pyx":73
+  /* "sfHMM/step_ext/stepc.pyx":73
  * 
  *     @data.setter
  *     def data(self, data_):             # <<<<<<<<<<<<<<
@@ -2247,14 +2262,14 @@ static int __pyx_pf_5stepc_11PyGaussStep_4data_2__set__(struct __pyx_obj_5stepc_
   __pyx_r = 0;
   goto __pyx_L0;
   __pyx_L1_error:;
-  __Pyx_AddTraceback("stepc.PyGaussStep.data.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("sfHMM.step_ext.stepc.PyGaussStep.data.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-/* "stepc.pyx":77
+/* "sfHMM/step_ext/stepc.pyx":77
  * 
  *     @property
  *     def fit(self):             # <<<<<<<<<<<<<<
@@ -2263,19 +2278,19 @@ static int __pyx_pf_5stepc_11PyGaussStep_4data_2__set__(struct __pyx_obj_5stepc_
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5stepc_11PyGaussStep_3fit_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_5stepc_11PyGaussStep_3fit_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_5sfHMM_8step_ext_5stepc_11PyGaussStep_3fit_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5sfHMM_8step_ext_5stepc_11PyGaussStep_3fit_1__get__(PyObject *__pyx_v_self) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_5stepc_11PyGaussStep_3fit___get__(((struct __pyx_obj_5stepc_PyGaussStep *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5sfHMM_8step_ext_5stepc_11PyGaussStep_3fit___get__(((struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5stepc_11PyGaussStep_3fit___get__(struct __pyx_obj_5stepc_PyGaussStep *__pyx_v_self) {
+static PyObject *__pyx_pf_5sfHMM_8step_ext_5stepc_11PyGaussStep_3fit___get__(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -2284,7 +2299,7 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_3fit___get__(struct __pyx_obj_5st
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "stepc.pyx":78
+  /* "sfHMM/step_ext/stepc.pyx":78
  *     @property
  *     def fit(self):
  *         return self.thisptr.fit             # <<<<<<<<<<<<<<
@@ -2298,7 +2313,7 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_3fit___get__(struct __pyx_obj_5st
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "stepc.pyx":77
+  /* "sfHMM/step_ext/stepc.pyx":77
  * 
  *     @property
  *     def fit(self):             # <<<<<<<<<<<<<<
@@ -2309,7 +2324,7 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_3fit___get__(struct __pyx_obj_5st
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("stepc.PyGaussStep.fit.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("sfHMM.step_ext.stepc.PyGaussStep.fit.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -2317,7 +2332,7 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_3fit___get__(struct __pyx_obj_5st
   return __pyx_r;
 }
 
-/* "stepc.pyx":81
+/* "sfHMM/step_ext/stepc.pyx":81
  * 
  *     @property
  *     def n_step(self):             # <<<<<<<<<<<<<<
@@ -2326,19 +2341,19 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_3fit___get__(struct __pyx_obj_5st
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5stepc_11PyGaussStep_6n_step_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_5stepc_11PyGaussStep_6n_step_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_5sfHMM_8step_ext_5stepc_11PyGaussStep_6n_step_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5sfHMM_8step_ext_5stepc_11PyGaussStep_6n_step_1__get__(PyObject *__pyx_v_self) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_5stepc_11PyGaussStep_6n_step___get__(((struct __pyx_obj_5stepc_PyGaussStep *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5sfHMM_8step_ext_5stepc_11PyGaussStep_6n_step___get__(((struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5stepc_11PyGaussStep_6n_step___get__(struct __pyx_obj_5stepc_PyGaussStep *__pyx_v_self) {
+static PyObject *__pyx_pf_5sfHMM_8step_ext_5stepc_11PyGaussStep_6n_step___get__(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -2347,7 +2362,7 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_6n_step___get__(struct __pyx_obj_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "stepc.pyx":82
+  /* "sfHMM/step_ext/stepc.pyx":82
  *     @property
  *     def n_step(self):
  *         return self.thisptr.n_step             # <<<<<<<<<<<<<<
@@ -2361,7 +2376,7 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_6n_step___get__(struct __pyx_obj_
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "stepc.pyx":81
+  /* "sfHMM/step_ext/stepc.pyx":81
  * 
  *     @property
  *     def n_step(self):             # <<<<<<<<<<<<<<
@@ -2372,7 +2387,7 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_6n_step___get__(struct __pyx_obj_
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("stepc.PyGaussStep.n_step.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("sfHMM.step_ext.stepc.PyGaussStep.n_step.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -2380,7 +2395,7 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_6n_step___get__(struct __pyx_obj_
   return __pyx_r;
 }
 
-/* "stepc.pyx":85
+/* "sfHMM/step_ext/stepc.pyx":85
  * 
  *     @property
  *     def step_list(self):             # <<<<<<<<<<<<<<
@@ -2389,19 +2404,19 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_6n_step___get__(struct __pyx_obj_
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5stepc_11PyGaussStep_9step_list_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_5stepc_11PyGaussStep_9step_list_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_5sfHMM_8step_ext_5stepc_11PyGaussStep_9step_list_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5sfHMM_8step_ext_5stepc_11PyGaussStep_9step_list_1__get__(PyObject *__pyx_v_self) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_5stepc_11PyGaussStep_9step_list___get__(((struct __pyx_obj_5stepc_PyGaussStep *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5sfHMM_8step_ext_5stepc_11PyGaussStep_9step_list___get__(((struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5stepc_11PyGaussStep_9step_list___get__(struct __pyx_obj_5stepc_PyGaussStep *__pyx_v_self) {
+static PyObject *__pyx_pf_5sfHMM_8step_ext_5stepc_11PyGaussStep_9step_list___get__(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -2410,7 +2425,7 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_9step_list___get__(struct __pyx_o
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "stepc.pyx":86
+  /* "sfHMM/step_ext/stepc.pyx":86
  *     @property
  *     def step_list(self):
  *         return self.thisptr.step_list             # <<<<<<<<<<<<<<
@@ -2424,7 +2439,7 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_9step_list___get__(struct __pyx_o
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "stepc.pyx":85
+  /* "sfHMM/step_ext/stepc.pyx":85
  * 
  *     @property
  *     def step_list(self):             # <<<<<<<<<<<<<<
@@ -2435,7 +2450,7 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_9step_list___get__(struct __pyx_o
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("stepc.PyGaussStep.step_list.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("sfHMM.step_ext.stepc.PyGaussStep.step_list.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -2443,7 +2458,7 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_9step_list___get__(struct __pyx_o
   return __pyx_r;
 }
 
-/* "stepc.pyx":89
+/* "sfHMM/step_ext/stepc.pyx":89
  * 
  *     @property
  *     def mu_list(self):             # <<<<<<<<<<<<<<
@@ -2452,19 +2467,19 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_9step_list___get__(struct __pyx_o
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5stepc_11PyGaussStep_7mu_list_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_5stepc_11PyGaussStep_7mu_list_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_5sfHMM_8step_ext_5stepc_11PyGaussStep_7mu_list_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5sfHMM_8step_ext_5stepc_11PyGaussStep_7mu_list_1__get__(PyObject *__pyx_v_self) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_5stepc_11PyGaussStep_7mu_list___get__(((struct __pyx_obj_5stepc_PyGaussStep *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5sfHMM_8step_ext_5stepc_11PyGaussStep_7mu_list___get__(((struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5stepc_11PyGaussStep_7mu_list___get__(struct __pyx_obj_5stepc_PyGaussStep *__pyx_v_self) {
+static PyObject *__pyx_pf_5sfHMM_8step_ext_5stepc_11PyGaussStep_7mu_list___get__(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -2473,7 +2488,7 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_7mu_list___get__(struct __pyx_obj
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "stepc.pyx":90
+  /* "sfHMM/step_ext/stepc.pyx":90
  *     @property
  *     def mu_list(self):
  *         return self.thisptr.mu_list             # <<<<<<<<<<<<<<
@@ -2487,7 +2502,7 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_7mu_list___get__(struct __pyx_obj
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "stepc.pyx":89
+  /* "sfHMM/step_ext/stepc.pyx":89
  * 
  *     @property
  *     def mu_list(self):             # <<<<<<<<<<<<<<
@@ -2498,7 +2513,7 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_7mu_list___get__(struct __pyx_obj
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("stepc.PyGaussStep.mu_list.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("sfHMM.step_ext.stepc.PyGaussStep.mu_list.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -2506,7 +2521,7 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_7mu_list___get__(struct __pyx_obj
   return __pyx_r;
 }
 
-/* "stepc.pyx":93
+/* "sfHMM/step_ext/stepc.pyx":93
  * 
  *     @property
  *     def len_list(self):             # <<<<<<<<<<<<<<
@@ -2515,19 +2530,19 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_7mu_list___get__(struct __pyx_obj
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5stepc_11PyGaussStep_8len_list_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_5stepc_11PyGaussStep_8len_list_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_5sfHMM_8step_ext_5stepc_11PyGaussStep_8len_list_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5sfHMM_8step_ext_5stepc_11PyGaussStep_8len_list_1__get__(PyObject *__pyx_v_self) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_5stepc_11PyGaussStep_8len_list___get__(((struct __pyx_obj_5stepc_PyGaussStep *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5sfHMM_8step_ext_5stepc_11PyGaussStep_8len_list___get__(((struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5stepc_11PyGaussStep_8len_list___get__(struct __pyx_obj_5stepc_PyGaussStep *__pyx_v_self) {
+static PyObject *__pyx_pf_5sfHMM_8step_ext_5stepc_11PyGaussStep_8len_list___get__(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -2536,7 +2551,7 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_8len_list___get__(struct __pyx_ob
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "stepc.pyx":94
+  /* "sfHMM/step_ext/stepc.pyx":94
  *     @property
  *     def len_list(self):
  *         return self.thisptr.len_list             # <<<<<<<<<<<<<<
@@ -2550,7 +2565,7 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_8len_list___get__(struct __pyx_ob
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "stepc.pyx":93
+  /* "sfHMM/step_ext/stepc.pyx":93
  * 
  *     @property
  *     def len_list(self):             # <<<<<<<<<<<<<<
@@ -2561,7 +2576,7 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_8len_list___get__(struct __pyx_ob
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("stepc.PyGaussStep.len_list.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("sfHMM.step_ext.stepc.PyGaussStep.len_list.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -2569,7 +2584,7 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_8len_list___get__(struct __pyx_ob
   return __pyx_r;
 }
 
-/* "stepc.pyx":97
+/* "sfHMM/step_ext/stepc.pyx":97
  * 
  *     @property
  *     def step_size_list(self):             # <<<<<<<<<<<<<<
@@ -2578,19 +2593,19 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_8len_list___get__(struct __pyx_ob
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5stepc_11PyGaussStep_14step_size_list_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_5stepc_11PyGaussStep_14step_size_list_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_5sfHMM_8step_ext_5stepc_11PyGaussStep_14step_size_list_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5sfHMM_8step_ext_5stepc_11PyGaussStep_14step_size_list_1__get__(PyObject *__pyx_v_self) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_5stepc_11PyGaussStep_14step_size_list___get__(((struct __pyx_obj_5stepc_PyGaussStep *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5sfHMM_8step_ext_5stepc_11PyGaussStep_14step_size_list___get__(((struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5stepc_11PyGaussStep_14step_size_list___get__(struct __pyx_obj_5stepc_PyGaussStep *__pyx_v_self) {
+static PyObject *__pyx_pf_5sfHMM_8step_ext_5stepc_11PyGaussStep_14step_size_list___get__(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -2599,7 +2614,7 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_14step_size_list___get__(struct _
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "stepc.pyx":98
+  /* "sfHMM/step_ext/stepc.pyx":98
  *     @property
  *     def step_size_list(self):
  *         return self.thisptr.step_size_list             # <<<<<<<<<<<<<<
@@ -2613,7 +2628,7 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_14step_size_list___get__(struct _
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "stepc.pyx":97
+  /* "sfHMM/step_ext/stepc.pyx":97
  * 
  *     @property
  *     def step_size_list(self):             # <<<<<<<<<<<<<<
@@ -2624,7 +2639,7 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_14step_size_list___get__(struct _
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("stepc.PyGaussStep.step_size_list.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("sfHMM.step_ext.stepc.PyGaussStep.step_size_list.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -2639,19 +2654,19 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_14step_size_list___get__(struct _
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5stepc_11PyGaussStep_7__reduce_cython__(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static PyObject *__pyx_pw_5stepc_11PyGaussStep_7__reduce_cython__(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
+static PyObject *__pyx_pw_5sfHMM_8step_ext_5stepc_11PyGaussStep_7__reduce_cython__(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static PyObject *__pyx_pw_5sfHMM_8step_ext_5stepc_11PyGaussStep_7__reduce_cython__(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__reduce_cython__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_5stepc_11PyGaussStep_6__reduce_cython__(((struct __pyx_obj_5stepc_PyGaussStep *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5sfHMM_8step_ext_5stepc_11PyGaussStep_6__reduce_cython__(((struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5stepc_11PyGaussStep_6__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_5stepc_PyGaussStep *__pyx_v_self) {
+static PyObject *__pyx_pf_5sfHMM_8step_ext_5stepc_11PyGaussStep_6__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -2681,7 +2696,7 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_6__reduce_cython__(CYTHON_UNUSED 
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("stepc.PyGaussStep.__reduce_cython__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("sfHMM.step_ext.stepc.PyGaussStep.__reduce_cython__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
@@ -2696,19 +2711,19 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_6__reduce_cython__(CYTHON_UNUSED 
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5stepc_11PyGaussStep_9__setstate_cython__(PyObject *__pyx_v_self, PyObject *__pyx_v___pyx_state); /*proto*/
-static PyObject *__pyx_pw_5stepc_11PyGaussStep_9__setstate_cython__(PyObject *__pyx_v_self, PyObject *__pyx_v___pyx_state) {
+static PyObject *__pyx_pw_5sfHMM_8step_ext_5stepc_11PyGaussStep_9__setstate_cython__(PyObject *__pyx_v_self, PyObject *__pyx_v___pyx_state); /*proto*/
+static PyObject *__pyx_pw_5sfHMM_8step_ext_5stepc_11PyGaussStep_9__setstate_cython__(PyObject *__pyx_v_self, PyObject *__pyx_v___pyx_state) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__setstate_cython__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_5stepc_11PyGaussStep_8__setstate_cython__(((struct __pyx_obj_5stepc_PyGaussStep *)__pyx_v_self), ((PyObject *)__pyx_v___pyx_state));
+  __pyx_r = __pyx_pf_5sfHMM_8step_ext_5stepc_11PyGaussStep_8__setstate_cython__(((struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep *)__pyx_v_self), ((PyObject *)__pyx_v___pyx_state));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5stepc_11PyGaussStep_8__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_5stepc_PyGaussStep *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state) {
+static PyObject *__pyx_pf_5sfHMM_8step_ext_5stepc_11PyGaussStep_8__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -2738,14 +2753,14 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_8__setstate_cython__(CYTHON_UNUSE
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("stepc.PyGaussStep.__setstate_cython__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("sfHMM.step_ext.stepc.PyGaussStep.__setstate_cython__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-/* "stepc.pyx":103
+/* "sfHMM/step_ext/stepc.pyx":103
  *     cdef PoissonStep* thisptr
  * 
  *     def __cinit__(self, np.ndarray data, double p=0):             # <<<<<<<<<<<<<<
@@ -2754,8 +2769,8 @@ static PyObject *__pyx_pf_5stepc_11PyGaussStep_8__setstate_cython__(CYTHON_UNUSE
  */
 
 /* Python wrapper */
-static int __pyx_pw_5stepc_13PyPoissonStep_1__cinit__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static int __pyx_pw_5stepc_13PyPoissonStep_1__cinit__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static int __pyx_pw_5sfHMM_8step_ext_5stepc_13PyPoissonStep_1__cinit__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static int __pyx_pw_5sfHMM_8step_ext_5stepc_13PyPoissonStep_1__cinit__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyArrayObject *__pyx_v_data = 0;
   double __pyx_v_p;
   int __pyx_lineno = 0;
@@ -2813,12 +2828,12 @@ static int __pyx_pw_5stepc_13PyPoissonStep_1__cinit__(PyObject *__pyx_v_self, Py
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("__cinit__", 0, 1, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(1, 103, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("stepc.PyPoissonStep.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("sfHMM.step_ext.stepc.PyPoissonStep.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return -1;
   __pyx_L4_argument_unpacking_done:;
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_data), __pyx_ptype_5numpy_ndarray, 1, "data", 0))) __PYX_ERR(1, 103, __pyx_L1_error)
-  __pyx_r = __pyx_pf_5stepc_13PyPoissonStep___cinit__(((struct __pyx_obj_5stepc_PyPoissonStep *)__pyx_v_self), __pyx_v_data, __pyx_v_p);
+  __pyx_r = __pyx_pf_5sfHMM_8step_ext_5stepc_13PyPoissonStep___cinit__(((struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep *)__pyx_v_self), __pyx_v_data, __pyx_v_p);
 
   /* function exit code */
   goto __pyx_L0;
@@ -2829,7 +2844,7 @@ static int __pyx_pw_5stepc_13PyPoissonStep_1__cinit__(PyObject *__pyx_v_self, Py
   return __pyx_r;
 }
 
-static int __pyx_pf_5stepc_13PyPoissonStep___cinit__(struct __pyx_obj_5stepc_PyPoissonStep *__pyx_v_self, PyArrayObject *__pyx_v_data, double __pyx_v_p) {
+static int __pyx_pf_5sfHMM_8step_ext_5stepc_13PyPoissonStep___cinit__(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep *__pyx_v_self, PyArrayObject *__pyx_v_data, double __pyx_v_p) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -2843,7 +2858,7 @@ static int __pyx_pf_5stepc_13PyPoissonStep___cinit__(struct __pyx_obj_5stepc_PyP
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__cinit__", 0);
 
-  /* "stepc.pyx":104
+  /* "sfHMM/step_ext/stepc.pyx":104
  * 
  *     def __cinit__(self, np.ndarray data, double p=0):
  *         if ((data < 0).any()):             # <<<<<<<<<<<<<<
@@ -2873,7 +2888,7 @@ static int __pyx_pf_5stepc_13PyPoissonStep___cinit__(struct __pyx_obj_5stepc_PyP
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   if (unlikely(__pyx_t_4)) {
 
-    /* "stepc.pyx":105
+    /* "sfHMM/step_ext/stepc.pyx":105
  *     def __cinit__(self, np.ndarray data, double p=0):
  *         if ((data < 0).any()):
  *             raise ValueError("Raw data cannot contain negative value.")             # <<<<<<<<<<<<<<
@@ -2886,7 +2901,7 @@ static int __pyx_pf_5stepc_13PyPoissonStep___cinit__(struct __pyx_obj_5stepc_PyP
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __PYX_ERR(1, 105, __pyx_L1_error)
 
-    /* "stepc.pyx":104
+    /* "sfHMM/step_ext/stepc.pyx":104
  * 
  *     def __cinit__(self, np.ndarray data, double p=0):
  *         if ((data < 0).any()):             # <<<<<<<<<<<<<<
@@ -2895,7 +2910,7 @@ static int __pyx_pf_5stepc_13PyPoissonStep___cinit__(struct __pyx_obj_5stepc_PyP
  */
   }
 
-  /* "stepc.pyx":106
+  /* "sfHMM/step_ext/stepc.pyx":106
  *         if ((data < 0).any()):
  *             raise ValueError("Raw data cannot contain negative value.")
  *         self.thisptr = new PoissonStep(list(data.astype("float64")), p)             # <<<<<<<<<<<<<<
@@ -2932,7 +2947,7 @@ static int __pyx_pf_5stepc_13PyPoissonStep___cinit__(struct __pyx_obj_5stepc_PyP
   }
   __pyx_v_self->thisptr = __pyx_t_6;
 
-  /* "stepc.pyx":103
+  /* "sfHMM/step_ext/stepc.pyx":103
  *     cdef PoissonStep* thisptr
  * 
  *     def __cinit__(self, np.ndarray data, double p=0):             # <<<<<<<<<<<<<<
@@ -2947,14 +2962,14 @@ static int __pyx_pf_5stepc_13PyPoissonStep___cinit__(struct __pyx_obj_5stepc_PyP
   __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
-  __Pyx_AddTraceback("stepc.PyPoissonStep.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("sfHMM.step_ext.stepc.PyPoissonStep.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-/* "stepc.pyx":108
+/* "sfHMM/step_ext/stepc.pyx":108
  *         self.thisptr = new PoissonStep(list(data.astype("float64")), p)
  * 
  *     def __dealloc__(self):             # <<<<<<<<<<<<<<
@@ -2963,21 +2978,21 @@ static int __pyx_pf_5stepc_13PyPoissonStep___cinit__(struct __pyx_obj_5stepc_PyP
  */
 
 /* Python wrapper */
-static void __pyx_pw_5stepc_13PyPoissonStep_3__dealloc__(PyObject *__pyx_v_self); /*proto*/
-static void __pyx_pw_5stepc_13PyPoissonStep_3__dealloc__(PyObject *__pyx_v_self) {
+static void __pyx_pw_5sfHMM_8step_ext_5stepc_13PyPoissonStep_3__dealloc__(PyObject *__pyx_v_self); /*proto*/
+static void __pyx_pw_5sfHMM_8step_ext_5stepc_13PyPoissonStep_3__dealloc__(PyObject *__pyx_v_self) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__dealloc__ (wrapper)", 0);
-  __pyx_pf_5stepc_13PyPoissonStep_2__dealloc__(((struct __pyx_obj_5stepc_PyPoissonStep *)__pyx_v_self));
+  __pyx_pf_5sfHMM_8step_ext_5stepc_13PyPoissonStep_2__dealloc__(((struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
 }
 
-static void __pyx_pf_5stepc_13PyPoissonStep_2__dealloc__(struct __pyx_obj_5stepc_PyPoissonStep *__pyx_v_self) {
+static void __pyx_pf_5sfHMM_8step_ext_5stepc_13PyPoissonStep_2__dealloc__(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep *__pyx_v_self) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__dealloc__", 0);
 
-  /* "stepc.pyx":109
+  /* "sfHMM/step_ext/stepc.pyx":109
  * 
  *     def __dealloc__(self):
  *         del self.thisptr             # <<<<<<<<<<<<<<
@@ -2986,7 +3001,7 @@ static void __pyx_pf_5stepc_13PyPoissonStep_2__dealloc__(struct __pyx_obj_5stepc
  */
   delete __pyx_v_self->thisptr;
 
-  /* "stepc.pyx":108
+  /* "sfHMM/step_ext/stepc.pyx":108
  *         self.thisptr = new PoissonStep(list(data.astype("float64")), p)
  * 
  *     def __dealloc__(self):             # <<<<<<<<<<<<<<
@@ -2998,7 +3013,7 @@ static void __pyx_pf_5stepc_13PyPoissonStep_2__dealloc__(struct __pyx_obj_5stepc
   __Pyx_RefNannyFinishContext();
 }
 
-/* "stepc.pyx":111
+/* "sfHMM/step_ext/stepc.pyx":111
  *         del self.thisptr
  * 
  *     def multi_step_finding(self):             # <<<<<<<<<<<<<<
@@ -3007,19 +3022,19 @@ static void __pyx_pf_5stepc_13PyPoissonStep_2__dealloc__(struct __pyx_obj_5stepc
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5stepc_13PyPoissonStep_5multi_step_finding(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static PyObject *__pyx_pw_5stepc_13PyPoissonStep_5multi_step_finding(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
+static PyObject *__pyx_pw_5sfHMM_8step_ext_5stepc_13PyPoissonStep_5multi_step_finding(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static PyObject *__pyx_pw_5sfHMM_8step_ext_5stepc_13PyPoissonStep_5multi_step_finding(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("multi_step_finding (wrapper)", 0);
-  __pyx_r = __pyx_pf_5stepc_13PyPoissonStep_4multi_step_finding(((struct __pyx_obj_5stepc_PyPoissonStep *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5sfHMM_8step_ext_5stepc_13PyPoissonStep_4multi_step_finding(((struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5stepc_13PyPoissonStep_4multi_step_finding(struct __pyx_obj_5stepc_PyPoissonStep *__pyx_v_self) {
+static PyObject *__pyx_pf_5sfHMM_8step_ext_5stepc_13PyPoissonStep_4multi_step_finding(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -3028,7 +3043,7 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_4multi_step_finding(struct __py
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("multi_step_finding", 0);
 
-  /* "stepc.pyx":112
+  /* "sfHMM/step_ext/stepc.pyx":112
  * 
  *     def multi_step_finding(self):
  *         return self.thisptr.MultiStepFinding()             # <<<<<<<<<<<<<<
@@ -3042,7 +3057,7 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_4multi_step_finding(struct __py
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "stepc.pyx":111
+  /* "sfHMM/step_ext/stepc.pyx":111
  *         del self.thisptr
  * 
  *     def multi_step_finding(self):             # <<<<<<<<<<<<<<
@@ -3053,7 +3068,7 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_4multi_step_finding(struct __py
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("stepc.PyPoissonStep.multi_step_finding", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("sfHMM.step_ext.stepc.PyPoissonStep.multi_step_finding", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -3061,7 +3076,7 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_4multi_step_finding(struct __py
   return __pyx_r;
 }
 
-/* "stepc.pyx":115
+/* "sfHMM/step_ext/stepc.pyx":115
  * 
  *     @property
  *     def data(self):             # <<<<<<<<<<<<<<
@@ -3070,19 +3085,19 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_4multi_step_finding(struct __py
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5stepc_13PyPoissonStep_4data_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_5stepc_13PyPoissonStep_4data_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_5sfHMM_8step_ext_5stepc_13PyPoissonStep_4data_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5sfHMM_8step_ext_5stepc_13PyPoissonStep_4data_1__get__(PyObject *__pyx_v_self) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_5stepc_13PyPoissonStep_4data___get__(((struct __pyx_obj_5stepc_PyPoissonStep *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5sfHMM_8step_ext_5stepc_13PyPoissonStep_4data___get__(((struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5stepc_13PyPoissonStep_4data___get__(struct __pyx_obj_5stepc_PyPoissonStep *__pyx_v_self) {
+static PyObject *__pyx_pf_5sfHMM_8step_ext_5stepc_13PyPoissonStep_4data___get__(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -3091,7 +3106,7 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_4data___get__(struct __pyx_obj_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "stepc.pyx":116
+  /* "sfHMM/step_ext/stepc.pyx":116
  *     @property
  *     def data(self):
  *         return self.thisptr.data             # <<<<<<<<<<<<<<
@@ -3105,7 +3120,7 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_4data___get__(struct __pyx_obj_
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "stepc.pyx":115
+  /* "sfHMM/step_ext/stepc.pyx":115
  * 
  *     @property
  *     def data(self):             # <<<<<<<<<<<<<<
@@ -3116,7 +3131,7 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_4data___get__(struct __pyx_obj_
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("stepc.PyPoissonStep.data.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("sfHMM.step_ext.stepc.PyPoissonStep.data.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -3124,7 +3139,7 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_4data___get__(struct __pyx_obj_
   return __pyx_r;
 }
 
-/* "stepc.pyx":119
+/* "sfHMM/step_ext/stepc.pyx":119
  * 
  *     @data.setter
  *     def data(self, data_):             # <<<<<<<<<<<<<<
@@ -3133,19 +3148,19 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_4data___get__(struct __pyx_obj_
  */
 
 /* Python wrapper */
-static int __pyx_pw_5stepc_13PyPoissonStep_4data_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_data_); /*proto*/
-static int __pyx_pw_5stepc_13PyPoissonStep_4data_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_data_) {
+static int __pyx_pw_5sfHMM_8step_ext_5stepc_13PyPoissonStep_4data_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_data_); /*proto*/
+static int __pyx_pw_5sfHMM_8step_ext_5stepc_13PyPoissonStep_4data_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_data_) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_5stepc_13PyPoissonStep_4data_2__set__(((struct __pyx_obj_5stepc_PyPoissonStep *)__pyx_v_self), ((PyObject *)__pyx_v_data_));
+  __pyx_r = __pyx_pf_5sfHMM_8step_ext_5stepc_13PyPoissonStep_4data_2__set__(((struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep *)__pyx_v_self), ((PyObject *)__pyx_v_data_));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static int __pyx_pf_5stepc_13PyPoissonStep_4data_2__set__(struct __pyx_obj_5stepc_PyPoissonStep *__pyx_v_self, PyObject *__pyx_v_data_) {
+static int __pyx_pf_5sfHMM_8step_ext_5stepc_13PyPoissonStep_4data_2__set__(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep *__pyx_v_self, PyObject *__pyx_v_data_) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   std::vector<double>  __pyx_t_1;
@@ -3154,7 +3169,7 @@ static int __pyx_pf_5stepc_13PyPoissonStep_4data_2__set__(struct __pyx_obj_5step
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__set__", 0);
 
-  /* "stepc.pyx":120
+  /* "sfHMM/step_ext/stepc.pyx":120
  *     @data.setter
  *     def data(self, data_):
  *         self.thisptr.data = data_             # <<<<<<<<<<<<<<
@@ -3164,7 +3179,7 @@ static int __pyx_pf_5stepc_13PyPoissonStep_4data_2__set__(struct __pyx_obj_5step
   __pyx_t_1 = __pyx_convert_vector_from_py_double(__pyx_v_data_); if (unlikely(PyErr_Occurred())) __PYX_ERR(1, 120, __pyx_L1_error)
   __pyx_v_self->thisptr->data = __pyx_t_1;
 
-  /* "stepc.pyx":119
+  /* "sfHMM/step_ext/stepc.pyx":119
  * 
  *     @data.setter
  *     def data(self, data_):             # <<<<<<<<<<<<<<
@@ -3176,14 +3191,14 @@ static int __pyx_pf_5stepc_13PyPoissonStep_4data_2__set__(struct __pyx_obj_5step
   __pyx_r = 0;
   goto __pyx_L0;
   __pyx_L1_error:;
-  __Pyx_AddTraceback("stepc.PyPoissonStep.data.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("sfHMM.step_ext.stepc.PyPoissonStep.data.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-/* "stepc.pyx":123
+/* "sfHMM/step_ext/stepc.pyx":123
  * 
  *     @property
  *     def fit(self):             # <<<<<<<<<<<<<<
@@ -3192,19 +3207,19 @@ static int __pyx_pf_5stepc_13PyPoissonStep_4data_2__set__(struct __pyx_obj_5step
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5stepc_13PyPoissonStep_3fit_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_5stepc_13PyPoissonStep_3fit_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_5sfHMM_8step_ext_5stepc_13PyPoissonStep_3fit_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5sfHMM_8step_ext_5stepc_13PyPoissonStep_3fit_1__get__(PyObject *__pyx_v_self) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_5stepc_13PyPoissonStep_3fit___get__(((struct __pyx_obj_5stepc_PyPoissonStep *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5sfHMM_8step_ext_5stepc_13PyPoissonStep_3fit___get__(((struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5stepc_13PyPoissonStep_3fit___get__(struct __pyx_obj_5stepc_PyPoissonStep *__pyx_v_self) {
+static PyObject *__pyx_pf_5sfHMM_8step_ext_5stepc_13PyPoissonStep_3fit___get__(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -3213,7 +3228,7 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_3fit___get__(struct __pyx_obj_5
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "stepc.pyx":124
+  /* "sfHMM/step_ext/stepc.pyx":124
  *     @property
  *     def fit(self):
  *         return self.thisptr.fit             # <<<<<<<<<<<<<<
@@ -3227,7 +3242,7 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_3fit___get__(struct __pyx_obj_5
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "stepc.pyx":123
+  /* "sfHMM/step_ext/stepc.pyx":123
  * 
  *     @property
  *     def fit(self):             # <<<<<<<<<<<<<<
@@ -3238,7 +3253,7 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_3fit___get__(struct __pyx_obj_5
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("stepc.PyPoissonStep.fit.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("sfHMM.step_ext.stepc.PyPoissonStep.fit.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -3246,7 +3261,7 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_3fit___get__(struct __pyx_obj_5
   return __pyx_r;
 }
 
-/* "stepc.pyx":127
+/* "sfHMM/step_ext/stepc.pyx":127
  * 
  *     @property
  *     def n_step(self):             # <<<<<<<<<<<<<<
@@ -3255,19 +3270,19 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_3fit___get__(struct __pyx_obj_5
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5stepc_13PyPoissonStep_6n_step_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_5stepc_13PyPoissonStep_6n_step_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_5sfHMM_8step_ext_5stepc_13PyPoissonStep_6n_step_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5sfHMM_8step_ext_5stepc_13PyPoissonStep_6n_step_1__get__(PyObject *__pyx_v_self) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_5stepc_13PyPoissonStep_6n_step___get__(((struct __pyx_obj_5stepc_PyPoissonStep *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5sfHMM_8step_ext_5stepc_13PyPoissonStep_6n_step___get__(((struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5stepc_13PyPoissonStep_6n_step___get__(struct __pyx_obj_5stepc_PyPoissonStep *__pyx_v_self) {
+static PyObject *__pyx_pf_5sfHMM_8step_ext_5stepc_13PyPoissonStep_6n_step___get__(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -3276,7 +3291,7 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_6n_step___get__(struct __pyx_ob
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "stepc.pyx":128
+  /* "sfHMM/step_ext/stepc.pyx":128
  *     @property
  *     def n_step(self):
  *         return self.thisptr.n_step             # <<<<<<<<<<<<<<
@@ -3290,7 +3305,7 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_6n_step___get__(struct __pyx_ob
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "stepc.pyx":127
+  /* "sfHMM/step_ext/stepc.pyx":127
  * 
  *     @property
  *     def n_step(self):             # <<<<<<<<<<<<<<
@@ -3301,7 +3316,7 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_6n_step___get__(struct __pyx_ob
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("stepc.PyPoissonStep.n_step.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("sfHMM.step_ext.stepc.PyPoissonStep.n_step.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -3309,7 +3324,7 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_6n_step___get__(struct __pyx_ob
   return __pyx_r;
 }
 
-/* "stepc.pyx":131
+/* "sfHMM/step_ext/stepc.pyx":131
  * 
  *     @property
  *     def step_list(self):             # <<<<<<<<<<<<<<
@@ -3318,19 +3333,19 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_6n_step___get__(struct __pyx_ob
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5stepc_13PyPoissonStep_9step_list_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_5stepc_13PyPoissonStep_9step_list_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_5sfHMM_8step_ext_5stepc_13PyPoissonStep_9step_list_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5sfHMM_8step_ext_5stepc_13PyPoissonStep_9step_list_1__get__(PyObject *__pyx_v_self) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_5stepc_13PyPoissonStep_9step_list___get__(((struct __pyx_obj_5stepc_PyPoissonStep *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5sfHMM_8step_ext_5stepc_13PyPoissonStep_9step_list___get__(((struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5stepc_13PyPoissonStep_9step_list___get__(struct __pyx_obj_5stepc_PyPoissonStep *__pyx_v_self) {
+static PyObject *__pyx_pf_5sfHMM_8step_ext_5stepc_13PyPoissonStep_9step_list___get__(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -3339,7 +3354,7 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_9step_list___get__(struct __pyx
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "stepc.pyx":132
+  /* "sfHMM/step_ext/stepc.pyx":132
  *     @property
  *     def step_list(self):
  *         return self.thisptr.step_list             # <<<<<<<<<<<<<<
@@ -3353,7 +3368,7 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_9step_list___get__(struct __pyx
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "stepc.pyx":131
+  /* "sfHMM/step_ext/stepc.pyx":131
  * 
  *     @property
  *     def step_list(self):             # <<<<<<<<<<<<<<
@@ -3364,7 +3379,7 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_9step_list___get__(struct __pyx
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("stepc.PyPoissonStep.step_list.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("sfHMM.step_ext.stepc.PyPoissonStep.step_list.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -3372,7 +3387,7 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_9step_list___get__(struct __pyx
   return __pyx_r;
 }
 
-/* "stepc.pyx":135
+/* "sfHMM/step_ext/stepc.pyx":135
  * 
  *     @property
  *     def mu_list(self):             # <<<<<<<<<<<<<<
@@ -3381,19 +3396,19 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_9step_list___get__(struct __pyx
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5stepc_13PyPoissonStep_7mu_list_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_5stepc_13PyPoissonStep_7mu_list_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_5sfHMM_8step_ext_5stepc_13PyPoissonStep_7mu_list_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5sfHMM_8step_ext_5stepc_13PyPoissonStep_7mu_list_1__get__(PyObject *__pyx_v_self) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_5stepc_13PyPoissonStep_7mu_list___get__(((struct __pyx_obj_5stepc_PyPoissonStep *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5sfHMM_8step_ext_5stepc_13PyPoissonStep_7mu_list___get__(((struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5stepc_13PyPoissonStep_7mu_list___get__(struct __pyx_obj_5stepc_PyPoissonStep *__pyx_v_self) {
+static PyObject *__pyx_pf_5sfHMM_8step_ext_5stepc_13PyPoissonStep_7mu_list___get__(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -3402,7 +3417,7 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_7mu_list___get__(struct __pyx_o
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "stepc.pyx":136
+  /* "sfHMM/step_ext/stepc.pyx":136
  *     @property
  *     def mu_list(self):
  *         return self.thisptr.mu_list             # <<<<<<<<<<<<<<
@@ -3416,7 +3431,7 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_7mu_list___get__(struct __pyx_o
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "stepc.pyx":135
+  /* "sfHMM/step_ext/stepc.pyx":135
  * 
  *     @property
  *     def mu_list(self):             # <<<<<<<<<<<<<<
@@ -3427,7 +3442,7 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_7mu_list___get__(struct __pyx_o
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("stepc.PyPoissonStep.mu_list.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("sfHMM.step_ext.stepc.PyPoissonStep.mu_list.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -3435,7 +3450,7 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_7mu_list___get__(struct __pyx_o
   return __pyx_r;
 }
 
-/* "stepc.pyx":139
+/* "sfHMM/step_ext/stepc.pyx":139
  * 
  *     @property
  *     def len_list(self):             # <<<<<<<<<<<<<<
@@ -3444,19 +3459,19 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_7mu_list___get__(struct __pyx_o
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5stepc_13PyPoissonStep_8len_list_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_5stepc_13PyPoissonStep_8len_list_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_5sfHMM_8step_ext_5stepc_13PyPoissonStep_8len_list_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5sfHMM_8step_ext_5stepc_13PyPoissonStep_8len_list_1__get__(PyObject *__pyx_v_self) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_5stepc_13PyPoissonStep_8len_list___get__(((struct __pyx_obj_5stepc_PyPoissonStep *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5sfHMM_8step_ext_5stepc_13PyPoissonStep_8len_list___get__(((struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5stepc_13PyPoissonStep_8len_list___get__(struct __pyx_obj_5stepc_PyPoissonStep *__pyx_v_self) {
+static PyObject *__pyx_pf_5sfHMM_8step_ext_5stepc_13PyPoissonStep_8len_list___get__(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -3465,7 +3480,7 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_8len_list___get__(struct __pyx_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "stepc.pyx":140
+  /* "sfHMM/step_ext/stepc.pyx":140
  *     @property
  *     def len_list(self):
  *         return self.thisptr.len_list             # <<<<<<<<<<<<<<
@@ -3479,7 +3494,7 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_8len_list___get__(struct __pyx_
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "stepc.pyx":139
+  /* "sfHMM/step_ext/stepc.pyx":139
  * 
  *     @property
  *     def len_list(self):             # <<<<<<<<<<<<<<
@@ -3490,7 +3505,7 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_8len_list___get__(struct __pyx_
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("stepc.PyPoissonStep.len_list.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("sfHMM.step_ext.stepc.PyPoissonStep.len_list.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -3498,7 +3513,7 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_8len_list___get__(struct __pyx_
   return __pyx_r;
 }
 
-/* "stepc.pyx":143
+/* "sfHMM/step_ext/stepc.pyx":143
  * 
  *     @property
  *     def step_size_list(self):             # <<<<<<<<<<<<<<
@@ -3507,19 +3522,19 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_8len_list___get__(struct __pyx_
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5stepc_13PyPoissonStep_14step_size_list_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_5stepc_13PyPoissonStep_14step_size_list_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_5sfHMM_8step_ext_5stepc_13PyPoissonStep_14step_size_list_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5sfHMM_8step_ext_5stepc_13PyPoissonStep_14step_size_list_1__get__(PyObject *__pyx_v_self) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_5stepc_13PyPoissonStep_14step_size_list___get__(((struct __pyx_obj_5stepc_PyPoissonStep *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5sfHMM_8step_ext_5stepc_13PyPoissonStep_14step_size_list___get__(((struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5stepc_13PyPoissonStep_14step_size_list___get__(struct __pyx_obj_5stepc_PyPoissonStep *__pyx_v_self) {
+static PyObject *__pyx_pf_5sfHMM_8step_ext_5stepc_13PyPoissonStep_14step_size_list___get__(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -3528,7 +3543,7 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_14step_size_list___get__(struct
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "stepc.pyx":144
+  /* "sfHMM/step_ext/stepc.pyx":144
  *     @property
  *     def step_size_list(self):
  *         return self.thisptr.step_size_list             # <<<<<<<<<<<<<<
@@ -3541,7 +3556,7 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_14step_size_list___get__(struct
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "stepc.pyx":143
+  /* "sfHMM/step_ext/stepc.pyx":143
  * 
  *     @property
  *     def step_size_list(self):             # <<<<<<<<<<<<<<
@@ -3552,7 +3567,7 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_14step_size_list___get__(struct
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("stepc.PyPoissonStep.step_size_list.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("sfHMM.step_ext.stepc.PyPoissonStep.step_size_list.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -3567,19 +3582,19 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_14step_size_list___get__(struct
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5stepc_13PyPoissonStep_7__reduce_cython__(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static PyObject *__pyx_pw_5stepc_13PyPoissonStep_7__reduce_cython__(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
+static PyObject *__pyx_pw_5sfHMM_8step_ext_5stepc_13PyPoissonStep_7__reduce_cython__(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static PyObject *__pyx_pw_5sfHMM_8step_ext_5stepc_13PyPoissonStep_7__reduce_cython__(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__reduce_cython__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_5stepc_13PyPoissonStep_6__reduce_cython__(((struct __pyx_obj_5stepc_PyPoissonStep *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5sfHMM_8step_ext_5stepc_13PyPoissonStep_6__reduce_cython__(((struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5stepc_13PyPoissonStep_6__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_5stepc_PyPoissonStep *__pyx_v_self) {
+static PyObject *__pyx_pf_5sfHMM_8step_ext_5stepc_13PyPoissonStep_6__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -3609,7 +3624,7 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_6__reduce_cython__(CYTHON_UNUSE
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("stepc.PyPoissonStep.__reduce_cython__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("sfHMM.step_ext.stepc.PyPoissonStep.__reduce_cython__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
@@ -3624,19 +3639,19 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_6__reduce_cython__(CYTHON_UNUSE
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5stepc_13PyPoissonStep_9__setstate_cython__(PyObject *__pyx_v_self, PyObject *__pyx_v___pyx_state); /*proto*/
-static PyObject *__pyx_pw_5stepc_13PyPoissonStep_9__setstate_cython__(PyObject *__pyx_v_self, PyObject *__pyx_v___pyx_state) {
+static PyObject *__pyx_pw_5sfHMM_8step_ext_5stepc_13PyPoissonStep_9__setstate_cython__(PyObject *__pyx_v_self, PyObject *__pyx_v___pyx_state); /*proto*/
+static PyObject *__pyx_pw_5sfHMM_8step_ext_5stepc_13PyPoissonStep_9__setstate_cython__(PyObject *__pyx_v_self, PyObject *__pyx_v___pyx_state) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__setstate_cython__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_5stepc_13PyPoissonStep_8__setstate_cython__(((struct __pyx_obj_5stepc_PyPoissonStep *)__pyx_v_self), ((PyObject *)__pyx_v___pyx_state));
+  __pyx_r = __pyx_pf_5sfHMM_8step_ext_5stepc_13PyPoissonStep_8__setstate_cython__(((struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep *)__pyx_v_self), ((PyObject *)__pyx_v___pyx_state));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5stepc_13PyPoissonStep_8__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_5stepc_PyPoissonStep *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state) {
+static PyObject *__pyx_pf_5sfHMM_8step_ext_5stepc_13PyPoissonStep_8__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -3666,14 +3681,14 @@ static PyObject *__pyx_pf_5stepc_13PyPoissonStep_8__setstate_cython__(CYTHON_UNU
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("stepc.PyPoissonStep.__setstate_cython__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("sfHMM.step_ext.stepc.PyPoissonStep.__setstate_cython__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-/* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":734
+/* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":735
  * ctypedef npy_cdouble     complex_t
  * 
  * cdef inline object PyArray_MultiIterNew1(a):             # <<<<<<<<<<<<<<
@@ -3690,7 +3705,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew1(PyObject *__
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("PyArray_MultiIterNew1", 0);
 
-  /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":735
+  /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":736
  * 
  * cdef inline object PyArray_MultiIterNew1(a):
  *     return PyArray_MultiIterNew(1, <void*>a)             # <<<<<<<<<<<<<<
@@ -3698,13 +3713,13 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew1(PyObject *__
  * cdef inline object PyArray_MultiIterNew2(a, b):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyArray_MultiIterNew(1, ((void *)__pyx_v_a)); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 735, __pyx_L1_error)
+  __pyx_t_1 = PyArray_MultiIterNew(1, ((void *)__pyx_v_a)); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 736, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":734
+  /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":735
  * ctypedef npy_cdouble     complex_t
  * 
  * cdef inline object PyArray_MultiIterNew1(a):             # <<<<<<<<<<<<<<
@@ -3723,7 +3738,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew1(PyObject *__
   return __pyx_r;
 }
 
-/* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":737
+/* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":738
  *     return PyArray_MultiIterNew(1, <void*>a)
  * 
  * cdef inline object PyArray_MultiIterNew2(a, b):             # <<<<<<<<<<<<<<
@@ -3740,7 +3755,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew2(PyObject *__
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("PyArray_MultiIterNew2", 0);
 
-  /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":738
+  /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":739
  * 
  * cdef inline object PyArray_MultiIterNew2(a, b):
  *     return PyArray_MultiIterNew(2, <void*>a, <void*>b)             # <<<<<<<<<<<<<<
@@ -3748,13 +3763,13 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew2(PyObject *__
  * cdef inline object PyArray_MultiIterNew3(a, b, c):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyArray_MultiIterNew(2, ((void *)__pyx_v_a), ((void *)__pyx_v_b)); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 738, __pyx_L1_error)
+  __pyx_t_1 = PyArray_MultiIterNew(2, ((void *)__pyx_v_a), ((void *)__pyx_v_b)); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 739, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":737
+  /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":738
  *     return PyArray_MultiIterNew(1, <void*>a)
  * 
  * cdef inline object PyArray_MultiIterNew2(a, b):             # <<<<<<<<<<<<<<
@@ -3773,7 +3788,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew2(PyObject *__
   return __pyx_r;
 }
 
-/* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":740
+/* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":741
  *     return PyArray_MultiIterNew(2, <void*>a, <void*>b)
  * 
  * cdef inline object PyArray_MultiIterNew3(a, b, c):             # <<<<<<<<<<<<<<
@@ -3790,7 +3805,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew3(PyObject *__
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("PyArray_MultiIterNew3", 0);
 
-  /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":741
+  /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":742
  * 
  * cdef inline object PyArray_MultiIterNew3(a, b, c):
  *     return PyArray_MultiIterNew(3, <void*>a, <void*>b, <void*> c)             # <<<<<<<<<<<<<<
@@ -3798,13 +3813,13 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew3(PyObject *__
  * cdef inline object PyArray_MultiIterNew4(a, b, c, d):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyArray_MultiIterNew(3, ((void *)__pyx_v_a), ((void *)__pyx_v_b), ((void *)__pyx_v_c)); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 741, __pyx_L1_error)
+  __pyx_t_1 = PyArray_MultiIterNew(3, ((void *)__pyx_v_a), ((void *)__pyx_v_b), ((void *)__pyx_v_c)); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 742, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":740
+  /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":741
  *     return PyArray_MultiIterNew(2, <void*>a, <void*>b)
  * 
  * cdef inline object PyArray_MultiIterNew3(a, b, c):             # <<<<<<<<<<<<<<
@@ -3823,7 +3838,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew3(PyObject *__
   return __pyx_r;
 }
 
-/* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":743
+/* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":744
  *     return PyArray_MultiIterNew(3, <void*>a, <void*>b, <void*> c)
  * 
  * cdef inline object PyArray_MultiIterNew4(a, b, c, d):             # <<<<<<<<<<<<<<
@@ -3840,7 +3855,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew4(PyObject *__
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("PyArray_MultiIterNew4", 0);
 
-  /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":744
+  /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":745
  * 
  * cdef inline object PyArray_MultiIterNew4(a, b, c, d):
  *     return PyArray_MultiIterNew(4, <void*>a, <void*>b, <void*>c, <void*> d)             # <<<<<<<<<<<<<<
@@ -3848,13 +3863,13 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew4(PyObject *__
  * cdef inline object PyArray_MultiIterNew5(a, b, c, d, e):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyArray_MultiIterNew(4, ((void *)__pyx_v_a), ((void *)__pyx_v_b), ((void *)__pyx_v_c), ((void *)__pyx_v_d)); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 744, __pyx_L1_error)
+  __pyx_t_1 = PyArray_MultiIterNew(4, ((void *)__pyx_v_a), ((void *)__pyx_v_b), ((void *)__pyx_v_c), ((void *)__pyx_v_d)); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 745, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":743
+  /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":744
  *     return PyArray_MultiIterNew(3, <void*>a, <void*>b, <void*> c)
  * 
  * cdef inline object PyArray_MultiIterNew4(a, b, c, d):             # <<<<<<<<<<<<<<
@@ -3873,7 +3888,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew4(PyObject *__
   return __pyx_r;
 }
 
-/* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":746
+/* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":747
  *     return PyArray_MultiIterNew(4, <void*>a, <void*>b, <void*>c, <void*> d)
  * 
  * cdef inline object PyArray_MultiIterNew5(a, b, c, d, e):             # <<<<<<<<<<<<<<
@@ -3890,7 +3905,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew5(PyObject *__
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("PyArray_MultiIterNew5", 0);
 
-  /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":747
+  /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":748
  * 
  * cdef inline object PyArray_MultiIterNew5(a, b, c, d, e):
  *     return PyArray_MultiIterNew(5, <void*>a, <void*>b, <void*>c, <void*> d, <void*> e)             # <<<<<<<<<<<<<<
@@ -3898,13 +3913,13 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew5(PyObject *__
  * cdef inline tuple PyDataType_SHAPE(dtype d):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyArray_MultiIterNew(5, ((void *)__pyx_v_a), ((void *)__pyx_v_b), ((void *)__pyx_v_c), ((void *)__pyx_v_d), ((void *)__pyx_v_e)); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 747, __pyx_L1_error)
+  __pyx_t_1 = PyArray_MultiIterNew(5, ((void *)__pyx_v_a), ((void *)__pyx_v_b), ((void *)__pyx_v_c), ((void *)__pyx_v_d), ((void *)__pyx_v_e)); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 748, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":746
+  /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":747
  *     return PyArray_MultiIterNew(4, <void*>a, <void*>b, <void*>c, <void*> d)
  * 
  * cdef inline object PyArray_MultiIterNew5(a, b, c, d, e):             # <<<<<<<<<<<<<<
@@ -3923,7 +3938,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew5(PyObject *__
   return __pyx_r;
 }
 
-/* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":749
+/* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":750
  *     return PyArray_MultiIterNew(5, <void*>a, <void*>b, <void*>c, <void*> d, <void*> e)
  * 
  * cdef inline tuple PyDataType_SHAPE(dtype d):             # <<<<<<<<<<<<<<
@@ -3937,7 +3952,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyDataType_SHAPE(PyArray_Descr *__
   int __pyx_t_1;
   __Pyx_RefNannySetupContext("PyDataType_SHAPE", 0);
 
-  /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":750
+  /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":751
  * 
  * cdef inline tuple PyDataType_SHAPE(dtype d):
  *     if PyDataType_HASSUBARRAY(d):             # <<<<<<<<<<<<<<
@@ -3947,7 +3962,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyDataType_SHAPE(PyArray_Descr *__
   __pyx_t_1 = (PyDataType_HASSUBARRAY(__pyx_v_d) != 0);
   if (__pyx_t_1) {
 
-    /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":751
+    /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":752
  * cdef inline tuple PyDataType_SHAPE(dtype d):
  *     if PyDataType_HASSUBARRAY(d):
  *         return <tuple>d.subarray.shape             # <<<<<<<<<<<<<<
@@ -3959,7 +3974,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyDataType_SHAPE(PyArray_Descr *__
     __pyx_r = ((PyObject*)__pyx_v_d->subarray->shape);
     goto __pyx_L0;
 
-    /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":750
+    /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":751
  * 
  * cdef inline tuple PyDataType_SHAPE(dtype d):
  *     if PyDataType_HASSUBARRAY(d):             # <<<<<<<<<<<<<<
@@ -3968,7 +3983,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyDataType_SHAPE(PyArray_Descr *__
  */
   }
 
-  /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":753
+  /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":754
  *         return <tuple>d.subarray.shape
  *     else:
  *         return ()             # <<<<<<<<<<<<<<
@@ -3982,7 +3997,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyDataType_SHAPE(PyArray_Descr *__
     goto __pyx_L0;
   }
 
-  /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":749
+  /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":750
  *     return PyArray_MultiIterNew(5, <void*>a, <void*>b, <void*>c, <void*> d, <void*> e)
  * 
  * cdef inline tuple PyDataType_SHAPE(dtype d):             # <<<<<<<<<<<<<<
@@ -3997,7 +4012,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyDataType_SHAPE(PyArray_Descr *__
   return __pyx_r;
 }
 
-/* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":868
+/* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":931
  *     int _import_umath() except -1
  * 
  * cdef inline void set_array_base(ndarray arr, object base):             # <<<<<<<<<<<<<<
@@ -4009,7 +4024,7 @@ static CYTHON_INLINE void __pyx_f_5numpy_set_array_base(PyArrayObject *__pyx_v_a
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("set_array_base", 0);
 
-  /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":869
+  /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":932
  * 
  * cdef inline void set_array_base(ndarray arr, object base):
  *     Py_INCREF(base) # important to do this before stealing the reference below!             # <<<<<<<<<<<<<<
@@ -4018,7 +4033,7 @@ static CYTHON_INLINE void __pyx_f_5numpy_set_array_base(PyArrayObject *__pyx_v_a
  */
   Py_INCREF(__pyx_v_base);
 
-  /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":870
+  /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":933
  * cdef inline void set_array_base(ndarray arr, object base):
  *     Py_INCREF(base) # important to do this before stealing the reference below!
  *     PyArray_SetBaseObject(arr, base)             # <<<<<<<<<<<<<<
@@ -4027,7 +4042,7 @@ static CYTHON_INLINE void __pyx_f_5numpy_set_array_base(PyArrayObject *__pyx_v_a
  */
   (void)(PyArray_SetBaseObject(__pyx_v_arr, __pyx_v_base));
 
-  /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":868
+  /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":931
  *     int _import_umath() except -1
  * 
  * cdef inline void set_array_base(ndarray arr, object base):             # <<<<<<<<<<<<<<
@@ -4039,7 +4054,7 @@ static CYTHON_INLINE void __pyx_f_5numpy_set_array_base(PyArrayObject *__pyx_v_a
   __Pyx_RefNannyFinishContext();
 }
 
-/* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":872
+/* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":935
  *     PyArray_SetBaseObject(arr, base)
  * 
  * cdef inline object get_array_base(ndarray arr):             # <<<<<<<<<<<<<<
@@ -4054,7 +4069,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_get_array_base(PyArrayObject *__py
   int __pyx_t_1;
   __Pyx_RefNannySetupContext("get_array_base", 0);
 
-  /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":873
+  /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":936
  * 
  * cdef inline object get_array_base(ndarray arr):
  *     base = PyArray_BASE(arr)             # <<<<<<<<<<<<<<
@@ -4063,7 +4078,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_get_array_base(PyArrayObject *__py
  */
   __pyx_v_base = PyArray_BASE(__pyx_v_arr);
 
-  /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":874
+  /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":937
  * cdef inline object get_array_base(ndarray arr):
  *     base = PyArray_BASE(arr)
  *     if base is NULL:             # <<<<<<<<<<<<<<
@@ -4073,7 +4088,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_get_array_base(PyArrayObject *__py
   __pyx_t_1 = ((__pyx_v_base == NULL) != 0);
   if (__pyx_t_1) {
 
-    /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":875
+    /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":938
  *     base = PyArray_BASE(arr)
  *     if base is NULL:
  *         return None             # <<<<<<<<<<<<<<
@@ -4084,7 +4099,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_get_array_base(PyArrayObject *__py
     __pyx_r = Py_None; __Pyx_INCREF(Py_None);
     goto __pyx_L0;
 
-    /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":874
+    /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":937
  * cdef inline object get_array_base(ndarray arr):
  *     base = PyArray_BASE(arr)
  *     if base is NULL:             # <<<<<<<<<<<<<<
@@ -4093,7 +4108,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_get_array_base(PyArrayObject *__py
  */
   }
 
-  /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":876
+  /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":939
  *     if base is NULL:
  *         return None
  *     return <object>base             # <<<<<<<<<<<<<<
@@ -4105,7 +4120,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_get_array_base(PyArrayObject *__py
   __pyx_r = ((PyObject *)__pyx_v_base);
   goto __pyx_L0;
 
-  /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":872
+  /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":935
  *     PyArray_SetBaseObject(arr, base)
  * 
  * cdef inline object get_array_base(ndarray arr):             # <<<<<<<<<<<<<<
@@ -4120,7 +4135,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_get_array_base(PyArrayObject *__py
   return __pyx_r;
 }
 
-/* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":880
+/* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":943
  * # Versions of the import_* functions which are more suitable for
  * # Cython code.
  * cdef inline int import_array() except -1:             # <<<<<<<<<<<<<<
@@ -4144,7 +4159,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_array(void) {
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("import_array", 0);
 
-  /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":881
+  /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":944
  * # Cython code.
  * cdef inline int import_array() except -1:
  *     try:             # <<<<<<<<<<<<<<
@@ -4160,16 +4175,16 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_array(void) {
     __Pyx_XGOTREF(__pyx_t_3);
     /*try:*/ {
 
-      /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":882
+      /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":945
  * cdef inline int import_array() except -1:
  *     try:
  *         __pyx_import_array()             # <<<<<<<<<<<<<<
  *     except Exception:
  *         raise ImportError("numpy.core.multiarray failed to import")
  */
-      __pyx_t_4 = _import_array(); if (unlikely(__pyx_t_4 == ((int)-1))) __PYX_ERR(2, 882, __pyx_L3_error)
+      __pyx_t_4 = _import_array(); if (unlikely(__pyx_t_4 == ((int)-1))) __PYX_ERR(2, 945, __pyx_L3_error)
 
-      /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":881
+      /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":944
  * # Cython code.
  * cdef inline int import_array() except -1:
  *     try:             # <<<<<<<<<<<<<<
@@ -4183,7 +4198,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_array(void) {
     goto __pyx_L8_try_end;
     __pyx_L3_error:;
 
-    /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":883
+    /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":946
  *     try:
  *         __pyx_import_array()
  *     except Exception:             # <<<<<<<<<<<<<<
@@ -4193,28 +4208,28 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_array(void) {
     __pyx_t_4 = __Pyx_PyErr_ExceptionMatches(((PyObject *)(&((PyTypeObject*)PyExc_Exception)[0])));
     if (__pyx_t_4) {
       __Pyx_AddTraceback("numpy.import_array", __pyx_clineno, __pyx_lineno, __pyx_filename);
-      if (__Pyx_GetException(&__pyx_t_5, &__pyx_t_6, &__pyx_t_7) < 0) __PYX_ERR(2, 883, __pyx_L5_except_error)
+      if (__Pyx_GetException(&__pyx_t_5, &__pyx_t_6, &__pyx_t_7) < 0) __PYX_ERR(2, 946, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_GOTREF(__pyx_t_7);
 
-      /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":884
+      /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":947
  *         __pyx_import_array()
  *     except Exception:
  *         raise ImportError("numpy.core.multiarray failed to import")             # <<<<<<<<<<<<<<
  * 
  * cdef inline int import_umath() except -1:
  */
-      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__6, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(2, 884, __pyx_L5_except_error)
+      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__6, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(2, 947, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_Raise(__pyx_t_8, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __PYX_ERR(2, 884, __pyx_L5_except_error)
+      __PYX_ERR(2, 947, __pyx_L5_except_error)
     }
     goto __pyx_L5_except_error;
     __pyx_L5_except_error:;
 
-    /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":881
+    /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":944
  * # Cython code.
  * cdef inline int import_array() except -1:
  *     try:             # <<<<<<<<<<<<<<
@@ -4229,7 +4244,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_array(void) {
     __pyx_L8_try_end:;
   }
 
-  /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":880
+  /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":943
  * # Versions of the import_* functions which are more suitable for
  * # Cython code.
  * cdef inline int import_array() except -1:             # <<<<<<<<<<<<<<
@@ -4252,7 +4267,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_array(void) {
   return __pyx_r;
 }
 
-/* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":886
+/* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":949
  *         raise ImportError("numpy.core.multiarray failed to import")
  * 
  * cdef inline int import_umath() except -1:             # <<<<<<<<<<<<<<
@@ -4276,7 +4291,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_umath(void) {
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("import_umath", 0);
 
-  /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":887
+  /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":950
  * 
  * cdef inline int import_umath() except -1:
  *     try:             # <<<<<<<<<<<<<<
@@ -4292,16 +4307,16 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_umath(void) {
     __Pyx_XGOTREF(__pyx_t_3);
     /*try:*/ {
 
-      /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":888
+      /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":951
  * cdef inline int import_umath() except -1:
  *     try:
  *         _import_umath()             # <<<<<<<<<<<<<<
  *     except Exception:
  *         raise ImportError("numpy.core.umath failed to import")
  */
-      __pyx_t_4 = _import_umath(); if (unlikely(__pyx_t_4 == ((int)-1))) __PYX_ERR(2, 888, __pyx_L3_error)
+      __pyx_t_4 = _import_umath(); if (unlikely(__pyx_t_4 == ((int)-1))) __PYX_ERR(2, 951, __pyx_L3_error)
 
-      /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":887
+      /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":950
  * 
  * cdef inline int import_umath() except -1:
  *     try:             # <<<<<<<<<<<<<<
@@ -4315,7 +4330,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_umath(void) {
     goto __pyx_L8_try_end;
     __pyx_L3_error:;
 
-    /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":889
+    /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":952
  *     try:
  *         _import_umath()
  *     except Exception:             # <<<<<<<<<<<<<<
@@ -4325,28 +4340,28 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_umath(void) {
     __pyx_t_4 = __Pyx_PyErr_ExceptionMatches(((PyObject *)(&((PyTypeObject*)PyExc_Exception)[0])));
     if (__pyx_t_4) {
       __Pyx_AddTraceback("numpy.import_umath", __pyx_clineno, __pyx_lineno, __pyx_filename);
-      if (__Pyx_GetException(&__pyx_t_5, &__pyx_t_6, &__pyx_t_7) < 0) __PYX_ERR(2, 889, __pyx_L5_except_error)
+      if (__Pyx_GetException(&__pyx_t_5, &__pyx_t_6, &__pyx_t_7) < 0) __PYX_ERR(2, 952, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_GOTREF(__pyx_t_7);
 
-      /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":890
+      /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":953
  *         _import_umath()
  *     except Exception:
  *         raise ImportError("numpy.core.umath failed to import")             # <<<<<<<<<<<<<<
  * 
  * cdef inline int import_ufunc() except -1:
  */
-      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__7, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(2, 890, __pyx_L5_except_error)
+      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__7, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(2, 953, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_Raise(__pyx_t_8, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __PYX_ERR(2, 890, __pyx_L5_except_error)
+      __PYX_ERR(2, 953, __pyx_L5_except_error)
     }
     goto __pyx_L5_except_error;
     __pyx_L5_except_error:;
 
-    /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":887
+    /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":950
  * 
  * cdef inline int import_umath() except -1:
  *     try:             # <<<<<<<<<<<<<<
@@ -4361,7 +4376,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_umath(void) {
     __pyx_L8_try_end:;
   }
 
-  /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":886
+  /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":949
  *         raise ImportError("numpy.core.multiarray failed to import")
  * 
  * cdef inline int import_umath() except -1:             # <<<<<<<<<<<<<<
@@ -4384,7 +4399,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_umath(void) {
   return __pyx_r;
 }
 
-/* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":892
+/* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":955
  *         raise ImportError("numpy.core.umath failed to import")
  * 
  * cdef inline int import_ufunc() except -1:             # <<<<<<<<<<<<<<
@@ -4408,7 +4423,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_ufunc(void) {
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("import_ufunc", 0);
 
-  /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":893
+  /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":956
  * 
  * cdef inline int import_ufunc() except -1:
  *     try:             # <<<<<<<<<<<<<<
@@ -4424,16 +4439,16 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_ufunc(void) {
     __Pyx_XGOTREF(__pyx_t_3);
     /*try:*/ {
 
-      /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":894
+      /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":957
  * cdef inline int import_ufunc() except -1:
  *     try:
  *         _import_umath()             # <<<<<<<<<<<<<<
  *     except Exception:
  *         raise ImportError("numpy.core.umath failed to import")
  */
-      __pyx_t_4 = _import_umath(); if (unlikely(__pyx_t_4 == ((int)-1))) __PYX_ERR(2, 894, __pyx_L3_error)
+      __pyx_t_4 = _import_umath(); if (unlikely(__pyx_t_4 == ((int)-1))) __PYX_ERR(2, 957, __pyx_L3_error)
 
-      /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":893
+      /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":956
  * 
  * cdef inline int import_ufunc() except -1:
  *     try:             # <<<<<<<<<<<<<<
@@ -4447,7 +4462,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_ufunc(void) {
     goto __pyx_L8_try_end;
     __pyx_L3_error:;
 
-    /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":895
+    /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":958
  *     try:
  *         _import_umath()
  *     except Exception:             # <<<<<<<<<<<<<<
@@ -4457,28 +4472,28 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_ufunc(void) {
     __pyx_t_4 = __Pyx_PyErr_ExceptionMatches(((PyObject *)(&((PyTypeObject*)PyExc_Exception)[0])));
     if (__pyx_t_4) {
       __Pyx_AddTraceback("numpy.import_ufunc", __pyx_clineno, __pyx_lineno, __pyx_filename);
-      if (__Pyx_GetException(&__pyx_t_5, &__pyx_t_6, &__pyx_t_7) < 0) __PYX_ERR(2, 895, __pyx_L5_except_error)
+      if (__Pyx_GetException(&__pyx_t_5, &__pyx_t_6, &__pyx_t_7) < 0) __PYX_ERR(2, 958, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_GOTREF(__pyx_t_7);
 
-      /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":896
+      /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":959
  *         _import_umath()
  *     except Exception:
  *         raise ImportError("numpy.core.umath failed to import")             # <<<<<<<<<<<<<<
  * 
  * cdef extern from *:
  */
-      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__7, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(2, 896, __pyx_L5_except_error)
+      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__7, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(2, 959, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_Raise(__pyx_t_8, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __PYX_ERR(2, 896, __pyx_L5_except_error)
+      __PYX_ERR(2, 959, __pyx_L5_except_error)
     }
     goto __pyx_L5_except_error;
     __pyx_L5_except_error:;
 
-    /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":893
+    /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":956
  * 
  * cdef inline int import_ufunc() except -1:
  *     try:             # <<<<<<<<<<<<<<
@@ -4493,7 +4508,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_ufunc(void) {
     __pyx_L8_try_end:;
   }
 
-  /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":892
+  /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":955
  *         raise ImportError("numpy.core.umath failed to import")
  * 
  * cdef inline int import_ufunc() except -1:             # <<<<<<<<<<<<<<
@@ -4513,6 +4528,180 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_ufunc(void) {
   __pyx_r = -1;
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":969
+ * 
+ * 
+ * cdef inline bint is_timedelta64_object(object obj):             # <<<<<<<<<<<<<<
+ *     """
+ *     Cython equivalent of `isinstance(obj, np.timedelta64)`
+ */
+
+static CYTHON_INLINE int __pyx_f_5numpy_is_timedelta64_object(PyObject *__pyx_v_obj) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("is_timedelta64_object", 0);
+
+  /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":981
+ *     bool
+ *     """
+ *     return PyObject_TypeCheck(obj, &PyTimedeltaArrType_Type)             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+  __pyx_r = PyObject_TypeCheck(__pyx_v_obj, (&PyTimedeltaArrType_Type));
+  goto __pyx_L0;
+
+  /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":969
+ * 
+ * 
+ * cdef inline bint is_timedelta64_object(object obj):             # <<<<<<<<<<<<<<
+ *     """
+ *     Cython equivalent of `isinstance(obj, np.timedelta64)`
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":984
+ * 
+ * 
+ * cdef inline bint is_datetime64_object(object obj):             # <<<<<<<<<<<<<<
+ *     """
+ *     Cython equivalent of `isinstance(obj, np.datetime64)`
+ */
+
+static CYTHON_INLINE int __pyx_f_5numpy_is_datetime64_object(PyObject *__pyx_v_obj) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("is_datetime64_object", 0);
+
+  /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":996
+ *     bool
+ *     """
+ *     return PyObject_TypeCheck(obj, &PyDatetimeArrType_Type)             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+  __pyx_r = PyObject_TypeCheck(__pyx_v_obj, (&PyDatetimeArrType_Type));
+  goto __pyx_L0;
+
+  /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":984
+ * 
+ * 
+ * cdef inline bint is_datetime64_object(object obj):             # <<<<<<<<<<<<<<
+ *     """
+ *     Cython equivalent of `isinstance(obj, np.datetime64)`
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":999
+ * 
+ * 
+ * cdef inline npy_datetime get_datetime64_value(object obj) nogil:             # <<<<<<<<<<<<<<
+ *     """
+ *     returns the int64 value underlying scalar numpy datetime64 object
+ */
+
+static CYTHON_INLINE npy_datetime __pyx_f_5numpy_get_datetime64_value(PyObject *__pyx_v_obj) {
+  npy_datetime __pyx_r;
+
+  /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":1006
+ *     also needed.  That can be found using `get_datetime64_unit`.
+ *     """
+ *     return (<PyDatetimeScalarObject*>obj).obval             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+  __pyx_r = ((PyDatetimeScalarObject *)__pyx_v_obj)->obval;
+  goto __pyx_L0;
+
+  /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":999
+ * 
+ * 
+ * cdef inline npy_datetime get_datetime64_value(object obj) nogil:             # <<<<<<<<<<<<<<
+ *     """
+ *     returns the int64 value underlying scalar numpy datetime64 object
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  return __pyx_r;
+}
+
+/* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":1009
+ * 
+ * 
+ * cdef inline npy_timedelta get_timedelta64_value(object obj) nogil:             # <<<<<<<<<<<<<<
+ *     """
+ *     returns the int64 value underlying scalar numpy timedelta64 object
+ */
+
+static CYTHON_INLINE npy_timedelta __pyx_f_5numpy_get_timedelta64_value(PyObject *__pyx_v_obj) {
+  npy_timedelta __pyx_r;
+
+  /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":1013
+ *     returns the int64 value underlying scalar numpy timedelta64 object
+ *     """
+ *     return (<PyTimedeltaScalarObject*>obj).obval             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+  __pyx_r = ((PyTimedeltaScalarObject *)__pyx_v_obj)->obval;
+  goto __pyx_L0;
+
+  /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":1009
+ * 
+ * 
+ * cdef inline npy_timedelta get_timedelta64_value(object obj) nogil:             # <<<<<<<<<<<<<<
+ *     """
+ *     returns the int64 value underlying scalar numpy timedelta64 object
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  return __pyx_r;
+}
+
+/* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":1016
+ * 
+ * 
+ * cdef inline NPY_DATETIMEUNIT get_datetime64_unit(object obj) nogil:             # <<<<<<<<<<<<<<
+ *     """
+ *     returns the unit part of the dtype for a numpy datetime64 object.
+ */
+
+static CYTHON_INLINE NPY_DATETIMEUNIT __pyx_f_5numpy_get_datetime64_unit(PyObject *__pyx_v_obj) {
+  NPY_DATETIMEUNIT __pyx_r;
+
+  /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":1020
+ *     returns the unit part of the dtype for a numpy datetime64 object.
+ *     """
+ *     return <NPY_DATETIMEUNIT>(<PyDatetimeScalarObject*>obj).obmeta.base             # <<<<<<<<<<<<<<
+ */
+  __pyx_r = ((NPY_DATETIMEUNIT)((PyDatetimeScalarObject *)__pyx_v_obj)->obmeta.base);
+  goto __pyx_L0;
+
+  /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":1016
+ * 
+ * 
+ * cdef inline NPY_DATETIMEUNIT get_datetime64_unit(object obj) nogil:             # <<<<<<<<<<<<<<
+ *     """
+ *     returns the unit part of the dtype for a numpy datetime64 object.
+ */
+
+  /* function exit code */
+  __pyx_L0:;
   return __pyx_r;
 }
 
@@ -4760,7 +4949,7 @@ static PyObject *__pyx_convert_vector_to_py_int(const std::vector<int>  &__pyx_v
   return __pyx_r;
 }
 
-static PyObject *__pyx_tp_new_5stepc_PyGaussStep(PyTypeObject *t, PyObject *a, PyObject *k) {
+static PyObject *__pyx_tp_new_5sfHMM_8step_ext_5stepc_PyGaussStep(PyTypeObject *t, PyObject *a, PyObject *k) {
   PyObject *o;
   if (likely((t->tp_flags & Py_TPFLAGS_IS_ABSTRACT) == 0)) {
     o = (*t->tp_alloc)(t, 0);
@@ -4768,14 +4957,14 @@ static PyObject *__pyx_tp_new_5stepc_PyGaussStep(PyTypeObject *t, PyObject *a, P
     o = (PyObject *) PyBaseObject_Type.tp_new(t, __pyx_empty_tuple, 0);
   }
   if (unlikely(!o)) return 0;
-  if (unlikely(__pyx_pw_5stepc_11PyGaussStep_1__cinit__(o, a, k) < 0)) goto bad;
+  if (unlikely(__pyx_pw_5sfHMM_8step_ext_5stepc_11PyGaussStep_1__cinit__(o, a, k) < 0)) goto bad;
   return o;
   bad:
   Py_DECREF(o); o = 0;
   return NULL;
 }
 
-static void __pyx_tp_dealloc_5stepc_PyGaussStep(PyObject *o) {
+static void __pyx_tp_dealloc_5sfHMM_8step_ext_5stepc_PyGaussStep(PyObject *o) {
   #if CYTHON_USE_TP_FINALIZE
   if (unlikely(PyType_HasFeature(Py_TYPE(o), Py_TPFLAGS_HAVE_FINALIZE) && Py_TYPE(o)->tp_finalize) && (!PyType_IS_GC(Py_TYPE(o)) || !_PyGC_FINALIZED(o))) {
     if (PyObject_CallFinalizerFromDealloc(o)) return;
@@ -4785,20 +4974,20 @@ static void __pyx_tp_dealloc_5stepc_PyGaussStep(PyObject *o) {
     PyObject *etype, *eval, *etb;
     PyErr_Fetch(&etype, &eval, &etb);
     __Pyx_SET_REFCNT(o, Py_REFCNT(o) + 1);
-    __pyx_pw_5stepc_11PyGaussStep_3__dealloc__(o);
+    __pyx_pw_5sfHMM_8step_ext_5stepc_11PyGaussStep_3__dealloc__(o);
     __Pyx_SET_REFCNT(o, Py_REFCNT(o) - 1);
     PyErr_Restore(etype, eval, etb);
   }
   (*Py_TYPE(o)->tp_free)(o);
 }
 
-static PyObject *__pyx_getprop_5stepc_11PyGaussStep_data(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_5stepc_11PyGaussStep_4data_1__get__(o);
+static PyObject *__pyx_getprop_5sfHMM_8step_ext_5stepc_11PyGaussStep_data(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5sfHMM_8step_ext_5stepc_11PyGaussStep_4data_1__get__(o);
 }
 
-static int __pyx_setprop_5stepc_11PyGaussStep_data(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
+static int __pyx_setprop_5sfHMM_8step_ext_5stepc_11PyGaussStep_data(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
   if (v) {
-    return __pyx_pw_5stepc_11PyGaussStep_4data_3__set__(o, v);
+    return __pyx_pw_5sfHMM_8step_ext_5stepc_11PyGaussStep_4data_3__set__(o, v);
   }
   else {
     PyErr_SetString(PyExc_NotImplementedError, "__del__");
@@ -4806,54 +4995,54 @@ static int __pyx_setprop_5stepc_11PyGaussStep_data(PyObject *o, PyObject *v, CYT
   }
 }
 
-static PyObject *__pyx_getprop_5stepc_11PyGaussStep_fit(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_5stepc_11PyGaussStep_3fit_1__get__(o);
+static PyObject *__pyx_getprop_5sfHMM_8step_ext_5stepc_11PyGaussStep_fit(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5sfHMM_8step_ext_5stepc_11PyGaussStep_3fit_1__get__(o);
 }
 
-static PyObject *__pyx_getprop_5stepc_11PyGaussStep_n_step(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_5stepc_11PyGaussStep_6n_step_1__get__(o);
+static PyObject *__pyx_getprop_5sfHMM_8step_ext_5stepc_11PyGaussStep_n_step(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5sfHMM_8step_ext_5stepc_11PyGaussStep_6n_step_1__get__(o);
 }
 
-static PyObject *__pyx_getprop_5stepc_11PyGaussStep_step_list(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_5stepc_11PyGaussStep_9step_list_1__get__(o);
+static PyObject *__pyx_getprop_5sfHMM_8step_ext_5stepc_11PyGaussStep_step_list(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5sfHMM_8step_ext_5stepc_11PyGaussStep_9step_list_1__get__(o);
 }
 
-static PyObject *__pyx_getprop_5stepc_11PyGaussStep_mu_list(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_5stepc_11PyGaussStep_7mu_list_1__get__(o);
+static PyObject *__pyx_getprop_5sfHMM_8step_ext_5stepc_11PyGaussStep_mu_list(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5sfHMM_8step_ext_5stepc_11PyGaussStep_7mu_list_1__get__(o);
 }
 
-static PyObject *__pyx_getprop_5stepc_11PyGaussStep_len_list(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_5stepc_11PyGaussStep_8len_list_1__get__(o);
+static PyObject *__pyx_getprop_5sfHMM_8step_ext_5stepc_11PyGaussStep_len_list(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5sfHMM_8step_ext_5stepc_11PyGaussStep_8len_list_1__get__(o);
 }
 
-static PyObject *__pyx_getprop_5stepc_11PyGaussStep_step_size_list(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_5stepc_11PyGaussStep_14step_size_list_1__get__(o);
+static PyObject *__pyx_getprop_5sfHMM_8step_ext_5stepc_11PyGaussStep_step_size_list(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5sfHMM_8step_ext_5stepc_11PyGaussStep_14step_size_list_1__get__(o);
 }
 
-static PyMethodDef __pyx_methods_5stepc_PyGaussStep[] = {
-  {"multi_step_finding", (PyCFunction)__pyx_pw_5stepc_11PyGaussStep_5multi_step_finding, METH_NOARGS, 0},
-  {"__reduce_cython__", (PyCFunction)__pyx_pw_5stepc_11PyGaussStep_7__reduce_cython__, METH_NOARGS, 0},
-  {"__setstate_cython__", (PyCFunction)__pyx_pw_5stepc_11PyGaussStep_9__setstate_cython__, METH_O, 0},
+static PyMethodDef __pyx_methods_5sfHMM_8step_ext_5stepc_PyGaussStep[] = {
+  {"multi_step_finding", (PyCFunction)__pyx_pw_5sfHMM_8step_ext_5stepc_11PyGaussStep_5multi_step_finding, METH_NOARGS, 0},
+  {"__reduce_cython__", (PyCFunction)__pyx_pw_5sfHMM_8step_ext_5stepc_11PyGaussStep_7__reduce_cython__, METH_NOARGS, 0},
+  {"__setstate_cython__", (PyCFunction)__pyx_pw_5sfHMM_8step_ext_5stepc_11PyGaussStep_9__setstate_cython__, METH_O, 0},
   {0, 0, 0, 0}
 };
 
-static struct PyGetSetDef __pyx_getsets_5stepc_PyGaussStep[] = {
-  {(char *)"data", __pyx_getprop_5stepc_11PyGaussStep_data, __pyx_setprop_5stepc_11PyGaussStep_data, (char *)0, 0},
-  {(char *)"fit", __pyx_getprop_5stepc_11PyGaussStep_fit, 0, (char *)0, 0},
-  {(char *)"n_step", __pyx_getprop_5stepc_11PyGaussStep_n_step, 0, (char *)0, 0},
-  {(char *)"step_list", __pyx_getprop_5stepc_11PyGaussStep_step_list, 0, (char *)0, 0},
-  {(char *)"mu_list", __pyx_getprop_5stepc_11PyGaussStep_mu_list, 0, (char *)0, 0},
-  {(char *)"len_list", __pyx_getprop_5stepc_11PyGaussStep_len_list, 0, (char *)0, 0},
-  {(char *)"step_size_list", __pyx_getprop_5stepc_11PyGaussStep_step_size_list, 0, (char *)0, 0},
+static struct PyGetSetDef __pyx_getsets_5sfHMM_8step_ext_5stepc_PyGaussStep[] = {
+  {(char *)"data", __pyx_getprop_5sfHMM_8step_ext_5stepc_11PyGaussStep_data, __pyx_setprop_5sfHMM_8step_ext_5stepc_11PyGaussStep_data, (char *)0, 0},
+  {(char *)"fit", __pyx_getprop_5sfHMM_8step_ext_5stepc_11PyGaussStep_fit, 0, (char *)0, 0},
+  {(char *)"n_step", __pyx_getprop_5sfHMM_8step_ext_5stepc_11PyGaussStep_n_step, 0, (char *)0, 0},
+  {(char *)"step_list", __pyx_getprop_5sfHMM_8step_ext_5stepc_11PyGaussStep_step_list, 0, (char *)0, 0},
+  {(char *)"mu_list", __pyx_getprop_5sfHMM_8step_ext_5stepc_11PyGaussStep_mu_list, 0, (char *)0, 0},
+  {(char *)"len_list", __pyx_getprop_5sfHMM_8step_ext_5stepc_11PyGaussStep_len_list, 0, (char *)0, 0},
+  {(char *)"step_size_list", __pyx_getprop_5sfHMM_8step_ext_5stepc_11PyGaussStep_step_size_list, 0, (char *)0, 0},
   {0, 0, 0, 0, 0}
 };
 
-static PyTypeObject __pyx_type_5stepc_PyGaussStep = {
+static PyTypeObject __pyx_type_5sfHMM_8step_ext_5stepc_PyGaussStep = {
   PyVarObject_HEAD_INIT(0, 0)
-  "stepc.PyGaussStep", /*tp_name*/
-  sizeof(struct __pyx_obj_5stepc_PyGaussStep), /*tp_basicsize*/
+  "sfHMM.step_ext.stepc.PyGaussStep", /*tp_name*/
+  sizeof(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyGaussStep), /*tp_basicsize*/
   0, /*tp_itemsize*/
-  __pyx_tp_dealloc_5stepc_PyGaussStep, /*tp_dealloc*/
+  __pyx_tp_dealloc_5sfHMM_8step_ext_5stepc_PyGaussStep, /*tp_dealloc*/
   #if PY_VERSION_HEX < 0x030800b4
   0, /*tp_print*/
   #endif
@@ -4886,9 +5075,9 @@ static PyTypeObject __pyx_type_5stepc_PyGaussStep = {
   0, /*tp_weaklistoffset*/
   0, /*tp_iter*/
   0, /*tp_iternext*/
-  __pyx_methods_5stepc_PyGaussStep, /*tp_methods*/
+  __pyx_methods_5sfHMM_8step_ext_5stepc_PyGaussStep, /*tp_methods*/
   0, /*tp_members*/
-  __pyx_getsets_5stepc_PyGaussStep, /*tp_getset*/
+  __pyx_getsets_5sfHMM_8step_ext_5stepc_PyGaussStep, /*tp_getset*/
   0, /*tp_base*/
   0, /*tp_dict*/
   0, /*tp_descr_get*/
@@ -4896,7 +5085,7 @@ static PyTypeObject __pyx_type_5stepc_PyGaussStep = {
   0, /*tp_dictoffset*/
   0, /*tp_init*/
   0, /*tp_alloc*/
-  __pyx_tp_new_5stepc_PyGaussStep, /*tp_new*/
+  __pyx_tp_new_5sfHMM_8step_ext_5stepc_PyGaussStep, /*tp_new*/
   0, /*tp_free*/
   0, /*tp_is_gc*/
   0, /*tp_bases*/
@@ -4917,7 +5106,7 @@ static PyTypeObject __pyx_type_5stepc_PyGaussStep = {
   #endif
 };
 
-static PyObject *__pyx_tp_new_5stepc_PyPoissonStep(PyTypeObject *t, PyObject *a, PyObject *k) {
+static PyObject *__pyx_tp_new_5sfHMM_8step_ext_5stepc_PyPoissonStep(PyTypeObject *t, PyObject *a, PyObject *k) {
   PyObject *o;
   if (likely((t->tp_flags & Py_TPFLAGS_IS_ABSTRACT) == 0)) {
     o = (*t->tp_alloc)(t, 0);
@@ -4925,14 +5114,14 @@ static PyObject *__pyx_tp_new_5stepc_PyPoissonStep(PyTypeObject *t, PyObject *a,
     o = (PyObject *) PyBaseObject_Type.tp_new(t, __pyx_empty_tuple, 0);
   }
   if (unlikely(!o)) return 0;
-  if (unlikely(__pyx_pw_5stepc_13PyPoissonStep_1__cinit__(o, a, k) < 0)) goto bad;
+  if (unlikely(__pyx_pw_5sfHMM_8step_ext_5stepc_13PyPoissonStep_1__cinit__(o, a, k) < 0)) goto bad;
   return o;
   bad:
   Py_DECREF(o); o = 0;
   return NULL;
 }
 
-static void __pyx_tp_dealloc_5stepc_PyPoissonStep(PyObject *o) {
+static void __pyx_tp_dealloc_5sfHMM_8step_ext_5stepc_PyPoissonStep(PyObject *o) {
   #if CYTHON_USE_TP_FINALIZE
   if (unlikely(PyType_HasFeature(Py_TYPE(o), Py_TPFLAGS_HAVE_FINALIZE) && Py_TYPE(o)->tp_finalize) && (!PyType_IS_GC(Py_TYPE(o)) || !_PyGC_FINALIZED(o))) {
     if (PyObject_CallFinalizerFromDealloc(o)) return;
@@ -4942,20 +5131,20 @@ static void __pyx_tp_dealloc_5stepc_PyPoissonStep(PyObject *o) {
     PyObject *etype, *eval, *etb;
     PyErr_Fetch(&etype, &eval, &etb);
     __Pyx_SET_REFCNT(o, Py_REFCNT(o) + 1);
-    __pyx_pw_5stepc_13PyPoissonStep_3__dealloc__(o);
+    __pyx_pw_5sfHMM_8step_ext_5stepc_13PyPoissonStep_3__dealloc__(o);
     __Pyx_SET_REFCNT(o, Py_REFCNT(o) - 1);
     PyErr_Restore(etype, eval, etb);
   }
   (*Py_TYPE(o)->tp_free)(o);
 }
 
-static PyObject *__pyx_getprop_5stepc_13PyPoissonStep_data(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_5stepc_13PyPoissonStep_4data_1__get__(o);
+static PyObject *__pyx_getprop_5sfHMM_8step_ext_5stepc_13PyPoissonStep_data(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5sfHMM_8step_ext_5stepc_13PyPoissonStep_4data_1__get__(o);
 }
 
-static int __pyx_setprop_5stepc_13PyPoissonStep_data(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
+static int __pyx_setprop_5sfHMM_8step_ext_5stepc_13PyPoissonStep_data(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
   if (v) {
-    return __pyx_pw_5stepc_13PyPoissonStep_4data_3__set__(o, v);
+    return __pyx_pw_5sfHMM_8step_ext_5stepc_13PyPoissonStep_4data_3__set__(o, v);
   }
   else {
     PyErr_SetString(PyExc_NotImplementedError, "__del__");
@@ -4963,54 +5152,54 @@ static int __pyx_setprop_5stepc_13PyPoissonStep_data(PyObject *o, PyObject *v, C
   }
 }
 
-static PyObject *__pyx_getprop_5stepc_13PyPoissonStep_fit(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_5stepc_13PyPoissonStep_3fit_1__get__(o);
+static PyObject *__pyx_getprop_5sfHMM_8step_ext_5stepc_13PyPoissonStep_fit(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5sfHMM_8step_ext_5stepc_13PyPoissonStep_3fit_1__get__(o);
 }
 
-static PyObject *__pyx_getprop_5stepc_13PyPoissonStep_n_step(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_5stepc_13PyPoissonStep_6n_step_1__get__(o);
+static PyObject *__pyx_getprop_5sfHMM_8step_ext_5stepc_13PyPoissonStep_n_step(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5sfHMM_8step_ext_5stepc_13PyPoissonStep_6n_step_1__get__(o);
 }
 
-static PyObject *__pyx_getprop_5stepc_13PyPoissonStep_step_list(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_5stepc_13PyPoissonStep_9step_list_1__get__(o);
+static PyObject *__pyx_getprop_5sfHMM_8step_ext_5stepc_13PyPoissonStep_step_list(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5sfHMM_8step_ext_5stepc_13PyPoissonStep_9step_list_1__get__(o);
 }
 
-static PyObject *__pyx_getprop_5stepc_13PyPoissonStep_mu_list(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_5stepc_13PyPoissonStep_7mu_list_1__get__(o);
+static PyObject *__pyx_getprop_5sfHMM_8step_ext_5stepc_13PyPoissonStep_mu_list(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5sfHMM_8step_ext_5stepc_13PyPoissonStep_7mu_list_1__get__(o);
 }
 
-static PyObject *__pyx_getprop_5stepc_13PyPoissonStep_len_list(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_5stepc_13PyPoissonStep_8len_list_1__get__(o);
+static PyObject *__pyx_getprop_5sfHMM_8step_ext_5stepc_13PyPoissonStep_len_list(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5sfHMM_8step_ext_5stepc_13PyPoissonStep_8len_list_1__get__(o);
 }
 
-static PyObject *__pyx_getprop_5stepc_13PyPoissonStep_step_size_list(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_5stepc_13PyPoissonStep_14step_size_list_1__get__(o);
+static PyObject *__pyx_getprop_5sfHMM_8step_ext_5stepc_13PyPoissonStep_step_size_list(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5sfHMM_8step_ext_5stepc_13PyPoissonStep_14step_size_list_1__get__(o);
 }
 
-static PyMethodDef __pyx_methods_5stepc_PyPoissonStep[] = {
-  {"multi_step_finding", (PyCFunction)__pyx_pw_5stepc_13PyPoissonStep_5multi_step_finding, METH_NOARGS, 0},
-  {"__reduce_cython__", (PyCFunction)__pyx_pw_5stepc_13PyPoissonStep_7__reduce_cython__, METH_NOARGS, 0},
-  {"__setstate_cython__", (PyCFunction)__pyx_pw_5stepc_13PyPoissonStep_9__setstate_cython__, METH_O, 0},
+static PyMethodDef __pyx_methods_5sfHMM_8step_ext_5stepc_PyPoissonStep[] = {
+  {"multi_step_finding", (PyCFunction)__pyx_pw_5sfHMM_8step_ext_5stepc_13PyPoissonStep_5multi_step_finding, METH_NOARGS, 0},
+  {"__reduce_cython__", (PyCFunction)__pyx_pw_5sfHMM_8step_ext_5stepc_13PyPoissonStep_7__reduce_cython__, METH_NOARGS, 0},
+  {"__setstate_cython__", (PyCFunction)__pyx_pw_5sfHMM_8step_ext_5stepc_13PyPoissonStep_9__setstate_cython__, METH_O, 0},
   {0, 0, 0, 0}
 };
 
-static struct PyGetSetDef __pyx_getsets_5stepc_PyPoissonStep[] = {
-  {(char *)"data", __pyx_getprop_5stepc_13PyPoissonStep_data, __pyx_setprop_5stepc_13PyPoissonStep_data, (char *)0, 0},
-  {(char *)"fit", __pyx_getprop_5stepc_13PyPoissonStep_fit, 0, (char *)0, 0},
-  {(char *)"n_step", __pyx_getprop_5stepc_13PyPoissonStep_n_step, 0, (char *)0, 0},
-  {(char *)"step_list", __pyx_getprop_5stepc_13PyPoissonStep_step_list, 0, (char *)0, 0},
-  {(char *)"mu_list", __pyx_getprop_5stepc_13PyPoissonStep_mu_list, 0, (char *)0, 0},
-  {(char *)"len_list", __pyx_getprop_5stepc_13PyPoissonStep_len_list, 0, (char *)0, 0},
-  {(char *)"step_size_list", __pyx_getprop_5stepc_13PyPoissonStep_step_size_list, 0, (char *)0, 0},
+static struct PyGetSetDef __pyx_getsets_5sfHMM_8step_ext_5stepc_PyPoissonStep[] = {
+  {(char *)"data", __pyx_getprop_5sfHMM_8step_ext_5stepc_13PyPoissonStep_data, __pyx_setprop_5sfHMM_8step_ext_5stepc_13PyPoissonStep_data, (char *)0, 0},
+  {(char *)"fit", __pyx_getprop_5sfHMM_8step_ext_5stepc_13PyPoissonStep_fit, 0, (char *)0, 0},
+  {(char *)"n_step", __pyx_getprop_5sfHMM_8step_ext_5stepc_13PyPoissonStep_n_step, 0, (char *)0, 0},
+  {(char *)"step_list", __pyx_getprop_5sfHMM_8step_ext_5stepc_13PyPoissonStep_step_list, 0, (char *)0, 0},
+  {(char *)"mu_list", __pyx_getprop_5sfHMM_8step_ext_5stepc_13PyPoissonStep_mu_list, 0, (char *)0, 0},
+  {(char *)"len_list", __pyx_getprop_5sfHMM_8step_ext_5stepc_13PyPoissonStep_len_list, 0, (char *)0, 0},
+  {(char *)"step_size_list", __pyx_getprop_5sfHMM_8step_ext_5stepc_13PyPoissonStep_step_size_list, 0, (char *)0, 0},
   {0, 0, 0, 0, 0}
 };
 
-static PyTypeObject __pyx_type_5stepc_PyPoissonStep = {
+static PyTypeObject __pyx_type_5sfHMM_8step_ext_5stepc_PyPoissonStep = {
   PyVarObject_HEAD_INIT(0, 0)
-  "stepc.PyPoissonStep", /*tp_name*/
-  sizeof(struct __pyx_obj_5stepc_PyPoissonStep), /*tp_basicsize*/
+  "sfHMM.step_ext.stepc.PyPoissonStep", /*tp_name*/
+  sizeof(struct __pyx_obj_5sfHMM_8step_ext_5stepc_PyPoissonStep), /*tp_basicsize*/
   0, /*tp_itemsize*/
-  __pyx_tp_dealloc_5stepc_PyPoissonStep, /*tp_dealloc*/
+  __pyx_tp_dealloc_5sfHMM_8step_ext_5stepc_PyPoissonStep, /*tp_dealloc*/
   #if PY_VERSION_HEX < 0x030800b4
   0, /*tp_print*/
   #endif
@@ -5043,9 +5232,9 @@ static PyTypeObject __pyx_type_5stepc_PyPoissonStep = {
   0, /*tp_weaklistoffset*/
   0, /*tp_iter*/
   0, /*tp_iternext*/
-  __pyx_methods_5stepc_PyPoissonStep, /*tp_methods*/
+  __pyx_methods_5sfHMM_8step_ext_5stepc_PyPoissonStep, /*tp_methods*/
   0, /*tp_members*/
-  __pyx_getsets_5stepc_PyPoissonStep, /*tp_getset*/
+  __pyx_getsets_5sfHMM_8step_ext_5stepc_PyPoissonStep, /*tp_getset*/
   0, /*tp_base*/
   0, /*tp_dict*/
   0, /*tp_descr_get*/
@@ -5053,7 +5242,7 @@ static PyTypeObject __pyx_type_5stepc_PyPoissonStep = {
   0, /*tp_dictoffset*/
   0, /*tp_init*/
   0, /*tp_alloc*/
-  __pyx_tp_new_5stepc_PyPoissonStep, /*tp_new*/
+  __pyx_tp_new_5sfHMM_8step_ext_5stepc_PyPoissonStep, /*tp_new*/
   0, /*tp_free*/
   0, /*tp_is_gc*/
   0, /*tp_bases*/
@@ -5150,7 +5339,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
 static CYTHON_SMALL_CODE int __Pyx_InitCachedBuiltins(void) {
   __pyx_builtin_TypeError = __Pyx_GetBuiltinName(__pyx_n_s_TypeError); if (!__pyx_builtin_TypeError) __PYX_ERR(0, 2, __pyx_L1_error)
   __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) __PYX_ERR(1, 105, __pyx_L1_error)
-  __pyx_builtin_ImportError = __Pyx_GetBuiltinName(__pyx_n_s_ImportError); if (!__pyx_builtin_ImportError) __PYX_ERR(2, 884, __pyx_L1_error)
+  __pyx_builtin_ImportError = __Pyx_GetBuiltinName(__pyx_n_s_ImportError); if (!__pyx_builtin_ImportError) __PYX_ERR(2, 947, __pyx_L1_error)
   __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 61, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
@@ -5180,7 +5369,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__2);
   __Pyx_GIVEREF(__pyx_tuple__2);
 
-  /* "stepc.pyx":105
+  /* "sfHMM/step_ext/stepc.pyx":105
  *     def __cinit__(self, np.ndarray data, double p=0):
  *         if ((data < 0).any()):
  *             raise ValueError("Raw data cannot contain negative value.")             # <<<<<<<<<<<<<<
@@ -5210,25 +5399,25 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__5);
   __Pyx_GIVEREF(__pyx_tuple__5);
 
-  /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":884
+  /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":947
  *         __pyx_import_array()
  *     except Exception:
  *         raise ImportError("numpy.core.multiarray failed to import")             # <<<<<<<<<<<<<<
  * 
  * cdef inline int import_umath() except -1:
  */
-  __pyx_tuple__6 = PyTuple_Pack(1, __pyx_kp_s_numpy_core_multiarray_failed_to); if (unlikely(!__pyx_tuple__6)) __PYX_ERR(2, 884, __pyx_L1_error)
+  __pyx_tuple__6 = PyTuple_Pack(1, __pyx_kp_s_numpy_core_multiarray_failed_to); if (unlikely(!__pyx_tuple__6)) __PYX_ERR(2, 947, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__6);
   __Pyx_GIVEREF(__pyx_tuple__6);
 
-  /* "../../../../../../Anaconda3/envs/py39/lib/site-packages/numpy/__init__.pxd":890
+  /* "../../../../Anaconda3/envs/py37_2/lib/site-packages/numpy/__init__.pxd":953
  *         _import_umath()
  *     except Exception:
  *         raise ImportError("numpy.core.umath failed to import")             # <<<<<<<<<<<<<<
  * 
  * cdef inline int import_ufunc() except -1:
  */
-  __pyx_tuple__7 = PyTuple_Pack(1, __pyx_kp_s_numpy_core_umath_failed_to_impor); if (unlikely(!__pyx_tuple__7)) __PYX_ERR(2, 890, __pyx_L1_error)
+  __pyx_tuple__7 = PyTuple_Pack(1, __pyx_kp_s_numpy_core_umath_failed_to_impor); if (unlikely(!__pyx_tuple__7)) __PYX_ERR(2, 953, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__7);
   __Pyx_GIVEREF(__pyx_tuple__7);
   __Pyx_RefNannyFinishContext();
@@ -5285,26 +5474,26 @@ static int __Pyx_modinit_type_init_code(void) {
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__Pyx_modinit_type_init_code", 0);
   /*--- Type init code ---*/
-  if (PyType_Ready(&__pyx_type_5stepc_PyGaussStep) < 0) __PYX_ERR(1, 56, __pyx_L1_error)
+  if (PyType_Ready(&__pyx_type_5sfHMM_8step_ext_5stepc_PyGaussStep) < 0) __PYX_ERR(1, 56, __pyx_L1_error)
   #if PY_VERSION_HEX < 0x030800B1
-  __pyx_type_5stepc_PyGaussStep.tp_print = 0;
+  __pyx_type_5sfHMM_8step_ext_5stepc_PyGaussStep.tp_print = 0;
   #endif
-  if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_type_5stepc_PyGaussStep.tp_dictoffset && __pyx_type_5stepc_PyGaussStep.tp_getattro == PyObject_GenericGetAttr)) {
-    __pyx_type_5stepc_PyGaussStep.tp_getattro = __Pyx_PyObject_GenericGetAttr;
+  if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_type_5sfHMM_8step_ext_5stepc_PyGaussStep.tp_dictoffset && __pyx_type_5sfHMM_8step_ext_5stepc_PyGaussStep.tp_getattro == PyObject_GenericGetAttr)) {
+    __pyx_type_5sfHMM_8step_ext_5stepc_PyGaussStep.tp_getattro = __Pyx_PyObject_GenericGetAttr;
   }
-  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_PyGaussStep, (PyObject *)&__pyx_type_5stepc_PyGaussStep) < 0) __PYX_ERR(1, 56, __pyx_L1_error)
-  if (__Pyx_setup_reduce((PyObject*)&__pyx_type_5stepc_PyGaussStep) < 0) __PYX_ERR(1, 56, __pyx_L1_error)
-  __pyx_ptype_5stepc_PyGaussStep = &__pyx_type_5stepc_PyGaussStep;
-  if (PyType_Ready(&__pyx_type_5stepc_PyPoissonStep) < 0) __PYX_ERR(1, 100, __pyx_L1_error)
+  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_PyGaussStep, (PyObject *)&__pyx_type_5sfHMM_8step_ext_5stepc_PyGaussStep) < 0) __PYX_ERR(1, 56, __pyx_L1_error)
+  if (__Pyx_setup_reduce((PyObject*)&__pyx_type_5sfHMM_8step_ext_5stepc_PyGaussStep) < 0) __PYX_ERR(1, 56, __pyx_L1_error)
+  __pyx_ptype_5sfHMM_8step_ext_5stepc_PyGaussStep = &__pyx_type_5sfHMM_8step_ext_5stepc_PyGaussStep;
+  if (PyType_Ready(&__pyx_type_5sfHMM_8step_ext_5stepc_PyPoissonStep) < 0) __PYX_ERR(1, 100, __pyx_L1_error)
   #if PY_VERSION_HEX < 0x030800B1
-  __pyx_type_5stepc_PyPoissonStep.tp_print = 0;
+  __pyx_type_5sfHMM_8step_ext_5stepc_PyPoissonStep.tp_print = 0;
   #endif
-  if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_type_5stepc_PyPoissonStep.tp_dictoffset && __pyx_type_5stepc_PyPoissonStep.tp_getattro == PyObject_GenericGetAttr)) {
-    __pyx_type_5stepc_PyPoissonStep.tp_getattro = __Pyx_PyObject_GenericGetAttr;
+  if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_type_5sfHMM_8step_ext_5stepc_PyPoissonStep.tp_dictoffset && __pyx_type_5sfHMM_8step_ext_5stepc_PyPoissonStep.tp_getattro == PyObject_GenericGetAttr)) {
+    __pyx_type_5sfHMM_8step_ext_5stepc_PyPoissonStep.tp_getattro = __Pyx_PyObject_GenericGetAttr;
   }
-  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_PyPoissonStep, (PyObject *)&__pyx_type_5stepc_PyPoissonStep) < 0) __PYX_ERR(1, 100, __pyx_L1_error)
-  if (__Pyx_setup_reduce((PyObject*)&__pyx_type_5stepc_PyPoissonStep) < 0) __PYX_ERR(1, 100, __pyx_L1_error)
-  __pyx_ptype_5stepc_PyPoissonStep = &__pyx_type_5stepc_PyPoissonStep;
+  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_PyPoissonStep, (PyObject *)&__pyx_type_5sfHMM_8step_ext_5stepc_PyPoissonStep) < 0) __PYX_ERR(1, 100, __pyx_L1_error)
+  if (__Pyx_setup_reduce((PyObject*)&__pyx_type_5sfHMM_8step_ext_5stepc_PyPoissonStep) < 0) __PYX_ERR(1, 100, __pyx_L1_error)
+  __pyx_ptype_5sfHMM_8step_ext_5stepc_PyPoissonStep = &__pyx_type_5sfHMM_8step_ext_5stepc_PyPoissonStep;
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -5331,18 +5520,38 @@ static int __Pyx_modinit_type_import_code(void) {
   __Pyx_ImportType_CheckSize_Warn);
    if (!__pyx_ptype_7cpython_4type_type) __PYX_ERR(3, 9, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = PyImport_ImportModule("numpy"); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 199, __pyx_L1_error)
+  __pyx_t_1 = PyImport_ImportModule("numpy"); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 200, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_ptype_5numpy_dtype = __Pyx_ImportType(__pyx_t_1, "numpy", "dtype", sizeof(PyArray_Descr), __Pyx_ImportType_CheckSize_Ignore);
-   if (!__pyx_ptype_5numpy_dtype) __PYX_ERR(2, 199, __pyx_L1_error)
+   if (!__pyx_ptype_5numpy_dtype) __PYX_ERR(2, 200, __pyx_L1_error)
   __pyx_ptype_5numpy_flatiter = __Pyx_ImportType(__pyx_t_1, "numpy", "flatiter", sizeof(PyArrayIterObject), __Pyx_ImportType_CheckSize_Ignore);
-   if (!__pyx_ptype_5numpy_flatiter) __PYX_ERR(2, 222, __pyx_L1_error)
+   if (!__pyx_ptype_5numpy_flatiter) __PYX_ERR(2, 223, __pyx_L1_error)
   __pyx_ptype_5numpy_broadcast = __Pyx_ImportType(__pyx_t_1, "numpy", "broadcast", sizeof(PyArrayMultiIterObject), __Pyx_ImportType_CheckSize_Ignore);
-   if (!__pyx_ptype_5numpy_broadcast) __PYX_ERR(2, 226, __pyx_L1_error)
+   if (!__pyx_ptype_5numpy_broadcast) __PYX_ERR(2, 227, __pyx_L1_error)
   __pyx_ptype_5numpy_ndarray = __Pyx_ImportType(__pyx_t_1, "numpy", "ndarray", sizeof(PyArrayObject), __Pyx_ImportType_CheckSize_Ignore);
-   if (!__pyx_ptype_5numpy_ndarray) __PYX_ERR(2, 238, __pyx_L1_error)
+   if (!__pyx_ptype_5numpy_ndarray) __PYX_ERR(2, 239, __pyx_L1_error)
+  __pyx_ptype_5numpy_generic = __Pyx_ImportType(__pyx_t_1, "numpy", "generic", sizeof(PyObject), __Pyx_ImportType_CheckSize_Warn);
+   if (!__pyx_ptype_5numpy_generic) __PYX_ERR(2, 771, __pyx_L1_error)
+  __pyx_ptype_5numpy_number = __Pyx_ImportType(__pyx_t_1, "numpy", "number", sizeof(PyObject), __Pyx_ImportType_CheckSize_Warn);
+   if (!__pyx_ptype_5numpy_number) __PYX_ERR(2, 773, __pyx_L1_error)
+  __pyx_ptype_5numpy_integer = __Pyx_ImportType(__pyx_t_1, "numpy", "integer", sizeof(PyObject), __Pyx_ImportType_CheckSize_Warn);
+   if (!__pyx_ptype_5numpy_integer) __PYX_ERR(2, 775, __pyx_L1_error)
+  __pyx_ptype_5numpy_signedinteger = __Pyx_ImportType(__pyx_t_1, "numpy", "signedinteger", sizeof(PyObject), __Pyx_ImportType_CheckSize_Warn);
+   if (!__pyx_ptype_5numpy_signedinteger) __PYX_ERR(2, 777, __pyx_L1_error)
+  __pyx_ptype_5numpy_unsignedinteger = __Pyx_ImportType(__pyx_t_1, "numpy", "unsignedinteger", sizeof(PyObject), __Pyx_ImportType_CheckSize_Warn);
+   if (!__pyx_ptype_5numpy_unsignedinteger) __PYX_ERR(2, 779, __pyx_L1_error)
+  __pyx_ptype_5numpy_inexact = __Pyx_ImportType(__pyx_t_1, "numpy", "inexact", sizeof(PyObject), __Pyx_ImportType_CheckSize_Warn);
+   if (!__pyx_ptype_5numpy_inexact) __PYX_ERR(2, 781, __pyx_L1_error)
+  __pyx_ptype_5numpy_floating = __Pyx_ImportType(__pyx_t_1, "numpy", "floating", sizeof(PyObject), __Pyx_ImportType_CheckSize_Warn);
+   if (!__pyx_ptype_5numpy_floating) __PYX_ERR(2, 783, __pyx_L1_error)
+  __pyx_ptype_5numpy_complexfloating = __Pyx_ImportType(__pyx_t_1, "numpy", "complexfloating", sizeof(PyObject), __Pyx_ImportType_CheckSize_Warn);
+   if (!__pyx_ptype_5numpy_complexfloating) __PYX_ERR(2, 785, __pyx_L1_error)
+  __pyx_ptype_5numpy_flexible = __Pyx_ImportType(__pyx_t_1, "numpy", "flexible", sizeof(PyObject), __Pyx_ImportType_CheckSize_Warn);
+   if (!__pyx_ptype_5numpy_flexible) __PYX_ERR(2, 787, __pyx_L1_error)
+  __pyx_ptype_5numpy_character = __Pyx_ImportType(__pyx_t_1, "numpy", "character", sizeof(PyObject), __Pyx_ImportType_CheckSize_Warn);
+   if (!__pyx_ptype_5numpy_character) __PYX_ERR(2, 789, __pyx_L1_error)
   __pyx_ptype_5numpy_ufunc = __Pyx_ImportType(__pyx_t_1, "numpy", "ufunc", sizeof(PyUFuncObject), __Pyx_ImportType_CheckSize_Ignore);
-   if (!__pyx_ptype_5numpy_ufunc) __PYX_ERR(2, 764, __pyx_L1_error)
+   if (!__pyx_ptype_5numpy_ufunc) __PYX_ERR(2, 827, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_RefNannyFinishContext();
   return 0;
@@ -5542,14 +5751,14 @@ if (!__Pyx_RefNanny) {
   #if PY_MAJOR_VERSION < 3 && (__PYX_DEFAULT_STRING_ENCODING_IS_ASCII || __PYX_DEFAULT_STRING_ENCODING_IS_DEFAULT)
   if (__Pyx_init_sys_getdefaultencoding_params() < 0) __PYX_ERR(1, 1, __pyx_L1_error)
   #endif
-  if (__pyx_module_is_main_stepc) {
+  if (__pyx_module_is_main_sfHMM__step_ext__stepc) {
     if (PyObject_SetAttr(__pyx_m, __pyx_n_s_name, __pyx_n_s_main) < 0) __PYX_ERR(1, 1, __pyx_L1_error)
   }
   #if PY_MAJOR_VERSION >= 3
   {
     PyObject *modules = PyImport_GetModuleDict(); if (unlikely(!modules)) __PYX_ERR(1, 1, __pyx_L1_error)
-    if (!PyDict_GetItemString(modules, "stepc")) {
-      if (unlikely(PyDict_SetItemString(modules, "stepc", __pyx_m) < 0)) __PYX_ERR(1, 1, __pyx_L1_error)
+    if (!PyDict_GetItemString(modules, "sfHMM.step_ext.stepc")) {
+      if (unlikely(PyDict_SetItemString(modules, "sfHMM.step_ext.stepc", __pyx_m) < 0)) __PYX_ERR(1, 1, __pyx_L1_error)
     }
   }
   #endif
@@ -5570,7 +5779,7 @@ if (!__Pyx_RefNanny) {
   if (__Pyx_patch_abc() < 0) __PYX_ERR(1, 1, __pyx_L1_error)
   #endif
 
-  /* "stepc.pyx":1
+  /* "sfHMM/step_ext/stepc.pyx":1
  * # distutils: language = c++             # <<<<<<<<<<<<<<
  * 
  * from libcpp.vector cimport vector
@@ -5595,11 +5804,11 @@ if (!__Pyx_RefNanny) {
   __Pyx_XDECREF(__pyx_t_1);
   if (__pyx_m) {
     if (__pyx_d) {
-      __Pyx_AddTraceback("init stepc", __pyx_clineno, __pyx_lineno, __pyx_filename);
+      __Pyx_AddTraceback("init sfHMM.step_ext.stepc", __pyx_clineno, __pyx_lineno, __pyx_filename);
     }
     Py_CLEAR(__pyx_m);
   } else if (!PyErr_Occurred()) {
-    PyErr_SetString(PyExc_ImportError, "init stepc");
+    PyErr_SetString(PyExc_ImportError, "init sfHMM.step_ext.stepc");
   }
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();

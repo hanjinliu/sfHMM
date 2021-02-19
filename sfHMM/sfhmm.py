@@ -3,9 +3,10 @@ import numpy as np
 try:
     from .step_ext import GaussStep
     from .step_ext import PoissonStep
-except ImportError:
+except ImportError as e:
     from .step import GaussStep, PoissonStep
-    print("Could not import pyd file. py file was imported instead.\nStep finding will take much longer time.")
+    print(f"Could not import pyd file due to following ImportError: {e}\n"\
+           "'step.py' was imported instead. Step finding will take much longer time.")
 from .base import Base_sfHMM
 from .func import *
 
