@@ -23,7 +23,7 @@ class sfHMM(Base_sfHMM):
         If <= 0, sg0 will be determined automatically.
     p : float, optional
         Transition probability used in step finding algorithm.
-        if 0 < p < 1 is not satisfied, the original Kalafut-Visscher's algorithm is executed.
+        if 0 < p < 0.5 is not satisfied, the original Kalafut-Visscher's algorithm is executed.
     krange : int or list
         Minimum and maximum number of states to search in GMM clustering. If it is integer, then
         it will be interpretted as [1, krange].
@@ -75,18 +75,21 @@ class sfHMM(Base_sfHMM):
         super().__init__(sg0, p, krange, model, name)
         self.ylim = [np.min(self.data_raw), np.max(self.data_raw)]
     
-    
 
     def step_finding(self):
         """
         Step finding by extended version of Kalafut-Visscher's algorithm.
         """
+        if (self.p <= 0 or 0.5 <= self.p):
+            self.p = 1/(1 + np.sqrt(self.data_raw.size))
+            
         if (self.model == "Poisson"):
             self.step = PoissonStep(self.data_raw, self.p)
         elif (self.model == "Gauss"):
             self.step = GaussStep(self.data_raw.astype("float64"), self.p)
         else:
             raise ValueError
+        
         self.step.multi_step_finding()
         
         return self

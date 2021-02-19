@@ -13,7 +13,7 @@ class build_ext(base_build_ext):
         sourcefiles = [os.path.join("sfHMM", "step_ext", f) for f in sourcefiles]
         ext = Extension("sfHMM.step_ext.stepc", 
                         sources=sourcefiles, 
-                        language='c++', 
+                        language="c++", 
                         include_dirs = [os.path.join("sfHMM", "step_ext")],
                         )
         self.distribution.ext_modules[:] = cythonize(ext)
@@ -27,8 +27,8 @@ setup(name="sfHMM",
       license="GPLv2",
       packages=find_packages(),
       install_requires=[
-            "hmmlearn>=0.2.5",
-            "scikit-learn>=0.23.2",
+            "hmmlearn>=0.2.3",
+            "scikit-learn",
             "matplotlib",
             "Cython",
       ],
