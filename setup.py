@@ -1,7 +1,5 @@
 from setuptools import Extension, find_packages, setup
-from setuptools.command.build_ext import build_ext
-from Cython.Build import cythonize
-from Cython.Distutils import build_ext as base_build_ext
+from setuptools.command.build_ext import build_ext as base_build_ext
 import numpy
 import os
 
@@ -10,6 +8,7 @@ class build_ext(base_build_ext):
         """
         Let pyd file be generated in a right place.
         """
+        from Cython.Build import cythonize
         sourcefiles = ["stepc.pyx", "StepFinder.cpp"]
         sourcefiles = [os.path.join("sfHMM", "step_ext", f) for f in sourcefiles]
         ext = Extension("sfHMM.step_ext.stepc", 
