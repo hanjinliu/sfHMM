@@ -18,8 +18,8 @@ class Multi_sfHMM(Base_sfHMM):
         Transition probability used in step finding algorithm.
         if 0 < p < 0.5 is not satisfied, the original Kalafut-Visscher's algorithm is executed.
     krange : int or list
-        Minimum and maximum number of states to search in GMM clustering. If it is integer, then
-        it will be interpretted as [1, krange].
+        Minimum and maximum number of states to search in GMM clustering. If it is integer, 
+        then it will be interpretted as [1, krange].
     model: str, optional
         Distribution of noise. Gauss and Poisson distribution are available for now.
     
@@ -52,7 +52,7 @@ class Multi_sfHMM(Base_sfHMM):
         return self._sf_list[key]
     
     def __iter__(self):
-        return self._sf_list
+        return iter(self._sf_list)
     
     def append(self, data):
         """
@@ -166,6 +166,7 @@ class Multi_sfHMM(Base_sfHMM):
     def plot(self):
         self.plot_hist()
         self.plot_traces()
+        return None
     
     def plot_hist(self):
         """
@@ -193,9 +194,9 @@ class Multi_sfHMM(Base_sfHMM):
         c_other = self.colors.get(data, None)
         
         if (filter_func is None):
-            indices = np.arange(len(self.n_data))
+            indices = np.arange(self.n_data)
         else:
-            indices = [i for (i, sf) in self if filter_func(sf)]
+            indices = [i for (i, sf) in enumerate(self) if filter_func(sf)]
 
         n_row = (len(indices) - 1) // n_col + 1
         plt.figure(figsize=(n_col * 2.7, n_row * 4))
@@ -203,20 +204,22 @@ class Multi_sfHMM(Base_sfHMM):
         for i, ind in enumerate(indices):
             sf = self[ind]
             plt.subplot(n_row, n_col, i + 1)
-            if (data=="Viterbi pass"):
+            if (data == "Viterbi pass"):
                 d = sf.viterbi
-            elif (data=="denoised"):
+            elif (data == "denoised"):
                 d = sf.data_fil
-            elif (data=="step finding"):
+            elif (data == "step finding"):
                 d = sf.step.fit
-            elif (data=="none"):
+            elif (data == "none"):
                 d = None
             else:
-                raise ValueError("'data' must be 'step finding', 'denoised', 'Viterbi pass' or 'none'")
+                raise ValueError("'data' must be 'step finding', 'denoised', "
+                                 "'Viterbi pass' or 'none'")
 
             plot2(sf.data_raw, d, ylim=self.ylim, legend=False,
                   color1 = self.colors["raw data"], color=c_other)
-            plt.text(sf.data_raw.size,sf.data_raw.max(), str(i), ha="right", color="gray")
+            plt.text(sf.data_raw.size, self.ylim[1], str(ind), 
+                     ha="right", va="top", color="gray")
         
         plt.tight_layout()
         plt.show()
