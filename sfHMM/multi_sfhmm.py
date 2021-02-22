@@ -52,15 +52,7 @@ class Multi_sfHMM(Base_sfHMM):
         return self._sf_list[key]
     
     def __iter__(self):
-        self._it = 0
-        return self
-
-    def __next__(self):
-        if self._it == self.n_data:
-            raise StopIteration()
-        value = self._sf_list[self._it]
-        self._it += 1
-        return value
+        return self._sf_list
     
     def append(self, data):
         """
@@ -184,18 +176,32 @@ class Multi_sfHMM(Base_sfHMM):
         plt.show()
         return None
         
-    def plot_traces(self, data:str="Viterbi pass", n_col:int=4):
+    def plot_traces(self, data:str="Viterbi pass", n_col:int=4, filter_func=None):
         """
         Plot all the trajectories.
-        data: What will be overlayed.
-        n_col: Number of columns in figure.
+
+        Parameters
+        ----------
+        data : str, optional
+            Which data to plot over the raw data trajectories, by default "Viterbi pass"
+        n_col : int, optional
+            Number of columns of figure, by default 4
+        filter_func : callable or None, optional
+            If not None, only sfHMM objects that satisfy filter_func(sf)==True are plotted.
+
         """
         c_other = self.colors.get(data, None)
+        
+        if (filter_func is None):
+            indices = np.arange(len(self.n_data))
+        else:
+            indices = [i for (i, sf) in self if filter_func(sf)]
 
-        n_row = (self.n_data - 1) // n_col + 1
+        n_row = (len(indices) - 1) // n_col + 1
         plt.figure(figsize=(n_col * 2.7, n_row * 4))
         
-        for i, sf in enumerate(self):
+        for i, ind in enumerate(indices):
+            sf = self[ind]
             plt.subplot(n_row, n_col, i + 1)
             if (data=="Viterbi pass"):
                 d = sf.viterbi
@@ -210,6 +216,7 @@ class Multi_sfHMM(Base_sfHMM):
 
             plot2(sf.data_raw, d, ylim=self.ylim, legend=False,
                   color1 = self.colors["raw data"], color=c_other)
+            plt.text(sf.data_raw.size,sf.data_raw.max(), str(i), ha="right", color="gray")
         
         plt.tight_layout()
         plt.show()
