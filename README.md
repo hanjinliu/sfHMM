@@ -36,9 +36,11 @@ msf.do_all()
 ```
 
 # Details of Attributes and Methods
+
 sfHMM class and Multi_sfHMM class have a similar structure (both inherit `Base_sfHMM`) so that they have many attributes and methods in common. Also `Base_sfHMM` inherits `GaussianHMM` so that prediction, scoring methods in `hmmlearn` are all supported.
 
 ## Parameters
+
 All the parameters are optional.
 - `sg0` ... The parameter used in denoising process.
 - `psf` ... The parameter used in step finding.
@@ -48,13 +50,16 @@ All the parameters are optional.
 
 ## Attributes and Methods
 
-Analysis based on sfHMM is composed of four steps. Attributes are sequencially added to the object.
+Analysis based on sfHMM is composed of four steps.
 
-1. `step_finding()`
-   
-    Step finding by likelihood maximization.
+1. `step_finding()` ... Step finding by likelihood maximization.
+2. `denoising()` ... The standard deviation of noise is cut off to `sg0`.
+3. `gmmfit()` ... Gaussian mixture model clustering.
+4. `hmmfit()` ... HMM parameter initialization and optimization.
 
-  *New Attribute*
+Attributes are sequencially added to the object.
+
+### step_finding   
 
   - `step` ... `GaussStep` or `PoissonStep` object, defined in `step` module or `stepc` extendsion module. This object has following attributes:
     - `fit` ... Fitting result.
@@ -64,18 +69,12 @@ Analysis based on sfHMM is composed of four steps. Attributes are sequencially a
     - `len_list` ... list of step lengths (`step_list[i+1] - step_list[i]`).
     - `step_size_list` ... list of signal change (`mu_list[i+1] - mu_list[i]`). 
 
-2. `denoising()`
-
-    The standard deviation of noise is cut off to `sg0`.
-  
-  *New Attribute*
+### denoising  
 
   - `data_fil` ... Data after denoised.
 
-3. `gmmfit()`
-   
-  *New Attributes*
-    
+### gmmfit
+
   - `gmm_opt` ... The optimal Gaussian mixture model in the form of `GMM1` object, defined in `gmm` module. This object has following attributes:
 
     - `wt` ... Weights of each Gaussian.
@@ -88,12 +87,8 @@ Analysis based on sfHMM is composed of four steps. Attributes are sequencially a
   - `n_components` ... The number of states.
   - `states` ... State sequence, predicted only with the results in 1-3.
 
-4. `hmmfit()`
-  
-  HMM parameter initialization and optimization.
-
-  *New Attributes*
-  
+### hmmfit
+    
   - `means_` ... Mean values. See `hmmlearn`.
   - `covars_` ... Covariances. See `hmmlearn`.
   - `transmat_` ... Transition probability matrix. See `hmmlearn`.
