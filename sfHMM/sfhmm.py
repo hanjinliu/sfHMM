@@ -62,7 +62,7 @@ class sfHMM(Base_sfHMM):
         Viterbi pass of 'data_raw', while takes value in 'means_'.
     """
     
-    def __init__(self, data_raw, sg0:float=-1, p:float=-1, krange=[1, 6],
+    def __init__(self, data_raw, sg0:float=-1, psf:float=-1, krange=[1, 6],
                  model:str="g", name:str=""):
 
         self.data_raw = np.asarray(data_raw).flatten()
@@ -72,7 +72,7 @@ class sfHMM(Base_sfHMM):
         self.states = None
         self.viterbi = None
         self._sg_list = []
-        super().__init__(sg0, p, krange, model, name)
+        super().__init__(sg0, psf, krange, model, name)
         self.ylim = [np.min(self.data_raw), np.max(self.data_raw)]
     
 
@@ -80,13 +80,13 @@ class sfHMM(Base_sfHMM):
         """
         Step finding by extended version of Kalafut-Visscher's algorithm.
         """
-        if (self.p <= 0 or 0.5 <= self.p):
-            self.p = 1/(1 + np.sqrt(self.data_raw.size))
+        if (self.psf <= 0 or 0.5 <= self.psf):
+            self.psf = 1/(1 + np.sqrt(self.data_raw.size))
             
         if (self.model == "Poisson"):
-            self.step = PoissonStep(self.data_raw, self.p)
+            self.step = PoissonStep(self.data_raw, self.psf)
         elif (self.model == "Gauss"):
-            self.step = GaussStep(self.data_raw.astype("float64"), self.p)
+            self.step = GaussStep(self.data_raw.astype("float64"), self.psf)
         else:
             raise ValueError
         
@@ -190,28 +190,29 @@ class sfHMM(Base_sfHMM):
         n_row = max(len(tasks), 1)
         n_col = showhist + 1
         
-        plt.figure(figsize=(6*n_col, 4.2*n_row))
-        i = 0
-        while tasks:
-            task = tasks.pop(0)
-            i += 1
-            plt.subplot(n_row, n_col, (i-1)*n_col + 1)
-            kw = dict(ylim=self.ylim, color1=c_raw, color=self.__class__.colors[task], label=task)
-            if (task == "step finding"):
-                plot2(self.data_raw, self.step.fit, **kw)
-            elif (task == "denoised"):
-                plot2(self.data_raw, self.data_fil, legend=False, **kw)
-                if (showhist):
-                    plt.subplot(n_row, n_col*2, 2*(i-1)*n_col + 3)
-                    self._hist()
-            elif (task == "Viterbi pass"):
-                plot2(self.data_raw, self.viterbi, **kw)
-            else:
-                raise NotImplementedError
-        
-        i == 0 and plot2(self.data_raw)
-        
-        plt.show()
+        with plt.style.context(self.__class__.styles):
+            plt.figure(figsize=(6*n_col, 4.2*n_row))
+            plt.suptitle(self.name, x=0.38, y=0.9, fontweight="bold")
+            
+            for i, task in enumerate(tasks):
+                i += 1
+                plt.subplot(n_row, n_col, (i-1)*n_col + 1)
+                kw = dict(ylim=self.ylim, color1=c_raw, color=self.__class__.colors[task], label=task)
+                if (task == "step finding"):
+                    plot2(self.data_raw, self.step.fit, **kw)
+                elif (task == "denoised"):
+                    plot2(self.data_raw, self.data_fil, legend=False, **kw)
+                    if (showhist):
+                        plt.subplot(n_row, n_col*2, 2*(i-1)*n_col + 3)
+                        self._hist()
+                elif (task == "Viterbi pass"):
+                    plot2(self.data_raw, self.viterbi, **kw)
+                else:
+                    raise NotImplementedError
+            
+            len(tasks) == 0 and plot2(self.data_raw, ylim=self.ylim, color1=c_raw)
+            
+            plt.show()
         
         return None
     

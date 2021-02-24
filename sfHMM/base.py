@@ -6,14 +6,28 @@ from .gmm import GMMn, DPGMM
 
 class Base_sfHMM(GaussianHMM):
     count = 0
-    colors = {"raw data": "violet", "step finding": "green",
-              "denoised": "darkblue", "Viterbi pass": "black"}
+    colors = {"raw data": "violet", 
+              "step finding": "darkgreen",
+              "denoised": "darkblue", 
+              "Viterbi pass": "black",
+              }
+    styles = {"font.size": 16, 
+              "lines.linewidth": 1,
+              "axes.titlesize": 24,
+              "font.family": "serif",
+              "font.serif": "Arial",
+              "axes.grid": True,
+              "axes.labelsize": 16,
+              "grid.linewidth": 0.5,
+              "legend.frameon": False,
+              "boxplot.meanprops.linewidth": 1,          
+              }
     
-    def __init__(self, sg0:float=-1, p:float=-1, krange=[1, 6],
+    def __init__(self, sg0:float=-1, psf:float=-1, krange=[1, 6],
                  model:str="g", name:str="", **hmmlearn_params):
-        sg0, p, krange, model = check(sg0, p, krange, model)
+        sg0, psf, krange, model = check(sg0, psf, krange, model)
         self.sg0 = sg0
-        self.p = p
+        self.psf = psf
         self.krange = krange
         self.model = model
         params = dict(covariance_type="spherical", init_params="")
@@ -90,7 +104,7 @@ class Base_sfHMM(GaussianHMM):
                  orientation="horizontal", alpha=0.7, density=True)
         plt.hist(self.data_fil, bins=n_bin, color=self.colors["denoised"],
                  orientation="horizontal", histtype="step", density=True, lw=2)
-        plt.grid(axis="y")
+        
         return None
     
     def _gmmfit(self, n_init, method, random_state):
@@ -147,3 +161,4 @@ class Base_sfHMM(GaussianHMM):
         hasattr(self, "transmat_") or self._set_transmat()
         
         return None
+    
