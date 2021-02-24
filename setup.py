@@ -1,6 +1,5 @@
 from setuptools import Extension, find_packages, setup
 from setuptools.command.build_ext import build_ext as base_build_ext
-# import numpy
 import os
 
 class build_ext(base_build_ext):
@@ -28,7 +27,7 @@ kwargs = dict(name="sfHMM",
               author_email="liuhanjin-sc@g.ecc.u-tokyo.ac.jp",
               license="GPLv2",
               packages=find_packages(),
-              setup_requires=['Cython'],
+              setup_requires=["Cython", "numpy"],
               install_requires=[
                     "hmmlearn>=0.2.3",
                     "scikit-learn",
@@ -40,7 +39,6 @@ kwargs = dict(name="sfHMM",
 try:
     setup(cmdclass={"build_ext": build_ext},
           ext_modules=[Extension("", [])],
-      #     include_dirs=[numpy.get_include()],
           **kwargs)
 except:
     # if C compiler is not installed
