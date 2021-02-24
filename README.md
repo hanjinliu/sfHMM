@@ -14,7 +14,7 @@ from sfHMM import sfHMM, Multi_sfHMM
 You can also use simulated data with `hmm_sampling` function.
 
 ```python
-from sfHMM import sfHMM
+from sfHMM import hmm_sampling
 data = hmm_sampling()
 ```
 
@@ -36,7 +36,7 @@ msf.do_all()
 ```
 
 # Details of Attributes and Methods
-sfHMM class and Multi_sfHMM class have a similar structure (both have super class `Base_sfHMM`) so that they have many attributes and methods in common.
+sfHMM class and Multi_sfHMM class have a similar structure (both inherit `Base_sfHMM`) so that they have many attributes and methods in common. Also `Base_sfHMM` inherits `GaussianHMM` so that prediction, scoring methods in `hmmlearn` are all supported.
 
 ## Parameters
 All the parameters are optional.
@@ -48,15 +48,13 @@ All the parameters are optional.
 
 ## Attributes and Methods
 
-sfHMM is composed of four steps. Attributes are sequencially added to the object.
+Analysis based on sfHMM is composed of four steps. Attributes are sequencially added to the object.
 
 1. `step_finding()`
    
     Step finding by likelihood maximization.
-    
-    $$\ln L=k\ln \frac{p_{sf}}{1-p_{sf}}-\frac{N}{2}\ln \hat \sigma^2 + const.$$
 
-    *Attributes*
+  *New Attribute*
 
   - `step` ... `GaussStep` or `PoissonStep` object, defined in `step` module or `stepc` extendsion module. This object has following attributes:
     - `fit` ... Fitting result.
@@ -70,19 +68,19 @@ sfHMM is composed of four steps. Attributes are sequencially added to the object
 
     The standard deviation of noise is cut off to `sg0`.
   
-    *Attributes*
+  *New Attribute*
 
   - `data_fil` ... Data after denoised.
 
 3. `gmmfit()`
    
-    *Attributes*
+  *New Attributes*
     
   - `gmm_opt` ... The optimal Gaussian mixture model in the form of `GMM1` object, defined in `gmm` module. This object has following attributes:
 
-    - `wt` ... Weights.
-    - `mu` ... Means.
-    - `sg` ... Standard deviations.
+    - `wt` ... Weights of each Gaussian.
+    - `mu` ... Means of each Gaussian.
+    - `sg` ... Standard deviations of each Gaussian.
     - `aic` ... Akaike information criterion.
     - `bic` ... Bayes information criterion.
 
@@ -91,9 +89,11 @@ sfHMM is composed of four steps. Attributes are sequencially added to the object
   - `states` ... State sequence, predicted only with the results in 1-3.
 
 4. `hmmfit()`
+  
+  HMM parameter initialization and optimization.
 
-    *Attributes*
-
+  *New Attributes*
+  
   - `means_` ... Mean values. See `hmmlearn`.
   - `covars_` ... Covariances. See `hmmlearn`.
   - `transmat_` ... Transition probability matrix. See `hmmlearn`.
@@ -107,19 +107,44 @@ sfHMM is composed of four steps. Attributes are sequencially added to the object
 - `do_all()` = conduct all the four steps and plot the results.
 - `tdp()` = show the results in pseudo transition density plot.
 
-## Customize Preferences
+## Customize Plots
 
 The super class `Base_sfHMM` has class attributes that is passed to `matplotlib` every time you plot. You can change them by updating the dictionaries.
 
 - `colors` ... Line colors of each data.
-- `styles` ... See `rcParams` of `matplotlib`.
+- `styles` ... Styles of plot. See `rcParams` of `matplotlib`.
 
 For example, if you want to use different color for raw data and smaller font size in `sfHMM`, then run following codes:
 
 ```python
 sfHMM.colors["raw data"] = "gold"
-sfHMM.styles["font.size"] *= 0.7
+sfHMM.styles["font.size"] = 10
 ```
+
+## Additional attributes and Methods in Multi_sfHMM
+- `self[i]` ... `sfHMM` objects for `i`-th trace. The real list of objects is `_sf_list`. Iteration is defined on this list.
+  
+```python
+msf.do_all()
+msf[0].plot() # plot the first trace and its analysis results.
+for sf in msf:
+  sf.plot()   # plot all the traces in msf and their analysis results.
+```
+
+- `n_list` ... List of data lengths (property).
+- `plot_hist()` ... Plot histogram only.
+- `plot_traces()` ... Plot all the traces. If you want to plot traces that satisfies a certain condition.
+  
+```python
+# Only plot traces longer than 50.
+def fil(sf):
+  return sf.data_raw.size > 50:
+
+msf.do_all(plot=False)
+plt.hist(msf.n_list) # show the histogram of data lengths.
+msf.plot_traces(filter_func=fil)
+```
+
 
 # References
 - Kalafut & Visscher
