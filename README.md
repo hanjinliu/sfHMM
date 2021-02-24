@@ -3,6 +3,12 @@ Step finding based HMM.
 
 ![ex1](animation.gif)
 
+# Installation
+
+```
+pip install git+https://github.com/hanjinliu/sfHMM
+```
+
 # Basic Usage
 
 First import `sfHMM` class and `Multi_sfHMM` class.
@@ -37,7 +43,7 @@ msf.do_all()
 
 # Details of Attributes and Methods
 
-sfHMM class and Multi_sfHMM class have a similar structure (both inherit `Base_sfHMM`) so that they have many attributes and methods in common. Also `Base_sfHMM` inherits `GaussianHMM` so that prediction, scoring methods in `hmmlearn` are all supported.
+`sfHMM` class and `Multi_sfHMM` class have a similar structure (both inherit `Base_sfHMM`) so that they have many attributes and methods in common. Also `Base_sfHMM` inherits `GaussianHMM` so that prediction, scoring methods in `hmmlearn` are all supported.
 
 ## Parameters
 
@@ -59,7 +65,7 @@ Analysis based on sfHMM is composed of four steps.
 
 Attributes are sequencially added to the object.
 
-### step_finding   
+- step_finding
 
   - `step` ... `GaussStep` or `PoissonStep` object, defined in `step` module or `stepc` extendsion module. This object has following attributes:
     - `fit` ... Fitting result.
@@ -68,12 +74,14 @@ Attributes are sequencially added to the object.
     - `mu_list` ... list of mean values of each step.
     - `len_list` ... list of step lengths (`step_list[i+1] - step_list[i]`).
     - `step_size_list` ... list of signal change (`mu_list[i+1] - mu_list[i]`). 
+  - `psf` ... Automatically determined here if needed.
 
-### denoising  
+- denoising  
 
   - `data_fil` ... Data after denoised.
+  - `sg0` ... Automatically determined here if needed.
 
-### gmmfit
+- gmmfit
 
   - `gmm_opt` ... The optimal Gaussian mixture model in the form of `GMM1` object, defined in `gmm` module. This object has following attributes:
 
@@ -87,14 +95,14 @@ Attributes are sequencially added to the object.
   - `n_components` ... The number of states.
   - `states` ... State sequence, predicted only with the results in 1-3.
 
-### hmmfit
+- hmmfit
     
   - `means_` ... Mean values. See `hmmlearn`.
   - `covars_` ... Covariances. See `hmmlearn`.
   - `transmat_` ... Transition probability matrix. See `hmmlearn`.
   - `startprob_` ... Starting probability. See `hmmlearn`.
-  - `states` ... State sequence, predicted by HMM.
-  - `viterbi` ... Viterbi pass of optimized HMM parameters.
+  - `states` ... State sequence, optimized using Viterbi algorithm. This array takes values {0, 1, 2, ...}.
+  - `viterbi` ... Signal sequence of Viterbi pass. This array takes values {`means_[0]`, `means_[1]`, `means_[2]`, ...}.
 
 ## Other Methods
 
@@ -140,6 +148,8 @@ plt.hist(msf.n_list) # show the histogram of data lengths.
 msf.plot_traces(filter_func=fil)
 ```
 
+# Citation
+ ...
 
 # References
 - Kalafut & Visscher
