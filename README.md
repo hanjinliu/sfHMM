@@ -27,6 +27,7 @@ sf.do_all()
 
 ## Multiple trajectories
 
+Append data to analyze one by one using `append` method.
 ```python
 msf = Multi_sfHMM()
 for data in list_of_data:
@@ -34,8 +35,8 @@ for data in list_of_data:
 msf.do_all()
 ```
 
-# Details of Attributes and Functions
-sfHMM class and Multi_sfHMM class have a similar structure (both have super class `Base_sfHMM`) so that they have many attributes and functions in common.
+# Details of Attributes and Methods
+sfHMM class and Multi_sfHMM class have a similar structure (both have super class `Base_sfHMM`) so that they have many attributes and methods in common.
 
 ## Parameters
 All the parameters are optional.
@@ -45,7 +46,7 @@ All the parameters are optional.
 - `model` ... Distribution of signal. Gaussian and Poissonian are supported now.
 - `name` ... Name of the object.
 
-## Attributes and Functions
+## Attributes and Methods
 
 sfHMM is composed of four steps. Attributes are sequencially added to the object.
 
@@ -100,14 +101,25 @@ sfHMM is composed of four steps. Attributes are sequencially added to the object
   - `states` ... State sequence, predicted by HMM.
   - `viterbi` ... Viterbi pass of optimized HMM parameters.
 
-## Other Functions
+## Other Methods
 
 - `plot()` = visualize the results of sfHMM analysis.
 - `do_all()` = conduct all the four steps and plot the results.
 - `tdp()` = show the results in pseudo transition density plot.
 
+## Customize Preferences
 
+The super class `Base_sfHMM` has class attributes that is passed to `matplotlib` every time you plot. You can change them by updating the dictionaries.
 
+- `colors` ... Line colors of each data.
+- `styles` ... See `rcParams` of `matplotlib`.
+
+For example, if you want to use different color for raw data and smaller font size in `sfHMM`, then run following codes:
+
+```python
+sfHMM.colors["raw data"] = "gold"
+sfHMM.styles["font.size"] *= 0.7
+```
 
 # References
 - Kalafut & Visscher
