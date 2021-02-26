@@ -18,8 +18,8 @@ class Multi_sfHMM(Base_sfHMM):
         Transition probability used in step finding algorithm.
         if 0 < p < 0.5 is not satisfied, the original Kalafut-Visscher's algorithm is executed.
     krange : int or list
-        Minimum and maximum number of states to search in GMM clustering. If it is integer, then
-        it will be interpretted as [1, krange].
+        Minimum and maximum number of states to search in GMM clustering. If it is integer, 
+        then it will be interpretted as [1, krange].
     model: str, optional
         Distribution of noise. Gauss and Poisson distribution are available for now.
     
@@ -39,11 +39,11 @@ class Multi_sfHMM(Base_sfHMM):
         The i-th sfHMM object. See .\sfhmm.py.
     """
     
-    def __init__(self, sg0:float=-1, p:float=-1, krange=[1, 6], 
+    def __init__(self, sg0:float=-1, psf:float=-1, krange=[1, 6], 
                  model:str="g", name:str=""):
         
         self.n_data = 0
-        super().__init__(sg0, p, krange, model, name)
+        super().__init__(sg0, psf, krange, model, name)
         self.ylim = [np.inf, -np.inf]
         self._sf_list = []
     
@@ -52,21 +52,13 @@ class Multi_sfHMM(Base_sfHMM):
         return self._sf_list[key]
     
     def __iter__(self):
-        self._it = 0
-        return self
-
-    def __next__(self):
-        if self._it == self.n_data:
-            raise StopIteration()
-        value = self._sf_list[self._it]
-        self._it += 1
-        return value
+        return iter(self._sf_list)
     
     def append(self, data):
         """
         Append a trajectory as sfHMM object.
         """
-        sf = sfHMM(data, sg0=self.sg0, p=self.p, krange=self.krange,
+        sf = sfHMM(data, sg0=self.sg0, psf=self.psf, krange=self.krange,
                    model=self.model, name=self.name+f"[{self.n_data}]")
         self.n_data += 1
         self._sf_list.append(sf)
@@ -83,8 +75,8 @@ class Multi_sfHMM(Base_sfHMM):
                       "Gauss": GaussStep,
                       }[self.model]
         for sf in self:
-            sf.p = self.p
-            sf.step = StepMethod(sf.data_raw, sf.p)
+            sf.psf = self.psf
+            sf.step = StepMethod(sf.data_raw, sf.psf)
             sf.step.multi_step_finding()
         return self
     
@@ -174,45 +166,69 @@ class Multi_sfHMM(Base_sfHMM):
     def plot(self):
         self.plot_hist()
         self.plot_traces()
+        return None
     
     def plot_hist(self):
         """
         Plot histogram of data_raw, data_fil and GMM fitting result.
         """
-        plt.figure(figsize=(3, 4))
-        self._hist()
-        plt.show()
+        with plt.style.context(self.__class__.styles):
+            plt.figure(figsize=(3, 4))
+            plt.suptitle(self.name, fontweight="bold")
+            self._hist()
+            plt.show()
         return None
         
-    def plot_traces(self, data:str="Viterbi pass", n_col:int=4):
+    def plot_traces(self, data:str="Viterbi pass", n_col:int=4, filter_func=None):
         """
         Plot all the trajectories.
-        data: What will be overlayed.
-        n_col: Number of columns in figure.
+
+        Parameters
+        ----------
+        data : str, optional
+            Which data to plot over the raw data trajectories, by default "Viterbi pass"
+        n_col : int, optional
+            Number of columns of figure, by default 4
+        filter_func : callable or None, optional
+            If not None, only sfHMM objects that satisfy filter_func(sf)==True are plotted.
+
         """
         c_other = self.colors.get(data, None)
-
-        n_row = (self.n_data - 1) // n_col + 1
-        plt.figure(figsize=(n_col * 2.7, n_row * 4))
         
-        for i, sf in enumerate(self):
-            plt.subplot(n_row, n_col, i + 1)
-            if (data=="Viterbi pass"):
-                d = sf.viterbi
-            elif (data=="denoised"):
-                d = sf.data_fil
-            elif (data=="step finding"):
-                d = sf.step.fit
-            elif (data=="none"):
-                d = None
-            else:
-                raise ValueError("'data' must be 'step finding', 'denoised', 'Viterbi pass' or 'none'")
+        # index list that satisfies filter_func
+        if (filter_func is None):
+            indices = np.arange(self.n_data)
+        else:
+            indices = [i for (i, sf) in enumerate(self) if filter_func(sf)]
 
-            plot2(sf.data_raw, d, ylim=self.ylim, legend=False,
-                  color1 = self.colors["raw data"], color=c_other)
+        n_row = (len(indices) - 1) // n_col + 1
         
-        plt.tight_layout()
-        plt.show()
+        with plt.style.context(self.__class__.styles):
+            plt.figure(figsize=(n_col * 2.7, n_row * 4))
+            plt.suptitle(self.name, fontweight="bold")
+            
+            for i, ind in enumerate(indices):
+                sf = self[ind]
+                plt.subplot(n_row, n_col, i + 1)
+                if (data == "Viterbi pass"):
+                    d = sf.viterbi
+                elif (data == "denoised"):
+                    d = sf.data_fil
+                elif (data == "step finding"):
+                    d = sf.step.fit
+                elif (data == "none"):
+                    d = None
+                else:
+                    raise ValueError("'data' must be 'step finding', 'denoised', "
+                                    "'Viterbi pass' or 'none'")
+
+                plot2(sf.data_raw, d, ylim=self.ylim, legend=False,
+                    color1 = self.colors["raw data"], color=c_other)
+                plt.text(sf.data_raw.size*0.98, self.ylim[1]*0.98, str(ind), 
+                        ha="right", va="top", color="gray")
+            
+            plt.tight_layout()
+            plt.show()
         return None
     
     def tdp(self, **kwargs):
@@ -275,3 +291,7 @@ class Multi_sfHMM(Base_sfHMM):
     @property
     def _sg_list(self):
         return np.array(concat([sf._sg_list for sf in self]))
+    
+    @property
+    def n_list(self):
+        return [sf.data_raw.size for sf in self]

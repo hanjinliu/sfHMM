@@ -21,10 +21,10 @@ def concat(list_of_list):
         out += list(list_)
     return out
 
-def check(sg0, p, krange, model):
+def check(sg0, psf, krange, model):
     sg0 = float(sg0)
     
-    p = float(p)
+    psf = float(psf)
     
     if (type(krange) is int):
         krange = (1, krange)
@@ -43,7 +43,7 @@ def check(sg0, p, krange, model):
     else:
         raise ValueError(f"Invalid model identifier: {model}")
     
-    return sg0, p, krange, model
+    return sg0, psf, krange, model
 
 
 def plot2(data1, data2=None, ylim=None, legend=True, color1=None, **kwargs):
@@ -62,10 +62,8 @@ def plot2(data1, data2=None, ylim=None, legend=True, color1=None, **kwargs):
         plt.plot(data2, **kwargs)
 
     if(legend):
-        plt.legend(bbox_to_anchor = (1.05, 1), loc = "upper left", 
-                   borderaxespad = 0, fontsize = 10)
+        plt.legend(bbox_to_anchor = (1.05, 1), loc = "upper left", borderaxespad = 0,)
     
-    plt.grid()
     return None
 
 def calc_covars(data_raw, states, n_components):
