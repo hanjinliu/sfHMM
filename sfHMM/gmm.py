@@ -12,6 +12,7 @@ class GMM1:
         self.sg = None
         self.aic = np.inf
         self.bic = np.inf
+        self.valid = False
         return self
     
     def fit(self, data, n_init=1, random_state=0):
@@ -29,6 +30,7 @@ class GMM1:
         self.sg = sg_[order]
         self.aic = gmm.aic(data)
         self.bic = gmm.bic(data)
+        self.valid = True
         return self
 
 
@@ -38,9 +40,10 @@ def interval_check(mu, thr=None):
     """
     if (thr is None or len(mu)==1):
         return False
-    elif ((np.diff(np.sort(mu)) < thr).any()):
+    elif ((np.diff(mu) < thr).any()):
         return True
-    return False
+    else:
+        return False
 
 def sg_check(sg, thr=None):
     """
@@ -50,10 +53,11 @@ def sg_check(sg, thr=None):
         return False
     elif ((sg < thr).any()):
         return True
-    return False
+    else:
+        return False
 
 
-class GMMn:
+class GMMs:
     def __init__(self, data, krange):
         self.data = data
         self.klist = list(range(krange[0], krange[1] + 1))
@@ -61,6 +65,17 @@ class GMMn:
     
     def __getitem__(self, key):
         return self.results[key]
+    
+    def __repr__(self):
+        out = "Gaussian Mixture Models"
+        line1 = "  n  ||"
+        line2 = " AIC ||"
+        line3 = " BIC ||"
+        for n, aic, bic in zip(self.klist, self.get_aic(), self.get_bic()):
+            line1 += f" {n:>7} |"
+            line2 += f" {int(aic+0.5):>7} |"
+            line3 += f" {int(bic+0.5):>7} |"
+        return "\n".join([out, line1, line2, line3])
     
     def fit(self, min_interval=None, min_sg=None, n_init:int=1, random_state:int=0):
         d = np.asarray(self.data).reshape(-1, 1)
@@ -71,27 +86,32 @@ class GMMn:
             
             if (interval_check(gmm1.mu, thr=min_interval) or
                 sg_check(gmm1.sg, thr=min_sg)):
-                gmm1.aic = np.inf
-                gmm1.bic = np.inf
+                gmm1.valid = False
                 
         return None
     
-    def get_optimal(self, criterion="bic"):
+    def get_optimal(self, criterion="bic", only_valid=True):
         if (criterion == "bic"):
-            argmin = np.argmin(self.get_bic())
+            cri_list = self.get_bic()
         elif (criterion == "aic"):
-            argmin = np.argmin(self.get_aic())
+            cri_list = self.get_aic()
         else:
             raise ValueError("'criterion' must be either 'aic' or 'bic'.")
-        k_best = self.klist[argmin]
+        
+        if (only_valid):
+            cri_list[~self.isvalid()] = np.inf
+                    
+        k_best = self.klist[np.argmin(cri_list)]
         return self[k_best]
     
     def get_aic(self):
-        return [self[k].aic for k in self.klist]
+        return np.array([self[k].aic for k in self.klist])
 
     def get_bic(self):
-        return [self[k].bic for k in self.klist]
+        return np.array([self[k].bic for k in self.klist])
 
+    def isvalid(self):
+        return np.array([gmm1.valid for gmm1 in self.results.values()])
 
 class DPGMM:
     def __init__(self, data):

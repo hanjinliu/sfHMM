@@ -1,10 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from .func import *
-from .sfhmm import sfHMM, GaussStep, PoissonStep
-from .base import Base_sfHMM
+from .single_sfhmm import sfHMM1, GaussStep, PoissonStep
+from .base import sfHMMBase
 
-class Multi_sfHMM(Base_sfHMM):
+class sfHMMn(sfHMMBase):
     """
     Multi-trajectory sfHMM.
     This class shares all the attributes in hmmlearn.hmm.GaussianHMM.
@@ -58,8 +58,8 @@ class Multi_sfHMM(Base_sfHMM):
         """
         Append a trajectory as sfHMM object.
         """
-        sf = sfHMM(data, sg0=self.sg0, psf=self.psf, krange=self.krange,
-                   model=self.model, name=self.name+f"[{self.n_data}]")
+        sf = sfHMM1(data, sg0=self.sg0, psf=self.psf, krange=self.krange,
+                    model=self.model, name=self.name+f"[{self.n_data}]")
         self.n_data += 1
         self._sf_list.append(sf)
         self.ylim[0] = min(sf.ylim[0], self.ylim[0])
@@ -71,6 +71,9 @@ class Multi_sfHMM(Base_sfHMM):
         Step finding by extended version of Kalafut-Visscher's algorithm.
         Run independently for each sfHMM object.
         """
+        if (self.n_data <= 0):
+            raise RuntimeError("Cannot start analysis before appending data.")
+        
         StepMethod = {"Poisson": PoissonStep,
                       "Gauss": GaussStep,
                       }[self.model]
@@ -85,6 +88,9 @@ class Multi_sfHMM(Base_sfHMM):
         Denoising by cutting of the standard deviation of noise to sg0.
         Run independently for each sfHMM object.
         """
+        if (self.n_data <= 0):
+            raise RuntimeError("Cannot start analysis before appending data.")
+        
         self._init_sg0()
         
         for sf in self:
@@ -112,6 +118,9 @@ class Multi_sfHMM(Base_sfHMM):
         ValueError
             If 'method' got an inappropriate string.
         """
+        if (self.n_data <= 0):
+            raise RuntimeError("Cannot start analysis before appending data.")
+        
         self._gmmfit(n_init, method, random_state)
         
         for sf in self:
@@ -124,6 +133,9 @@ class Multi_sfHMM(Base_sfHMM):
         HMM paramter optimization by Forward-Backward algorithm, and state inference by Viterbi 
         algorithm.
         """
+        if (self.n_data <= 0):
+            raise RuntimeError("Cannot start analysis before appending data.")
+        
         self.data_raw_all = self.data_raw
         self.states_list = [sf.states for sf in self]
         
