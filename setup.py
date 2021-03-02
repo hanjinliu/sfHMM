@@ -21,7 +21,7 @@ class build_ext(base_build_ext):
         super().finalize_options()
 
 kwargs = dict(name="sfHMM",
-              version="1.1.0",
+              version="1.2.0",
               description="step finding based HMM",
               author="Hanjin Liu",
               author_email="liuhanjin-sc@g.ecc.u-tokyo.ac.jp",
