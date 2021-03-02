@@ -66,6 +66,17 @@ class GMMs:
     def __getitem__(self, key):
         return self.results[key]
     
+    def __repr__(self):
+        out = "Gaussian Mixture Models"
+        line1 = "  n  ||"
+        line2 = " AIC ||"
+        line3 = " BIC ||"
+        for n, aic, bic in zip(self.klist, self.get_aic(), self.get_bic()):
+            line1 += f" {n:>7} |"
+            line2 += f" {int(aic+0.5):>7} |"
+            line3 += f" {int(bic+0.5):>7} |"
+        return "\n".join([out, line1, line2, line3])
+    
     def fit(self, min_interval=None, min_sg=None, n_init:int=1, random_state:int=0):
         d = np.asarray(self.data).reshape(-1, 1)
         self.results = {k: GMM1(k)._init() for k in self.klist}
