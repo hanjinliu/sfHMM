@@ -7,10 +7,10 @@ except ImportError as e:
     from .step import GaussStep, PoissonStep
     print(f"Could not import pyd file due to following ImportError: {e}\n"\
            "'step.py' was imported instead. Step finding will take much longer time.")
-from .base import Base_sfHMM
+from .base import sfHMMBase
 from .func import *
 
-class sfHMM(Base_sfHMM):    
+class sfHMM1(sfHMMBase):    
     """
     Step-finding based HMM.
 
@@ -44,7 +44,7 @@ class sfHMM(Base_sfHMM):
         - step_size_list ... list of signal change (mu_list[i+1] - mu_list[i]).
     data_fil : np.ndarray
         Data after denoised.
-    gmm_opt : GMMn or DPGMM object
+    gmm_opt : GMMs or DPGMM object
         The result of GMM clustering, which has following attributes:
         - wt ... Weights.
         - mu ... Means.

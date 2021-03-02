@@ -12,6 +12,7 @@ class GMM1:
         self.sg = None
         self.aic = np.inf
         self.bic = np.inf
+        self.valid = False
         return self
     
     def fit(self, data, n_init=1, random_state=0):
@@ -29,6 +30,7 @@ class GMM1:
         self.sg = sg_[order]
         self.aic = gmm.aic(data)
         self.bic = gmm.bic(data)
+        self.valid = True
         return self
 
 
@@ -38,9 +40,10 @@ def interval_check(mu, thr=None):
     """
     if (thr is None or len(mu)==1):
         return False
-    elif ((np.diff(np.sort(mu)) < thr).any()):
+    elif ((np.diff(mu) < thr).any()):
         return True
-    return False
+    else:
+        return False
 
 def sg_check(sg, thr=None):
     """
@@ -50,10 +53,11 @@ def sg_check(sg, thr=None):
         return False
     elif ((sg < thr).any()):
         return True
-    return False
+    else:
+        return False
 
 
-class GMMn:
+class GMMs:
     def __init__(self, data, krange):
         self.data = data
         self.klist = list(range(krange[0], krange[1] + 1))
@@ -71,27 +75,32 @@ class GMMn:
             
             if (interval_check(gmm1.mu, thr=min_interval) or
                 sg_check(gmm1.sg, thr=min_sg)):
-                gmm1.aic = np.inf
-                gmm1.bic = np.inf
+                gmm1.valid = False
                 
         return None
     
-    def get_optimal(self, criterion="bic"):
+    def get_optimal(self, criterion="bic", only_valid=True):
         if (criterion == "bic"):
-            argmin = np.argmin(self.get_bic())
+            cri_list = self.get_bic()
         elif (criterion == "aic"):
-            argmin = np.argmin(self.get_aic())
+            cri_list = self.get_aic()
         else:
             raise ValueError("'criterion' must be either 'aic' or 'bic'.")
-        k_best = self.klist[argmin]
+        
+        if (only_valid):
+            cri_list[~self.isvalid()] = np.inf
+                    
+        k_best = self.klist[np.argmin(cri_list)]
         return self[k_best]
     
     def get_aic(self):
-        return [self[k].aic for k in self.klist]
+        return np.array([self[k].aic for k in self.klist])
 
     def get_bic(self):
-        return [self[k].bic for k in self.klist]
+        return np.array([self[k].bic for k in self.klist])
 
+    def isvalid(self):
+        return np.array([gmm1.valid for gmm1 in self.results.values()])
 
 class DPGMM:
     def __init__(self, data):

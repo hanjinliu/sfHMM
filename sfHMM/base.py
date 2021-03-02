@@ -2,9 +2,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from hmmlearn.hmm import GaussianHMM
 from .func import *
-from .gmm import GMMn, DPGMM
+from .gmm import GMMs, DPGMM
 
-class Base_sfHMM(GaussianHMM):
+class sfHMMBase(GaussianHMM):
     count = 0
     colors = {"raw data": "violet", 
               "step finding": "darkgreen",
@@ -127,7 +127,7 @@ class Base_sfHMM(GaussianHMM):
             If 'method' got an inappropriate string.
         """
         if (method in ["aic", "bic"]):
-            gmm_ = GMMn(self.data_fil, self.krange)
+            gmm_ = GMMs(self.data_fil, self.krange)
             # in case S.D. of noise was very small
             if (len(self._sg_list) > 0):
                 sg0_ = min(self.sg0, np.percentile(self._sg_list, 25))
