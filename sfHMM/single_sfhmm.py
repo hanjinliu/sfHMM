@@ -3,10 +3,8 @@ import numpy as np
 try:
     from .step_ext import GaussStep
     from .step_ext import PoissonStep
-except ImportError as e:
+except ImportError:
     from .step import GaussStep, PoissonStep
-    print(f"Could not import C++ extension due to following ImportError: {e}\n"\
-           "'step.py' was imported instead. Step finding will take much longer time.")
 from .base import sfHMMBase
 from .func import *
 
