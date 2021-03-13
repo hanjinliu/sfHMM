@@ -27,13 +27,12 @@ data = hmm_sampling()
 ## Single trajectory
 
 ```python
-sf = sfHMM1(data)
-sf.do_all()
+sf = sfHMM1(data).do_all()
 ```
 
 ## Multiple trajectories
 
-Append data to analyze one by one using `append` method.
+Append datasets one by one using `append` method.
 ```python
 msf = sfHMMn()
 for data in list_of_data:
@@ -83,13 +82,7 @@ Attributes are sequencially added to the object.
 
 - gmmfit
 
-  - `gmm_opt` ... The optimal Gaussian mixture model in the form of `GMM1` object, defined in `gmm` module. This object has following attributes:
-
-    - `wt` ... Weights of each Gaussian.
-    - `mu` ... Means of each Gaussian.
-    - `sg` ... Standard deviations of each Gaussian.
-    - `aic` ... Akaike information criterion.
-    - `bic` ... Bayes information criterion.
+  - `gmm_opt` ... The optimal Gaussian mixture model in the form of `GMM1` object. `GMM1` inherits `sklearn.mixture.GaussianMixture`. The only Difference is that all the parameters are sorted after fitting.
 
   - `gmm` ... `GMMn` object defined in `gmm` module. This object contains `GMM1` objects with different number of states. You can get `n`-state model by indexing like `gmm[n]`.
   - `n_components` ... The number of states.
@@ -101,7 +94,7 @@ Attributes are sequencially added to the object.
   - `covars_` ... Covariances. See `hmmlearn`.
   - `transmat_` ... Transition probability matrix. See `hmmlearn`.
   - `startprob_` ... Starting probability. See `hmmlearn`.
-  - `states` ... State sequence, optimized using Viterbi algorithm. This array takes values {0, 1, 2, ...}.
+  - `states` (updated after `gmmfit`) ... State sequence, optimized using Viterbi algorithm. This array takes values {0, 1, 2, ...}.
   - `viterbi` ... Signal sequence of Viterbi pass. This array takes values {`means_[0]`, `means_[1]`, `means_[2]`, ...}.
 
 ## Other Methods
@@ -125,6 +118,7 @@ sfHMM1.styles["font.size"] = 10
 ```
 
 ## Additional attributes and Methods in sfHMMn
+
 - `self[i]` ... `sfHMM1` objects for `i`-th trace. The real list of objects is `_sf_list`. Iteration is defined on this list.
   
 ```python
@@ -134,7 +128,7 @@ for sf in msf:
   sf.plot()   # plot all the traces in msf and their analysis results.
 ```
 
-- `n_list` ... List of data lengths (property).
+- `n_list`(property) ... List of data lengths.
 - `plot_hist()` ... Plot histogram only.
 - `plot_traces()` ... Plot all the traces. If you want to plot traces that satisfies a certain condition.
   
@@ -149,6 +143,7 @@ msf.plot_traces(filter_func=fil)
 ```
 
 # Citation
+If you found sfHMM useful, please consider citing our paper.
  ...
 
 # References

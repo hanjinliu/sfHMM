@@ -1,36 +1,30 @@
 import numpy as np
 from sklearn import mixture
 
-class GMM1:
-    def __init__(self, n_components):
-        self.n_components = n_components
-        self._init()
-    
-    def _init(self):
-        self.wt = None
-        self.mu = None
-        self.sg = None
-        self.aic = np.inf
-        self.bic = np.inf
+class GMM1(mixture.GaussianMixture):
+    """
+    GaussianMixture with sorted parameters.
+    """    
+    def __init__(self, n_components, n_init, random_state):
+        super().__init__(n_components=n_components,
+                         covariance_type="spherical",
+                         n_init=n_init,
+                         random_state=random_state)
         self.valid = False
-        return self
     
-    def fit(self, data, n_init=1, random_state=0):
-        gmm = mixture.GaussianMixture(n_components=self.n_components,
-                                      covariance_type="spherical",
-                                      n_init=n_init,
-                                      random_state=random_state)
-        gmm.fit(data)
-        wt_ = gmm.weights_
-        mu_ = gmm.means_.flatten()
-        sg_ = np.sqrt(gmm.covariances_)
-        order = np.argsort(mu_)
-        self.wt = wt_[order]
-        self.mu = mu_[order]
-        self.sg = sg_[order]
-        self.aic = gmm.aic(data)
-        self.bic = gmm.bic(data)
+    def fit(self, data):
+        super().fit(data)
         self.valid = True
+        
+        # sort all
+        order = np.argsort(self.means_.flat)
+        self.weights_ = self.weights_[order]
+        self.means_ = self.means_[order]
+        self.covariances_ = self.covariances_[order].reshape(-1, 1, 1)
+        self.precisions_cholesky_ = self.precisions_cholesky_[order]
+        self.precisions_ = self.precisions_[order]
+        self.sigma_ = np.sqrt(self.covariances_.flat)
+        
         return self
 
 
@@ -40,7 +34,7 @@ def interval_check(mu, thr=None):
     """
     if (thr is None or len(mu)==1):
         return False
-    elif ((np.diff(mu) < thr).any()):
+    elif ((np.diff(mu.flat) < thr).any()):
         return True
     else:
         return False
@@ -58,6 +52,10 @@ def sg_check(sg, thr=None):
 
 
 class GMMs:
+    """
+    Gaussian mixture models with different states.
+    The best model can be chosen by comparing AIC or BIC.
+    """    
     def __init__(self, data, krange):
         self.data = data
         self.klist = list(range(krange[0], krange[1] + 1))
@@ -79,13 +77,13 @@ class GMMs:
     
     def fit(self, min_interval=None, min_sg=None, n_init:int=1, random_state:int=0):
         d = np.asarray(self.data).reshape(-1, 1)
-        self.results = {k: GMM1(k)._init() for k in self.klist}
+        self.results = {k: GMM1(k, n_init, random_state) for k in self.klist}
         
         for gmm1 in self.results.values():
-            gmm1.fit(d, n_init=n_init, random_state=random_state)
+            gmm1.fit(d)
             
-            if (interval_check(gmm1.mu, thr=min_interval) or
-                sg_check(gmm1.sg, thr=min_sg)):
+            if (interval_check(gmm1.means_, thr=min_interval) or
+                sg_check(gmm1.sigma_, thr=min_sg)):
                 gmm1.valid = False
                 
         return None
@@ -105,31 +103,16 @@ class GMMs:
         return self[k_best]
     
     def get_aic(self):
-        return np.array([self[k].aic for k in self.klist])
+        d = np.asarray(self.data).reshape(-1, 1)
+        return np.array([self[k].aic(d) for k in self.klist])
 
     def get_bic(self):
-        return np.array([self[k].bic for k in self.klist])
+        d = np.asarray(self.data).reshape(-1, 1)
+        return np.array([self[k].bic(d) for k in self.klist])
 
     def isvalid(self):
         return np.array([gmm1.valid for gmm1 in self.results.values()])
 
 class DPGMM:
     def __init__(self, data):
-        self.data = data
-        
-    def fit(self, n_init:int = 1, n_peak:int = 10, random_state=0):
-        d = np.asarray(self.data).reshape(-1, 1)
-        dpgmm = mixture.BayesianGaussianMixture(n_components=n_peak, covariance_type="spherical",
-                    n_init=n_init, random_state=random_state).fit(d)
-        clusters = list(set(dpgmm.predict(d)))
-        
-        wt_ = dpgmm.weights_[clusters]
-        mu_ = dpgmm.means_.flatten()[clusters]
-        sg_ = np.sqrt(dpgmm.covariances_)[clusters]
-        self.n_components = len(wt_)
-        order = np.argsort(mu_)
-        self.wt = wt_[order]
-        self.mu = mu_[order]
-        self.sg = sg_[order]
-    
-        return None
+        raise NotImplementedError

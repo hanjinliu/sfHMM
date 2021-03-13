@@ -36,7 +36,7 @@ class sfHMMn(sfHMMBase):
     n_components : int
         The optimal number of states. Same as 'gmm_opt.n_components'.
     self[i] (accessed by indexing) : sfHMM object
-        The i-th sfHMM object. See .\sfhmm.py.
+        The i-th sfHMM object. See .\single_sfhmm.py.
     """
     
     def __init__(self, sg0:float=-1, psf:float=-1, krange=[1, 6], 
@@ -124,7 +124,7 @@ class sfHMMn(sfHMMBase):
         self._gmmfit(n_init, method, random_state)
         
         for sf in self:
-            sf.states = infer_states(sf.step.fit, self.gmm_opt.mu)
+            sf.states = self.gmm_opt.predict(np.asarray(sf.step.fit).reshape(-1, 1))
             sf.n_components = self.n_components
         return self
     
@@ -162,12 +162,12 @@ class sfHMMn(sfHMMBase):
         return None
     
     def _set_means(self):
-        self.means_ = self.gmm_opt.mu.reshape(-1, 1)
+        self.means_ = self.gmm_opt.means_.copy()
         return None
     
     def _set_startprob(self):
         d0_list = [sf.data_raw[0] for sf in self]
-        self.startprob_ = calc_startprob(d0_list, self.gmm_opt.wt, self.gmm_opt.mu, self.covars_)
+        self.startprob_ = calc_startprob(d0_list, self.gmm_opt.weights_, self.gmm_opt.means_, self.covars_)
         return None
     
     def _set_transmat(self):
