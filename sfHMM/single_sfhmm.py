@@ -5,7 +5,7 @@ try:
     from .step_ext import PoissonStep
 except ImportError as e:
     from .step import GaussStep, PoissonStep
-    print(f"Could not import pyd file due to following ImportError: {e}\n"\
+    print(f"Could not import C++ extension due to following ImportError: {e}\n"\
            "'step.py' was imported instead. Step finding will take much longer time.")
 from .base import sfHMMBase
 from .func import *
@@ -72,15 +72,15 @@ class sfHMM1(sfHMMBase):
         self.states = None
         self.viterbi = None
         self._sg_list = []
-        super().__init__(sg0, psf, krange, model, name)
         self.ylim = [np.min(self.data_raw), np.max(self.data_raw)]
+        super().__init__(sg0, psf, krange, model, name)
     
 
     def step_finding(self):
         """
         Step finding by extended version of Kalafut-Visscher's algorithm.
         """
-        if (self.psf <= 0 or 0.5 <= self.psf):
+        if (not 0 < self.psf < 0.5):
             self.psf = 1/(1 + np.sqrt(self.data_raw.size))
             
         if (self.model == "Poisson"):
@@ -145,9 +145,9 @@ class sfHMM1(sfHMMBase):
         # If denoising is conducted without step finding, state sequence will be inferred
         # using 'self.data_fil'.
         if (self.step is not None):
-            self.states = infer_states(self.step.fit, self.gmm_opt.mu)
+            self.states = self.gmm_opt.predict(np.asarray(self.step.fit).reshape(-1, 1))
         else:
-            self.states = infer_states(self.data_fil, self.gmm_opt.mu)
+            self.states = self.gmm_opt.predict(np.asarray(self.data_fil).reshape(-1, 1))
             
         return self
     
@@ -278,15 +278,15 @@ class sfHMM1(sfHMMBase):
         if (self.gmm_opt is None):
             raise ValueError("Cannot initialize 'means_'. You must run gmmfit() before hmmfit() or" \
                              "set 'means_' manually.")
-        self.means_ = self.gmm_opt.mu.reshape(-1, 1)
+        self.means_ = self.gmm_opt.means_.copy()
         return None
     
     def _set_startprob(self):
         if (self.gmm_opt is None):
             raise ValueError("Cannot initialize 'startprob_'. You must run gmmfit() before hmmfit() or" \
                              "set 'startprob_' manually.")
-        self.startprob_ = calc_startprob([self.data_raw[0]], self.gmm_opt.wt, 
-                                         self.gmm_opt.mu, self.covars_)
+        self.startprob_ = calc_startprob([self.data_raw[0]], self.gmm_opt.weights_,
+                                         self.gmm_opt.means_, self.covars_)
         return None
     
     def _set_transmat(self):

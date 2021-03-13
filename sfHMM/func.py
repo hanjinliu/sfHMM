@@ -85,8 +85,10 @@ def calc_covars(data_raw, states, n_components):
 
 def calc_startprob(d0_list, wt, mu, covars):
     logprob = np.zeros(len(wt))
+    mu = mu.flatten()
+    sg = np.sqrt(covars.flatten())
     for d0 in d0_list:
-        logprob += gauss(d0, wt, mu, np.sqrt(covars.flatten())) + 1e-12
+        logprob += gauss(d0, wt, mu, sg) + 1e-12
     prob = np.exp(logprob)
     return prob / np.sum(prob)
 
@@ -100,7 +102,7 @@ def calc_transmat(states_list, n_components):
     normalize_transmat(transmat)
     return transmat
 
-def infer_states(stepfit, mu):
-    # calculate the most closed state
-    states = np.argmin(np.abs(np.array(stepfit) - np.array(mu).reshape(-1, 1)), axis=0).astype("int8")
-    return states
+# def infer_states(stepfit, mu):
+#     # calculate the most closed state
+#     states = np.argmin(np.abs(np.array(stepfit) - np.array(mu).reshape(-1, 1)), axis=0).astype("int8")
+#     return states
