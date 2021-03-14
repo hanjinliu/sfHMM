@@ -5,11 +5,12 @@ class GMM1(mixture.GaussianMixture):
     """
     GaussianMixture with sorted parameters.
     """    
-    def __init__(self, n_components, n_init, random_state):
+    def __init__(self, n_components, n_init, random_state, **kwargs):
         super().__init__(n_components=n_components,
                          covariance_type="spherical",
                          n_init=n_init,
-                         random_state=random_state)
+                         random_state=random_state,
+                         **kwargs)
         self.valid = False
     
     def fit(self, data):
@@ -20,7 +21,7 @@ class GMM1(mixture.GaussianMixture):
         order = np.argsort(self.means_.flat)
         self.weights_ = self.weights_[order]
         self.means_ = self.means_[order]
-        self.covariances_ = self.covariances_[order].reshape(-1, 1, 1)
+        self.covariances_ = self.covariances_[order]
         self.precisions_cholesky_ = self.precisions_cholesky_[order]
         self.precisions_ = self.precisions_[order]
         self.sigma_ = np.sqrt(self.covariances_.flat)
@@ -113,6 +114,34 @@ class GMMs:
     def isvalid(self):
         return np.array([gmm1.valid for gmm1 in self.results.values()])
 
-class DPGMM:
-    def __init__(self, data):
-        raise NotImplementedError
+class DPGMM(mixture.BayesianGaussianMixture):
+    def __init__(self, n_components, n_init, random_state, **kwargs):
+        super().__init__(n_components=n_components,
+                         covariance_type="spherical",
+                         n_init=n_init,
+                         random_state=random_state,
+                         **kwargs)
+    
+    def fit(self, data):
+        super().fit(data)
+        
+        labels = self.predict(data)
+        unique_labels = np.unique(labels)
+        self.n_components = len(unique_labels)
+        
+        # sort all
+        self.means_ = self.means_[unique_labels]
+        order = np.argsort(self.means_.flat)
+        self.weights_ = self.weights_[unique_labels][order]
+        self.means_ = self.means_[order]
+        self.covariances_ = self.covariances_[unique_labels][order]
+        self.precisions_cholesky_ = self.precisions_cholesky_[unique_labels][order]
+        self.precisions_ = self.precisions_[unique_labels][order]
+        self.degrees_of_freedom_ = self.degrees_of_freedom_[unique_labels][order]
+        self.weight_concentration_ = (self.weight_concentration_[0][unique_labels][order],
+                                      self.weight_concentration_[1][unique_labels][order])
+        self.mean_precision_ = self.mean_precision_[unique_labels][order]
+        self.sigma_ = np.sqrt(self.covariances_.flat)
+        
+        return self
+        
