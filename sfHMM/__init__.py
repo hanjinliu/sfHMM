@@ -1,4 +1,4 @@
-__version__ = "1.0.0"
+__version__ = "0.1.0"
 
 from .single_sfhmm import sfHMM1
 from .multi_sfhmm import sfHMMn
@@ -18,7 +18,7 @@ Usage
 
 >>> data = ``array-like object``
 >>> sf = sfHMM1(data)
->>> sf.do_all()
+>>> sf.run_all()
 
 and if you want to analyze multiple trajectories with common parameters:
 
@@ -26,7 +26,7 @@ and if you want to analyze multiple trajectories with common parameters:
 >>> msf = sfHMMn()
 >>> for data in data_list:
 >>>     msf.append(data)
->>> msf.do_all()
+>>> msf.run_all()
 
 (2) You can also use other filtering methods by simply substituting 'data_fil'.
 
@@ -60,7 +60,7 @@ sfHMMn because you don't need to run filtering function for every trajectory).
 (5) To manually specify which GMM to adopt, substitute gmm_opt.
 
 >>> sf = sfHMM1(data)
->>> sf.do_all(plot=False)  # fit anyway
+>>> sf.run_all(plot=False) # fit anyway
 >>> sf.gmm_opt = sf.gmm[3] # three-state model is chosen
 >>> sf.hmmfit()
 >>> sf.plot()

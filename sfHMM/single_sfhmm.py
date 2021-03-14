@@ -113,7 +113,7 @@ class sfHMM1(sfHMMBase):
         return self
     
     
-    def gmmfit(self, n_init=1, method="bic", random_state=0):
+    def gmmfit(self, method="bic"):
         """
         Fit the denoised data to Gaussian mixture model, and the optimal number of states
         will be determined. After that, state sequence 'states' will be initialized.
@@ -136,9 +136,14 @@ class sfHMM1(sfHMMBase):
         # If denoising was passed.
         if (self.data_fil is None):
             self.data_fil = self.data_raw
+        
+        if (self.step is None):
+            edge = np.percentile(self.data_fil, [5, 95])
+        else:
+            edge = np.percentile(self.step.fit, [5, 95])
 
         # Start GMM clustering and determine optimal number of states.
-        self._gmmfit(n_init, method, random_state)
+        self._gmmfit(method, edge)
         
         # If denoising is conducted without step finding, state sequence will be inferred
         # using 'self.data_fil'.

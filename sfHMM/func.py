@@ -101,8 +101,3 @@ def calc_transmat(states_list, n_components):
     
     normalize_transmat(transmat)
     return transmat
-
-# def infer_states(stepfit, mu):
-#     # calculate the most closed state
-#     states = np.argmin(np.abs(np.array(stepfit) - np.array(mu).reshape(-1, 1)), axis=0).astype("int8")
-#     return states

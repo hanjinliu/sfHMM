@@ -1,15 +1,14 @@
 import numpy as np
-from sklearn import mixture
+from sklearn import mixture, cluster
 
 class GMM1(mixture.GaussianMixture):
     """
-    GaussianMixture with sorted parameters.
+    GaussianMixture with sorted parameters. Also, parameter initialization is
+    deterministic because initial centroids are set at regular intervals.
     """    
-    def __init__(self, n_components, n_init, random_state, **kwargs):
+    def __init__(self, n_components, **kwargs):
         super().__init__(n_components=n_components,
                          covariance_type="spherical",
-                         n_init=n_init,
-                         random_state=random_state,
                          **kwargs)
         self.valid = False
     
@@ -27,29 +26,42 @@ class GMM1(mixture.GaussianMixture):
         self.sigma_ = np.sqrt(self.covariances_.flat)
         
         return self
+    
+    def _initialize_parameters_generic(self, X, edges=None):
+        """
+        Generic k-means-initialization function.
+        
+        Parameters
+        ----------
+        X : (n, 1) np.ndarray
+        mean_ref : (n, 1) np.ndarray
+            Reference data
+        """
+        # initialize kmeans centers
+        if (self.n_components == 1):
+            init = np.array([[np.mean(X)]])
+        elif (edges is not None):
+            init = np.linspace(*edges, self.n_components).reshape(-1, 1)
+        else:
+            init = np.linspace(*np.percentile(X, [5, 95]), self.n_components).reshape(-1, 1)
+        
+        n_samples, _ = X.shape
 
-
-def interval_check(mu, thr=None):
-    """
-    check if peaks are too near to each other.
-    """
-    if (thr is None or len(mu)==1):
-        return False
-    elif ((np.diff(mu.flat) < thr).any()):
-        return True
-    else:
-        return False
-
-def sg_check(sg, thr=None):
-    """
-    check if any standard deviations are too small.
-    """
-    if (thr is None or len(sg)==1):
-        return False
-    elif ((sg < thr).any()):
-        return True
-    else:
-        return False
+        resp = np.zeros((n_samples, self.n_components))
+        label = cluster.KMeans(n_clusters=self.n_components, n_init=1,
+                               init=init).fit(X).labels_
+        
+        resp[np.arange(n_samples), label] = 1
+        self._initialize(X, resp)
+        return None
+    
+    def _initialize_parameters(self, X, random_state):
+        """
+        Overload this function because parameters should not be initialized with
+        k-means again. Here `_initialize_parameters_generic` is called everytime
+        before `fit` is called.
+        """        
+        pass
 
 
 class GMMs:
@@ -57,10 +69,12 @@ class GMMs:
     Gaussian mixture models with different states.
     The best model can be chosen by comparing AIC or BIC.
     """    
-    def __init__(self, data, krange):
+    def __init__(self, data, krange, min_interval=None, min_sg=None):
         self.data = data
         self.klist = list(range(krange[0], krange[1] + 1))
         self.results = None
+        self.min_interval = min_interval if min_interval else -1
+        self.min_sg = min_sg if min_sg else -1
     
     def __getitem__(self, key):
         return self.results[key]
@@ -76,15 +90,16 @@ class GMMs:
             line3 += f" {int(bic+0.5):>7} |"
         return "\n".join([out, line1, line2, line3])
     
-    def fit(self, min_interval=None, min_sg=None, n_init:int=1, random_state:int=0):
+    def fit(self, edges):
         d = np.asarray(self.data).reshape(-1, 1)
-        self.results = {k: GMM1(k, n_init, random_state) for k in self.klist}
+            
+        self.results = {k: GMM1(k) for k in self.klist}
         
         for gmm1 in self.results.values():
+            gmm1._initialize_parameters_generic(d, edges)
             gmm1.fit(d)
             
-            if (interval_check(gmm1.means_, thr=min_interval) or
-                sg_check(gmm1.sigma_, thr=min_sg)):
+            if (self._interval_check(gmm1.means_) or self._sg_check(gmm1.sigma_)):
                 gmm1.valid = False
                 
         return None
@@ -113,6 +128,20 @@ class GMMs:
 
     def isvalid(self):
         return np.array([gmm1.valid for gmm1 in self.results.values()])
+    
+    def _interval_check(self, mu):
+        """
+        check if peaks are too near to each other.
+        """
+        return (np.diff(mu.flat) < self.min_interval).any()
+
+    def _sg_check(self, sg):
+        """
+        check if any standard deviations are too small.
+        """
+        return (sg < self.min_sg).any()
+
+
 
 class DPGMM(mixture.BayesianGaussianMixture):
     def __init__(self, n_components, n_init, random_state, **kwargs):
