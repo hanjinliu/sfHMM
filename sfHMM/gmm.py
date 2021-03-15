@@ -6,11 +6,12 @@ class GMM1(mixture.GaussianMixture):
     GaussianMixture with sorted parameters. Also, parameter initialization is
     deterministic because initial centroids are set at regular intervals.
     """    
-    def __init__(self, n_components, **kwargs):
+    def __init__(self, n_components, edges=None, **kwargs):
         super().__init__(n_components=n_components,
                          covariance_type="spherical",
                          **kwargs)
         self.valid = False
+        self.edges = edges
     
     def fit(self, data):
         super().fit(data)
@@ -27,21 +28,16 @@ class GMM1(mixture.GaussianMixture):
         
         return self
     
-    def _initialize_parameters_generic(self, X, edges=None):
+    def _initialize_parameters(self, X, random_state):
         """
-        Generic k-means-initialization function.
-        
-        Parameters
-        ----------
-        X : (n, 1) np.ndarray
-        mean_ref : (n, 1) np.ndarray
-            Reference data
+        Overload this function because parameters should not be initialized with
+        randomized centroids.
         """
         # initialize kmeans centers
         if (self.n_components == 1):
             init = np.array([[np.mean(X)]])
-        elif (edges is not None):
-            init = np.linspace(*edges, self.n_components).reshape(-1, 1)
+        elif (self.edges is not None):
+            init = np.linspace(*self.edges, self.n_components).reshape(-1, 1)
         else:
             init = np.linspace(*np.percentile(X, [5, 95]), self.n_components).reshape(-1, 1)
         
@@ -54,14 +50,6 @@ class GMM1(mixture.GaussianMixture):
         resp[np.arange(n_samples), label] = 1
         self._initialize(X, resp)
         return None
-    
-    def _initialize_parameters(self, X, random_state):
-        """
-        Overload this function because parameters should not be initialized with
-        k-means again. Here `_initialize_parameters_generic` is called everytime
-        before `fit` is called.
-        """        
-        pass
 
 
 class GMMs:
@@ -93,10 +81,9 @@ class GMMs:
     def fit(self, edges):
         d = np.asarray(self.data).reshape(-1, 1)
             
-        self.results = {k: GMM1(k) for k in self.klist}
+        self.results = {k: GMM1(k, edges=edges) for k in self.klist}
         
         for gmm1 in self.results.values():
-            gmm1._initialize_parameters_generic(d, edges)
             gmm1.fit(d)
             
             if (self._interval_check(gmm1.means_) or self._sg_check(gmm1.sigma_)):
