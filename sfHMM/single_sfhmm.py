@@ -254,7 +254,9 @@ class sfHMM1(sfHMMBase):
         Initialize 'sg0' if sg0 is negative.
         """        
         if self.sg0 < 0:
-            if len(self.step.step_size_list) > 0:
+            if self.step is None:
+                raise RuntimeError("Steps are not detected yet.")
+            elif len(self.step.step_size_list) > 0:
                 self.sg0 = np.percentile(np.abs(self.step.step_size_list), 25) * 0.2
             else:
                 self.sg0 = np.std(self.data_raw)
@@ -263,31 +265,31 @@ class sfHMM1(sfHMMBase):
     
     def _set_covars(self):
         if self.states is None:
-            raise ValueError("Cannot initialize 'covars_' because the state sequence 'states' has" 
-                             "yet been determined.")
+            raise RuntimeError("Cannot initialize 'covars_' because the state sequence 'states' has" 
+                               "yet been determined.")
         self.covars_ = calc_covars(self.data_raw, self.states, self.n_components)
         self.min_covar = np.min(self.covars_) * 0.015
         return None
     
     def _set_means(self):
         if self.gmm_opt is None:
-            raise ValueError("Cannot initialize 'means_'. You must run gmmfit() before hmmfit() or" \
-                             "set 'means_' manually.")
+            raise RuntimeError("Cannot initialize 'means_'. You must run gmmfit() before hmmfit() or" \
+                               "set 'means_' manually.")
         self.means_ = self.gmm_opt.means_.copy()
         return None
     
     def _set_startprob(self):
         if self.gmm_opt is None:
-            raise ValueError("Cannot initialize 'startprob_'. You must run gmmfit() before hmmfit() or" \
-                             "set 'startprob_' manually.")
+            raise RuntimeError("Cannot initialize 'startprob_'. You must run gmmfit() before hmmfit() or" \
+                               "set 'startprob_' manually.")
         self.startprob_ = calc_startprob([self.data_raw[0]], self.gmm_opt.weights_,
                                          self.gmm_opt.means_, self.covars_)
         return None
     
     def _set_transmat(self):
         if self.states is None:
-            raise ValueError("Cannot initialize 'transmat_' because the state sequence 'states' has" 
-                             "yet been determined.")
+            raise RuntimeError("Cannot initialize 'transmat_' because the state sequence 'states' has" 
+                               "yet been determined.")
         self.transmat_ = calc_transmat([self.states], self.n_components)
         return None
     

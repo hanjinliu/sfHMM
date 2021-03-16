@@ -281,7 +281,9 @@ class sfHMMn(sfHMMBase):
     def _init_sg0(self):
         step_size_list = concat([sf.step.step_size_list for sf in self])
         if self.sg0 < 0:
-            if len(step_size_list) > 0:
+            if self.step is None:
+                raise RuntimeError("Steps are not detected yet.")
+            elif len(step_size_list) > 0:
                 self.sg0 = np.percentile(np.abs(step_size_list), 25) * 0.2
             else:
                 self.sg0 = np.std(self.data_raw)
