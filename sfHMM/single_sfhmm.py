@@ -1,10 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-try:
-    from .step_ext import GaussStep
-    from .step_ext import PoissonStep
-except ImportError:
-    from .step import GaussStep, PoissonStep
+from .step import GaussStep, PoissonStep
 from .base import sfHMMBase
 from .func import *
 
