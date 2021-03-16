@@ -19,7 +19,7 @@ class sfHMM1(sfHMMBase):
     sg0 : float, optional
         Parameter used in filtering method. Expected to be 20% of signal change.
         If <= 0, sg0 will be determined automatically.
-    p : float, optional
+    psf : float, optional
         Transition probability used in step finding algorithm.
         if 0 < p < 0.5 is not satisfied, the original Kalafut-Visscher's algorithm is executed.
     krange : int or list
@@ -42,14 +42,10 @@ class sfHMM1(sfHMMBase):
         - step_size_list ... list of signal change (mu_list[i+1] - mu_list[i]).
     data_fil : np.ndarray
         Data after denoised.
-    gmm_opt : GMMs or DPGMM object
-        The result of GMM clustering, which has following attributes:
-        - wt ... Weights.
-        - mu ... Means.
-        - sg ... Standard deviations.
-        - n_components ... The number of states.
+    gmm_opt : `GMM1` object
+        The result of GMM clustering, which inherits sklearn.mixture.GaussianMixture
         If AIC/BIC minimization of standard GMM clustering was conducted, the clustering
-        results will be stored in 'gmm'. See .\gmm.py
+        results will be stored in `gmm`. See .gmm.GMMs
     n_components : int
         The optimal number of states. Same as 'gmm_opt.n_components'.
     states : np.ndarray
