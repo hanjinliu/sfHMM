@@ -66,7 +66,7 @@ Attributes are sequencially added to the object.
 
 - step_finding
 
-  - `step` ... `GaussStep` or `PoissonStep` object, defined in `step` module or `stepc` extendsion module. This object has following attributes:
+  - `step` ... `GaussStep` or `PoissonStep` object, defined in `step` module. This object has following attributes:
     - `fit` ... Fitting result.
     - `n_step` ... The number of steps (region between two signal change points).
     - `step_list` ... List of signal change points.
