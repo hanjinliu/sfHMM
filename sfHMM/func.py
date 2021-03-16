@@ -27,7 +27,7 @@ def check(sg0, psf, krange, model):
     
     if isinstance(krange, int):
         krange = (1, krange)
-    elif isinstance(krange, [list, tuple]):
+    elif isinstance(krange, (list, tuple)):
         if len(krange) != 2:
             raise ValueError("'krange' must be in [kmin, kmax] form.")
         elif (krange[0] > krange[1]):

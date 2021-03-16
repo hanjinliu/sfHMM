@@ -106,8 +106,8 @@ class PoissonStep(BaseStep):
         if len(p) < 3:
             return None
         slogm, dx = p.get_optimal_splitter()
-        dL = self.penalty + slogm
-        if dL > 0:
+        dlogL = self.penalty + slogm
+        if dlogL > 0:
             self.step_list.append(start + dx)
             p1, p2 = p.split(dx)
             self._append_steps(p1, start = start)
