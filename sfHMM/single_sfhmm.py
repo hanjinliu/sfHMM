@@ -19,7 +19,7 @@ class sfHMM1(sfHMMBase):
     sg0 : float, optional
         Parameter used in filtering method. Expected to be 20% of signal change.
         If <= 0, sg0 will be determined automatically.
-    p : float, optional
+    psf : float, optional
         Transition probability used in step finding algorithm.
         if 0 < p < 0.5 is not satisfied, the original Kalafut-Visscher's algorithm is executed.
     krange : int or list
@@ -42,14 +42,10 @@ class sfHMM1(sfHMMBase):
         - step_size_list ... list of signal change (mu_list[i+1] - mu_list[i]).
     data_fil : np.ndarray
         Data after denoised.
-    gmm_opt : GMMs or DPGMM object
-        The result of GMM clustering, which has following attributes:
-        - wt ... Weights.
-        - mu ... Means.
-        - sg ... Standard deviations.
-        - n_components ... The number of states.
+    gmm_opt : `GMM1` object
+        The result of GMM clustering, which inherits sklearn.mixture.GaussianMixture
         If AIC/BIC minimization of standard GMM clustering was conducted, the clustering
-        results will be stored in 'gmm'. See .\gmm.py
+        results will be stored in `gmm`. See .gmm.GMMs
     n_components : int
         The optimal number of states. Same as 'gmm_opt.n_components'.
     states : np.ndarray
@@ -113,7 +109,7 @@ class sfHMM1(sfHMMBase):
         return self
     
     
-    def gmmfit(self, n_init=1, method="bic", random_state=0):
+    def gmmfit(self, method="bic"):
         """
         Fit the denoised data to Gaussian mixture model, and the optimal number of states
         will be determined. After that, state sequence 'states' will be initialized.
@@ -136,9 +132,14 @@ class sfHMM1(sfHMMBase):
         # If denoising was passed.
         if (self.data_fil is None):
             self.data_fil = self.data_raw
+        
+        if (self.step is None):
+            edge = np.percentile(self.data_fil, [5, 95])
+        else:
+            edge = np.percentile(self.step.fit, [5, 95])
 
         # Start GMM clustering and determine optimal number of states.
-        self._gmmfit(n_init, method, random_state)
+        self._gmmfit(method, edge)
         
         # If denoising is conducted without step finding, state sequence will be inferred
         # using 'self.data_fil'.

@@ -100,18 +100,14 @@ class sfHMMn(sfHMMBase):
         return self
     
     
-    def gmmfit(self, n_init=1, method="bic", random_state=0):
+    def gmmfit(self, method="bic"):
         """
         Fit the denoised data to Gaussian mixture model.
         
         Paramters
         ---------
-        n_init: int
-            How many times initialization will be performed.
-        method: str, 'aic', 'bic' or 'Dirichlet'
+        method: str, 'aic', 'bic' or 'Dirichlet'(not recommended)
             How to determine the number of states.
-        random_state: int
-            Random seed for kmeans initialization.
         
         Raises
         ------
@@ -121,7 +117,8 @@ class sfHMMn(sfHMMBase):
         if (self.n_data <= 0):
             raise RuntimeError("Cannot start analysis before appending data.")
         
-        self._gmmfit(n_init, method, random_state)
+        step_fit = np.array(concat([sf.step.fit for sf in self]))
+        self._gmmfit(method, np.percentile(step_fit, [5, 95]))
         
         for sf in self:
             sf.states = self.gmm_opt.predict(np.asarray(sf.step.fit).reshape(-1, 1))
@@ -299,7 +296,7 @@ class sfHMMn(sfHMMBase):
     @property    
     def data_fil(self):
         return np.array(concat([sf.data_fil for sf in self]))
-    
+        
     @property
     def _sg_list(self):
         return np.array(concat([sf._sg_list for sf in self]))

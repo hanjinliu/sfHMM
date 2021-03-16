@@ -27,7 +27,7 @@ data = hmm_sampling()
 ## Single trajectory
 
 ```python
-sf = sfHMM1(data).do_all()
+sf = sfHMM1(data).run_all()
 ```
 
 ## Multiple trajectories
@@ -37,7 +37,7 @@ Append datasets one by one using `append` method.
 msf = sfHMMn()
 for data in list_of_data:
     msf.append(data)
-msf.do_all()
+msf.run_all()
 ```
 
 # Details of Attributes and Methods
@@ -100,7 +100,7 @@ Attributes are sequencially added to the object.
 ## Other Methods
 
 - `plot()` = visualize the results of sfHMM analysis.
-- `do_all()` = conduct all the four steps and plot the results.
+- `run_all()` = run all the four steps and plot the results.
 - `tdp()` = show the results in pseudo transition density plot.
 
 ## Customize Plots
@@ -119,7 +119,7 @@ sfHMM1.styles["font.size"] = 10
 
 ## Additional attributes and Methods in sfHMMn
 
-- `self[i]` ... `sfHMM1` objects for `i`-th trace. The real list of objects is `_sf_list`. Iteration is defined on this list.
+- `self[i]` ... `sfHMM1` objects for $i$-th trace. The real list of objects is `_sf_list`. Iteration is defined on this list.
   
 ```python
 msf.do_all()

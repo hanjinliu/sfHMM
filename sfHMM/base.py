@@ -56,7 +56,7 @@ class sfHMMBase(GaussianHMM):
     def denoising(self):
         pass
     
-    def gmmfit(self, n_init, method, random_state):
+    def gmmfit(self, method):
         pass
     
     def hmmfit(self):
@@ -65,7 +65,7 @@ class sfHMMBase(GaussianHMM):
     def plot(self):
         pass
     
-    def do_all(self, plot:bool=True):
+    def run_all(self, plot:bool=True):
         """
         Conduct all the processes with default settings.
 
@@ -107,19 +107,14 @@ class sfHMMBase(GaussianHMM):
         
         return None
     
-    def _gmmfit(self, n_init, method, random_state):
-        
+    def _gmmfit(self, method, edges):
         """
         Fit the denoised data to Gaussian mixture model.
         
         Paramters
         ---------
-        n_init: int
-            How many times initialization will be performed.
         method: str, 'aic', 'bic' or 'Dirichlet'
             How to determine the number of states.
-        random_state: int
-            Random seed for kmeans initialization.
         
         Raises
         ------
@@ -133,17 +128,14 @@ class sfHMMBase(GaussianHMM):
             sg0_ = self.sg0
             
         if (method in ["aic", "bic"]):
-            gmm_ = GMMs(self.data_fil, self.krange)
-            
-
-            gmm_.fit(min_interval=sg0_*1.5, min_sg=sg0_*0.8,
-                     n_init=n_init, random_state=random_state)
+            gmm_ = GMMs(self.data_fil, self.krange, min_interval=sg0_*1.5, min_sg=sg0_*0.8)
+            gmm_.fit(edges=edges)
             self.gmm = gmm_
             self.gmm_opt = self.gmm.get_optimal(method)
 
         elif (method == "Dirichlet"):
-            gmm_ = DPGMM(n_components=self.krange[1], n_init=n_init, 
-                         random_state=random_state,
+            gmm_ = DPGMM(n_components=self.krange[1], n_init=1, 
+                         random_state=0,
                          covariance_prior=sg0_**2)
             gmm_.fit(np.asarray(self.data_fil.reshape(-1,1)))
             self.gmm_opt = gmm_
