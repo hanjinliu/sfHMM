@@ -1,14 +1,14 @@
 import numpy as np
 from .moment import GaussMoment, PoissonMoment
 
-class Base(object):
+class BaseStep:
     def __init__(self, data, p):
         self.data = np.asarray(data)
         self.len = self.data.size
         self.n_step = 1
         self.step_list = [0, self.len]
 
-        if (0.0 < p < 0.5):
+        if 0.0 < p < 0.5:
             self.penalty = np.log(p/(1-p))
         else:
             self.penalty = -0.5 * np.log(self.len)
@@ -30,7 +30,7 @@ class Base(object):
         return None
 
         
-class GaussStep(Base):
+class GaussStep(BaseStep):
     def __init__(self, data, p=-1):
         super().__init__(data, p)
     
@@ -77,9 +77,9 @@ class GaussStep(Base):
                     chi2 += dchi2
                     last_updated = i + 1
 
-                elif i + 1 == last_updated or len(self.step_list) == 2:
+                elif i+1 == last_updated or len(self.step_list) == 2:
                     repeat = False
-            elif i + 1 == last_updated:
+            elif i+1 == last_updated:
                 repeat = False
             i += 1
             if i >= len(self.step_list)-1:
@@ -89,7 +89,7 @@ class GaussStep(Base):
         return self
 
 
-class PoissonStep(Base):
+class PoissonStep(BaseStep):
     def __init__(self, data, p=-1):
         super().__init__(data, p)
 

@@ -40,14 +40,14 @@ def hmm_sampling(dim=3, num_of_data=500, trs=0.05, sigma=0.5, rand=None, ans=Fal
     
     answer = model.means_[states, 0]
 
-    if (poi):
+    if poi:
         np.random.seed(rand)
         data_1 = np.random.poisson(lam=answer)
         np.random.seed()
     else:
         data_1 = data.flatten()
 
-    if (ans):
+    if ans:
         return data_1, answer
     else:
         return data_1

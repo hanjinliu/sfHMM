@@ -73,9 +73,9 @@ class sfHMM1(sfHMMBase):
         if (not 0 < self.psf < 0.5):
             self.psf = 1/(1 + np.sqrt(self.data_raw.size))
             
-        if (self.model == "Poisson"):
+        if self.model == "Poisson":
             self.step = PoissonStep(self.data_raw, self.psf)
-        elif (self.model == "Gauss"):
+        elif self.model == "Gauss":
             self.step = GaussStep(self.data_raw.astype("float64"), self.psf)
         else:
             raise ValueError
@@ -97,7 +97,7 @@ class sfHMM1(sfHMMBase):
             mu = self.step.mu_list[i]
             sg = np.sqrt(np.mean((self.data_raw[x0:x1] - mu)**2))
             self._sg_list.append(sg)
-            if (self.sg0 < sg):
+            if self.sg0 < sg:
                 self.data_fil[x0:x1] = (self.data_raw[x0:x1] - mu) * self.sg0 / sg + mu
             else:
                 self.data_fil[x0:x1] = self.data_raw[x0:x1]
@@ -126,10 +126,10 @@ class sfHMM1(sfHMMBase):
             If 'method' got an inappropriate string.
         """
         # If denoising was passed.
-        if (self.data_fil is None):
+        if self.data_fil is None:
             self.data_fil = self.data_raw
         
-        if (self.step is None):
+        if self.step is None:
             edge = np.percentile(self.data_fil, [5, 95])
         else:
             edge = np.percentile(self.step.fit, [5, 95])
@@ -139,7 +139,7 @@ class sfHMM1(sfHMMBase):
         
         # If denoising is conducted without step finding, state sequence will be inferred
         # using 'self.data_fil'.
-        if (self.step is not None):
+        if self.step is not None:
             self.states = self.gmm_opt.predict(np.asarray(self.step.fit).reshape(-1, 1))
         else:
             self.states = self.gmm_opt.predict(np.asarray(self.data_fil).reshape(-1, 1))
@@ -193,14 +193,14 @@ class sfHMM1(sfHMMBase):
                 i += 1
                 plt.subplot(n_row, n_col, (i-1)*n_col + 1)
                 kw = dict(ylim=self.ylim, color1=c_raw, color=self.__class__.colors[task], label=task)
-                if (task == "step finding"):
+                if task == "step finding":
                     plot2(self.data_raw, self.step.fit, **kw)
-                elif (task == "denoised"):
+                elif task == "denoised":
                     plot2(self.data_raw, self.data_fil, legend=False, **kw)
-                    if (showhist):
+                    if showhist:
                         plt.subplot(n_row, n_col*2, 2*(i-1)*n_col + 3)
                         self._hist()
-                elif (task == "Viterbi pass"):
+                elif task == "Viterbi pass":
                     plot2(self.data_raw, self.viterbi, **kw)
                 else:
                     raise NotImplementedError
@@ -253,8 +253,8 @@ class sfHMM1(sfHMMBase):
         """
         Initialize 'sg0' if sg0 is negative.
         """        
-        if (self.sg0 < 0):
-            if (len(self.step.step_size_list) > 0):
+        if self.sg0 < 0:
+            if len(self.step.step_size_list) > 0:
                 self.sg0 = np.percentile(np.abs(self.step.step_size_list), 25) * 0.2
             else:
                 self.sg0 = np.std(self.data_raw)
@@ -262,7 +262,7 @@ class sfHMM1(sfHMMBase):
         return None
     
     def _set_covars(self):
-        if (self.states is None):
+        if self.states is None:
             raise ValueError("Cannot initialize 'covars_' because the state sequence 'states' has" 
                              "yet been determined.")
         self.covars_ = calc_covars(self.data_raw, self.states, self.n_components)
@@ -270,14 +270,14 @@ class sfHMM1(sfHMMBase):
         return None
     
     def _set_means(self):
-        if (self.gmm_opt is None):
+        if self.gmm_opt is None:
             raise ValueError("Cannot initialize 'means_'. You must run gmmfit() before hmmfit() or" \
                              "set 'means_' manually.")
         self.means_ = self.gmm_opt.means_.copy()
         return None
     
     def _set_startprob(self):
-        if (self.gmm_opt is None):
+        if self.gmm_opt is None:
             raise ValueError("Cannot initialize 'startprob_'. You must run gmmfit() before hmmfit() or" \
                              "set 'startprob_' manually.")
         self.startprob_ = calc_startprob([self.data_raw[0]], self.gmm_opt.weights_,
@@ -285,7 +285,7 @@ class sfHMM1(sfHMMBase):
         return None
     
     def _set_transmat(self):
-        if (self.states is None):
+        if self.states is None:
             raise ValueError("Cannot initialize 'transmat_' because the state sequence 'states' has" 
                              "yet been determined.")
         self.transmat_ = calc_transmat([self.states], self.n_components)

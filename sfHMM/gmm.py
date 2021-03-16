@@ -34,9 +34,9 @@ class GMM1(mixture.GaussianMixture):
         randomized centroids.
         """
         # initialize kmeans centers
-        if (self.n_components == 1):
+        if self.n_components == 1:
             init = np.array([[np.mean(X)]])
-        elif (self.edges is not None):
+        elif self.edges is not None:
             init = np.linspace(*self.edges, self.n_components).reshape(-1, 1)
         else:
             init = np.linspace(*np.percentile(X, [5, 95]), self.n_components).reshape(-1, 1)
@@ -86,20 +86,20 @@ class GMMs:
         for gmm1 in self.results.values():
             gmm1.fit(d)
             
-            if (self._interval_check(gmm1.means_) or self._sg_check(gmm1.sigma_)):
+            if self._interval_check(gmm1.means_) or self._sg_check(gmm1.sigma_):
                 gmm1.valid = False
                 
         return None
     
     def get_optimal(self, criterion="bic", only_valid=True):
-        if (criterion == "bic"):
+        if criterion == "bic":
             cri_list = self.get_bic()
-        elif (criterion == "aic"):
+        elif criterion == "aic":
             cri_list = self.get_aic()
         else:
             raise ValueError("'criterion' must be either 'aic' or 'bic'.")
         
-        if (only_valid):
+        if only_valid:
             cri_list[~self.isvalid()] = np.inf
                     
         k_best = self.klist[np.argmin(cri_list)]
