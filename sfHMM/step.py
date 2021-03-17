@@ -1,5 +1,17 @@
 import numpy as np
 from .moment import GaussMoment, PoissonMoment
+import heapq
+
+class Heap:
+    def __init__(self):
+        self.heap = []
+    
+    def push(self, item):
+        heapq.heappush(self.heap, item)
+    
+    def pop(self):
+        return heapq.heappop(self.heap)
+    
 
 class BaseStep:
     def __init__(self, data, p):
@@ -33,58 +45,28 @@ class BaseStep:
 class GaussStep(BaseStep):
     def __init__(self, data, p=-1):
         super().__init__(data, p)
-    
+        
     def multi_step_finding(self):
-        i = 0
-        repeat = True
-        last_updated = 0
         g = GaussMoment().init(self.data, order=2)
         self.fit = np.full(self.len, g.total[0]/self.len)
-        moments = [g]
-        chi2 = g.chi2
-        dchi2, x = g.get_optimal_splitter()
-        best_step = [x]
-        best_dchi2 = [dchi2]
+        chi2 = g.chi2 # initialize total chi^2
+        heap = Heap() # chi^2 change (<0), dx, x0, moment
+        heap.push(g.get_optimal_splitter() + (0, g))
         
-        while repeat:
-            x0 = self.step_list[i]
-            x1 = self.step_list[i+1]
-            if x1 - x0 > 2:
-                if best_step[i] > 0:
-                    x = best_step[i]
-                    dx = x - x0
-                    dchi2 = best_dchi2[i]
-                else:
-                    moments[i].complement()
-                    dchi2, dx = moments[i].get_optimal_splitter()
-                    x = x0 + dx
-                    best_step[i] = x
-                    best_dchi2[i] = dchi2
-                    
-                dlogL = self.penalty - self.len/2 * np.log(1 + dchi2/chi2)
-                if dlogL > 0:
-                    # insert moments
-                    g1, g2 = moments[i].split(dx)
-                    moments[i] = g1
-                    moments.insert(i+1, g2)
-                    # insert step position
-                    self.step_list.insert(i+1, x)
-                    # initialize information
-                    best_step[i] = 0
-                    best_step.insert(i+1, 0)
-                    best_dchi2.insert(i+1, 0)
-
-                    chi2 += dchi2
-                    last_updated = i + 1
-
-                elif i+1 == last_updated or len(self.step_list) == 2:
-                    repeat = False
-            elif i+1 == last_updated:
-                repeat = False
-            i += 1
-            if i >= len(self.step_list)-1:
-                i = 0
+        while True:
+            dchi2, dx, x0, g = heap.pop()
+            dlogL = self.penalty - self.len/2 * np.log(1 + dchi2/chi2)
+            if dlogL > 0:
+                x = x0 + dx
+                g1, g2 = g.split(dx)
+                len(g1) > 2 and heap.push(g1.get_optimal_splitter() + (x0, g1))
+                len(g2) > 2 and heap.push(g2.get_optimal_splitter() + (x, g2))
+                self.step_list.append(x)
+                chi2 += dchi2
+            else:
+                break
         
+        self.step_list.sort()
         self._finalize()
         return self
 
@@ -102,7 +84,6 @@ class PoissonStep(BaseStep):
         return None
     
     def _append_steps(self, p:PoissonMoment, start:int=0):
-        p.complement()
         if len(p) < 3:
             return None
         slogm, dx = p.get_optimal_splitter()
