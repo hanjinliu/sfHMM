@@ -42,9 +42,12 @@ class Moment:
         """
         Split a Moment object into to Moment objects at position i.
         This means :i-1 will be the former, and i: will be the latter.
-        """        
-        return (self.__class__(self.fw[:,:i-1], None, self.fw[:,i-1]),
-                self.__class__(None, self.bw[:,i:], self.bw[:,i-1]))
+        """
+        m1 = self.__class__(self.fw[:,:i-1], None, self.fw[:,i-1])
+        m2 = self.__class__(None, self.bw[:,i:], self.bw[:,i-1])
+        m1.complement()
+        m2.complement()
+        return (m1, m2)
     
     def init(self, data, order=1):
         """
