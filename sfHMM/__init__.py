@@ -8,9 +8,9 @@ __all__ = ["sfHMM1", "sfHMMn", "hmm_sampling"]
 
 __doc__ = \
 r"""
-sfHMM1 algorithm.
-Trajectories can be fitted to HMM in an objective manner,
-or with user-defined parameters p and sg0.
+sfHMM algorithm.
+Trajectories are fitted to HMM in an objective manner,
+or with user-defined parameters psf and sg0.
 
 Usage
 -----

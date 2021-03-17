@@ -122,18 +122,18 @@ class sfHMMBase(GaussianHMM):
             If 'method' got an inappropriate string.
         """
         # in case S.D. of noise was very small
-        if (len(self._sg_list) > 0):
+        if len(self._sg_list) > 0:
             sg0_ = min(self.sg0, np.percentile(self._sg_list, 25))
         else:
             sg0_ = self.sg0
-            
-        if (method in ["aic", "bic"]):
+     
+        if method in ("aic", "bic"):
             gmm_ = GMMs(self.data_fil, self.krange, min_interval=sg0_*1.5, min_sg=sg0_*0.8)
             gmm_.fit(edges=edges)
             self.gmm = gmm_
             self.gmm_opt = self.gmm.get_optimal(method)
 
-        elif (method == "Dirichlet"):
+        elif method == "Dirichlet":
             gmm_ = DPGMM(n_components=self.krange[1], n_init=1, 
                          random_state=0,
                          covariance_prior=sg0_**2)
@@ -148,7 +148,7 @@ class sfHMMBase(GaussianHMM):
         return None
     
     def _set_hmm_params(self):
-        if (not hasattr(self, "n_components")):
+        if not hasattr(self, "n_components"):
             raise AttributeError("'n_components' has yet been specified.")
         
         hasattr(self, "covars_") or self._set_covars()

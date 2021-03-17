@@ -71,7 +71,7 @@ class sfHMMn(sfHMMBase):
         Step finding by extended version of Kalafut-Visscher's algorithm.
         Run independently for each sfHMM object.
         """
-        if (self.n_data <= 0):
+        if self.n_data <= 0:
             raise RuntimeError("Cannot start analysis before appending data.")
         
         StepMethod = {"Poisson": PoissonStep,
@@ -88,7 +88,7 @@ class sfHMMn(sfHMMBase):
         Denoising by cutting of the standard deviation of noise to sg0.
         Run independently for each sfHMM object.
         """
-        if (self.n_data <= 0):
+        if self.n_data <= 0:
             raise RuntimeError("Cannot start analysis before appending data.")
         
         self._init_sg0()
@@ -114,7 +114,7 @@ class sfHMMn(sfHMMBase):
         ValueError
             If 'method' got an inappropriate string.
         """
-        if (self.n_data <= 0):
+        if self.n_data <= 0:
             raise RuntimeError("Cannot start analysis before appending data.")
         
         step_fit = np.array(concat([sf.step.fit for sf in self]))
@@ -130,7 +130,7 @@ class sfHMMn(sfHMMBase):
         HMM paramter optimization by Forward-Backward algorithm, and state inference by Viterbi 
         algorithm.
         """
-        if (self.n_data <= 0):
+        if self.n_data <= 0:
             raise RuntimeError("Cannot start analysis before appending data.")
         
         self.data_raw_all = self.data_raw
@@ -205,7 +205,7 @@ class sfHMMn(sfHMMBase):
         c_other = self.colors.get(data, None)
         
         # index list that satisfies filter_func
-        if (filter_func is None):
+        if filter_func is None:
             indices = np.arange(self.n_data)
         else:
             indices = [i for (i, sf) in enumerate(self) if filter_func(sf)]
@@ -280,8 +280,10 @@ class sfHMMn(sfHMMBase):
     
     def _init_sg0(self):
         step_size_list = concat([sf.step.step_size_list for sf in self])
-        if(self.sg0 < 0):
-            if(len(step_size_list) > 0):
+        if self.sg0 < 0:
+            if self.step is None:
+                raise RuntimeError("Steps are not detected yet.")
+            elif len(step_size_list) > 0:
                 self.sg0 = np.percentile(np.abs(step_size_list), 25) * 0.2
             else:
                 self.sg0 = np.std(self.data_raw)

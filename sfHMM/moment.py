@@ -1,6 +1,10 @@
 import numpy as np
 from dataclasses import dataclass
 
+# Ideally we should prepare `n = np.arange(1, len(data))` first, and view
+# it many times in get_optimal_splitter like n[:len(self.fw)], but this
+# does not improved efficiency so much.
+
 @dataclass
 class Moment:
     """
@@ -10,7 +14,6 @@ class Moment:
      : :      : :
      n ****** * n
 
-    
     """    
     fw: np.ndarray = None
     bw: np.ndarray = None
@@ -23,6 +26,10 @@ class Moment:
         return self.fw.shape[1] + 1
 
     def complement(self):
+        """
+        Complement moments values.
+        Calculate fw from bw, or vice versa.
+        """        
         if self.fw is None:
             self.fw = self.total.reshape(-1,1) - self.bw
         elif self.bw is None:
@@ -40,6 +47,18 @@ class Moment:
                 self.__class__(None, self.bw[:,i:], self.bw[:,i-1]))
     
     def init(self, data, order=1):
+        """
+        Initialization using total data.
+
+        Parameters
+        ----------
+        data : array
+            The input data.
+        order : int, optional
+            Up to what order of moment should be calculated, by default 1
+        """
+        self.__class__.fwn = np.arange(1, len(data))
+        self.__class__.bwn = np.arange(len(data)-1, 0, -1)
         orders = np.arange(1, order+1)
         self.fw = np.vstack([np.cumsum(data[:-1]**o) for o in orders])
         self.total = np.array(self.fw[:,-1] + data[-1]**orders)
@@ -56,8 +75,9 @@ class GaussMoment(Moment):
         return self.total[1] - self.total[0]**2/len(self)
     
     def get_optimal_splitter(self):
-        chi2_fw = self.fw[1] - self.fw[0]**2 / np.arange(1, len(self))
-        chi2_bw = self.bw[1] - self.bw[0]**2 / np.arange(len(self)-1, 0, -1)
+        n = np.arange(1, len(self))
+        chi2_fw = self.fw[1] - self.fw[0]**2 / n
+        chi2_bw = self.bw[1] - self.bw[0]**2 / n[::-1]
         chi2 = chi2_fw + chi2_bw
         x = np.argmin(chi2)
         return chi2[x] - self.chi2, x + 1
@@ -70,8 +90,9 @@ class PoissonMoment(Moment):
         return self.total[0] * np.log(self.total[0] / len(self))
     
     def get_optimal_splitter(self):
-        slogm_fw = self.fw[0] * np.log((self.fw[0]+1e-12) / np.arange(1, len(self)))
-        slogm_bw = self.bw[0] * np.log((self.bw[0]+1e-12) / np.arange(len(self)-1, 0, -1))
+        n = np.arange(1, len(self))
+        slogm_fw = self.fw[0] * np.log((self.fw[0]+1e-12) / n)
+        slogm_bw = self.bw[0] * np.log((self.bw[0]+1e-12) / n[::-1])
         slogm = slogm_fw + slogm_bw
         x = np.argmax(slogm)
         return slogm[x] - self.slogm, x + 1
