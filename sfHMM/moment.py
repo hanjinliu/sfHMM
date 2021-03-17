@@ -1,6 +1,9 @@
 import numpy as np
 from dataclasses import dataclass
-from typing import ClassVar
+
+# Ideally we should prepare `n = np.arange(1, len(data))` first, and view
+# it many times in get_optimal_splitter like n[:len(self.fw)], but this
+# does not improved efficiency so much.
 
 @dataclass
 class Moment:
@@ -11,13 +14,10 @@ class Moment:
      : :      : :
      n ****** * n
 
-    
     """    
     fw: np.ndarray = None
     bw: np.ndarray = None
     total: float = None
-    fwn: ClassVar[np.ndarray]
-    bwn: ClassVar[np.ndarray]
     
     def __len__(self):
         """
@@ -75,8 +75,9 @@ class GaussMoment(Moment):
         return self.total[1] - self.total[0]**2/len(self)
     
     def get_optimal_splitter(self):
-        chi2_fw = self.fw[1] - self.fw[0]**2 / self.__class__.fwn[:len(self)-1]
-        chi2_bw = self.bw[1] - self.bw[0]**2 / self.__class__.bwn[-len(self)+1:]
+        n = np.arange(1, len(self))
+        chi2_fw = self.fw[1] - self.fw[0]**2 / n
+        chi2_bw = self.bw[1] - self.bw[0]**2 / n[::-1]
         chi2 = chi2_fw + chi2_bw
         x = np.argmin(chi2)
         return chi2[x] - self.chi2, x + 1
@@ -89,8 +90,9 @@ class PoissonMoment(Moment):
         return self.total[0] * np.log(self.total[0] / len(self))
     
     def get_optimal_splitter(self):
-        slogm_fw = self.fw[0] * np.log((self.fw[0]+1e-12) / self.__class__.fwn[:len(self)-1])
-        slogm_bw = self.bw[0] * np.log((self.bw[0]+1e-12) / self.__class__.bwn[-len(self)+1:])
+        n = np.arange(1, len(self))
+        slogm_fw = self.fw[0] * np.log((self.fw[0]+1e-12) / n)
+        slogm_bw = self.bw[0] * np.log((self.bw[0]+1e-12) / n[::-1])
         slogm = slogm_fw + slogm_bw
         x = np.argmax(slogm)
         return slogm[x] - self.slogm, x + 1
