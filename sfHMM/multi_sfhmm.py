@@ -143,7 +143,7 @@ class sfHMMn(sfHMMBase):
         self.fit(_data_reshaped, lengths=_lengths)
         
         for sf in self:
-            sf.covars_ = self.covars_.flatten()
+            sf.covars_ = self.covars_.ravel()
             sf.min_covar = self.min_covar
             sf.means_ = self.means_
             sf.startprob_ = self.startprob_
