@@ -100,7 +100,7 @@ class sfHMMn(sfHMMBase):
         return self
     
     
-    def gmmfit(self, method="bic", n_init=1, random_seed=0):
+    def gmmfit(self, method="bic", n_init=1, random_state=0):
         """
         Fit the denoised data to Gaussian mixture model.
         
@@ -117,7 +117,7 @@ class sfHMMn(sfHMMBase):
         if self.n_data <= 0:
             raise RuntimeError("Cannot start analysis before appending data.")
         
-        self._gmmfit(method, n_init, random_seed)
+        self._gmmfit(method, n_init, random_state)
         
         for sf in self:
             sf.states = self.gmm_opt.predict(np.asarray(sf.step.fit).reshape(-1, 1))

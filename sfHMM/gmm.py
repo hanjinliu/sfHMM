@@ -53,10 +53,10 @@ class GMMs:
             line3 += f" {int(bic+0.5):>7} |"
         return "\n".join([out, line1, line2, line3])
     
-    def fit(self, n_init=1, random_seed=0):
+    def fit(self, n_init=1, random_state=0):
         d = np.asarray(self.data).reshape(-1, 1)
             
-        self.results = {k: GMM1(k, n_init=n_init, random_seed=random_seed) 
+        self.results = {k: GMM1(k, n_init=n_init, random_state=random_state) 
                         for k in self.klist}
         
         for gmm1 in self.results.values():

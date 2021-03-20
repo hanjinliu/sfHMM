@@ -107,7 +107,7 @@ class sfHMMBase(GaussianHMM):
         
         return None
     
-    def _gmmfit(self, method, n_init, random_seed):
+    def _gmmfit(self, method, n_init, random_state):
         """
         Fit the denoised data to Gaussian mixture model.
         
@@ -129,7 +129,7 @@ class sfHMMBase(GaussianHMM):
      
         if method in ("aic", "bic"):
             gmm_ = GMMs(self.data_fil, self.krange, min_interval=sg0_*1.5, min_sg=sg0_*0.8)
-            gmm_.fit(n_init=n_init, random_seed=random_seed)
+            gmm_.fit(n_init=n_init, random_state=random_state)
             self.gmm = gmm_
             self.gmm_opt = self.gmm.get_optimal(method)
 
