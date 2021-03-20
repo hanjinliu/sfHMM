@@ -1,17 +1,16 @@
 import numpy as np
-from sklearn import mixture, cluster
+from sklearn import mixture
 
 class GMM1(mixture.GaussianMixture):
     """
     GaussianMixture with sorted parameters. Also, parameter initialization is
     deterministic because initial centroids are set at regular intervals.
     """    
-    def __init__(self, n_components, edges=None, **kwargs):
+    def __init__(self, n_components, **kwargs):
         super().__init__(n_components=n_components,
                          covariance_type="spherical",
                          **kwargs)
         self.valid = False
-        self.edges = edges
     
     def fit(self, data):
         super().fit(data)
@@ -27,30 +26,6 @@ class GMM1(mixture.GaussianMixture):
         self.sigma_ = np.sqrt(self.covariances_.flat)
         
         return self
-    
-    def _initialize_parameters(self, X, random_state):
-        """
-        Overload this function because parameters should not be initialized with
-        randomized centroids.
-        """
-        # initialize kmeans centers
-        if self.n_components == 1:
-            init = np.array([[np.mean(X)]])
-        elif self.edges is not None:
-            init = np.linspace(*self.edges, self.n_components).reshape(-1, 1)
-        else:
-            init = np.linspace(*np.percentile(X, [5, 95]), self.n_components).reshape(-1, 1)
-        
-        n_samples, _ = X.shape
-
-        resp = np.zeros((n_samples, self.n_components))
-        label = cluster.KMeans(n_clusters=self.n_components, n_init=1,
-                               init=init).fit(X).labels_
-        
-        resp[np.arange(n_samples), label] = 1
-        self._initialize(X, resp)
-        return None
-
 
 class GMMs:
     """
@@ -78,10 +53,11 @@ class GMMs:
             line3 += f" {int(bic+0.5):>7} |"
         return "\n".join([out, line1, line2, line3])
     
-    def fit(self, edges):
+    def fit(self, n_init=1, random_seed=0):
         d = np.asarray(self.data).reshape(-1, 1)
             
-        self.results = {k: GMM1(k, edges=edges) for k in self.klist}
+        self.results = {k: GMM1(k, n_init=n_init, random_seed=random_seed) 
+                        for k in self.klist}
         
         for gmm1 in self.results.values():
             gmm1.fit(d)
