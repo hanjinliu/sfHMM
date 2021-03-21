@@ -142,6 +142,15 @@ plt.hist(msf.n_list) # show the histogram of data lengths.
 msf.plot_traces(filter_func=fil)
 ```
 
+## Application to Motor Stepping
+
+```python
+from sfHMM import sfHMM1Motor
+sf = sfHMM1motor(data).run_all()
+```
+
+- `transmat_kernel` ... Independent paramters in the transition probability matrix. This is passed to `transmat_` getter method every time to construct transition probability matrix. For example, when `transmat_kernel = [0.01, 0.97, 0.02]` then the generated `transmat_` will be
+
 # Citation
 If you found sfHMM useful, please consider citing our paper.
  ...

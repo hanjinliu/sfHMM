@@ -148,11 +148,7 @@ class sfHMMn(sfHMMBase):
         self.fit(_data_reshaped, lengths=_lengths)
         
         for sf in self:
-            sf.covars_ = self.covars_.ravel()
-            sf.min_covar = self.min_covar
-            sf.means_ = self.means_
-            sf.startprob_ = self.startprob_
-            sf.transmat_ = self.transmat_
+            self._copy_params(sf)
             sf.states = sf.predict(np.asarray(sf.data_raw).reshape(-1, 1))
             sf.viterbi = sf.means_[sf.states, 0]
         del self.data_raw_all, self.states_list
@@ -297,8 +293,15 @@ class sfHMMn(sfHMMBase):
                 self.sg0 = np.std(self.data_raw)
         
         return None
-
     
+    def _copy_params(self, sf):
+        sf.covars_ = self.covars_.ravel()
+        sf.min_covar = self.min_covar
+        sf.means_ = self.means_
+        sf.startprob_ = self.startprob_
+        sf.transmat_ = self.transmat_
+        return None
+        
     @property
     def data_raw(self):
         return np.array(concat([sf.data_raw for sf in self]))

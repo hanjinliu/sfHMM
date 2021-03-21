@@ -147,6 +147,9 @@ class sfHMMBase(GaussianHMM):
 
 
 def normalize(A, axis=None, mask=None):
+    """
+    See: https://github.com/matthiasplappert/hmmlearn/tree/topology-fix
+    """
     A += np.finfo(float).eps
     if mask is None:
         inverted_mask = None

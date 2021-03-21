@@ -5,27 +5,6 @@ from .multi_sfhmm import sfHMMn
 from .base import sfHMMmotorBase
 from .func import *
 
-def normalize(A, axis=None, mask=None):
-    A += np.finfo(float).eps
-    if mask is None:
-        inverted_mask = None
-    else:
-        inverted_mask = np.invert(mask)
-        A[inverted_mask] = 0.0
-    Asum = A.sum(axis)
-
-    if axis and A.ndim > 1:
-        # Make sure we don't divide by zero.
-        Asum[Asum == 0] = 1
-        shape = list(A.shape)
-        shape[axis] = 1
-        Asum.shape = shape
-
-    A /= Asum
-    
-    if inverted_mask is not None:
-        A[inverted_mask] = np.finfo(float).eps
-    return None
 
 class sfHMM1Motor(sfHMM1, sfHMMmotorBase):
     def __init__(self, data_raw, sg0:float=-1, psf:float=-1, krange=[1, 6],
@@ -38,7 +17,7 @@ class sfHMM1Motor(sfHMM1, sfHMMmotorBase):
         if estimate_krange:
             cumsum_ = np.cumsum(np.where(self.step.step_size_list > 0, 1, -1)).tolist() + [0]
             k = np.max(cumsum_) - np.min(cumsum_)
-            self.krange = [int(k*0.8), int(k*1.2)]
+            self.krange = [int(k*0.8), int(k*1.2)+1]
         return super().gmmfit(method, n_init, random_state)
     
     def _set_covars(self):
@@ -54,9 +33,8 @@ class sfHMM1Motor(sfHMM1, sfHMMmotorBase):
             raise RuntimeError("Cannot initialize 'transmat_' because the state sequence 'states' has" 
                                "yet been determined.")
         transmat_kernel = np.zeros(self.max_step_size*2 + 1)
-
         dy = np.diff(self.states)
-        dy = np.clip(dy, -self.max_step_size, self.max_step_size)
+        dy = dy[np.abs(dy)<=self.max_step_size]
         dy_unique, counts = np.unique(dy,return_counts=True)
         transmat_kernel[dy_unique + self.max_step_size] = counts
         self.transmat_kernel = transmat_kernel/np.sum(transmat_kernel)
@@ -66,8 +44,11 @@ class sfHMM1Motor(sfHMM1, sfHMMmotorBase):
     def tdp(self, **kwargs):
         dy = np.diff(self.viterbi)
         dy = dy[dy!=0]
+        kw = dict(bins=int((self.max_step_size*2+1)*5),
+                  color=self.__class__.colors["Viterbi pass"])
+        kw.update(kwargs)
         with plt.style.context(self.__class__.styles):
-            plt.hist(dy, **kwargs)
+            plt.hist(dy, **kw)
             plt.xlabel("step size")
             plt.show()
         return None
@@ -82,7 +63,7 @@ class sfHMMnMotor(sfHMMn, sfHMMmotorBase):
     
     def append(self, data):
         sf = sfHMM1Motor(data, sg0=self.sg0, psf=self.psf, krange=self.krange,
-                    model=self.model, name=self.name+f"[{self.n_data}]")
+                    model=self.model, name=self.name+f"[{self.n_data}]", max_step_size=self.max_step_size)
         self.n_data += 1
         self._sf_list.append(sf)
         self.ylim[0] = min(sf.ylim[0], self.ylim[0])
@@ -93,37 +74,9 @@ class sfHMMnMotor(sfHMMn, sfHMMmotorBase):
         if estimate_krange:
             cumsum_ = concat([np.cumsum(np.where(sf.step.step_size_list > 0, 1, -1)) for sf in self]) + [0]
             k = np.max(cumsum_) - np.min(cumsum_)
-            self.krange = [int(k*0.8), int(k*1.2)]
+            self.krange = [int(k*0.8), int(k*1.2)+1]
         return super().gmmfit(method, n_init, random_state)
-    
-    def hmmfit(self):
-        """
-        HMM paramter optimization by Forward-Backward algorithm, and state inference by Viterbi 
-        algorithm.
-        """
-        if self.n_data <= 0:
-            raise RuntimeError("Cannot start analysis before appending data.")
         
-        self.data_raw_all = self.data_raw
-        self.states_list = [sf.states for sf in self]
-        
-        self._set_hmm_params()
-        
-        _data_reshaped = np.asarray(self.data_raw_all).reshape(-1, 1)
-        _lengths = [sf.data_raw.size for sf in self]
-        self.fit(_data_reshaped, lengths=_lengths)
-        
-        for sf in self:
-            sf.covars_ = [[self.covars_[0, 0, 0]]]
-            sf.min_covar = self.min_covar
-            sf.means_ = self.means_
-            sf.startprob_ = self.startprob_
-            sf.transmat_kernel = self.transmat_kernel
-            sf.states = sf.predict(np.asarray(sf.data_raw).reshape(-1, 1))
-            sf.viterbi = sf.means_[sf.states, 0]
-        del self.data_raw_all, self.states_list
-        return self
-    
     def _set_covars(self):
         step_fit = np.array(concat([sf.step.fit for sf in self]))
         self.covars_ = [[np.var(self.data_raw - step_fit)]]
@@ -132,9 +85,9 @@ class sfHMMnMotor(sfHMMn, sfHMMmotorBase):
     
     def _set_transmat(self):
         transmat_kernel = np.zeros(self.max_step_size*2 + 1)
-        dy = concat([np.diff(sf.states) for sf in self])
-        dy = np.clip(dy, -self.max_step_size, self.max_step_size)
-        dy_unique, counts = np.unique(dy,return_counts=True)
+        dy = np.array(concat([np.diff(sf.states) for sf in self]))
+        dy = dy[np.abs(dy) <= self.max_step_size]
+        dy_unique, counts = np.unique(dy, return_counts=True)
         transmat_kernel[dy_unique + self.max_step_size] = counts
         self.transmat_kernel = transmat_kernel/np.sum(transmat_kernel)
         
@@ -143,8 +96,19 @@ class sfHMMnMotor(sfHMMn, sfHMMmotorBase):
     def tdp(self, **kwargs):
         dy = np.array(concat([np.diff(sf.viterbi) for sf in self]))
         dy = dy[dy!=0]
+        kw = dict(bins=int((self.max_step_size*2+1)*5),
+                  color=self.__class__.colors["Viterbi pass"])
+        kw.update(kwargs)
         with plt.style.context(self.__class__.styles):
-            plt.hist(dy, **kwargs)
+            plt.hist(dy, **kw)
             plt.xlabel("step size")
             plt.show()
+        return None
+    
+    def _copy_params(self, sf):
+        sf.covars_ = [[self.covars_[0,0,0]]]
+        sf.min_covar = self.min_covar
+        sf.means_ = self.means_
+        sf.startprob_ = self.startprob_
+        sf.transmat_kernel = self.transmat_kernel
         return None
