@@ -53,7 +53,7 @@ class sfHMM1motor(sfHMM1, sfHMMmotorBase):
         if self.states is None:
             raise RuntimeError("Cannot initialize 'transmat_' because the state sequence 'states' has" 
                                "yet been determined.")
-        transmat_kernel = np.zeros(self.max_step_size*2+1)
+        transmat_kernel = np.zeros(self.max_step_size*2 + 1)
 
         dy = np.diff(self.states)
         dy = np.clip(dy, -self.max_step_size, self.max_step_size)
@@ -90,14 +90,58 @@ class sfHMMnmotor(sfHMMn, sfHMMmotorBase):
     
     def gmmfit(self, method="bic", n_init=1, random_state=0, estimate_krange=True):
         if estimate_krange:
-            step_size_list = concat([sf.step.step_size_list for sf in self])
+            step_size_list = np.array(concat([sf.step.step_size_list for sf in self]))
             n_forward_step = np.sum(step_size_list > 0)
             k = 2 * n_forward_step - len(step_size_list) + 1 # predicted number of new steps.
             self.krange = [int(k*0.9), int(k*1.1)]
         return super().gmmfit(method, n_init, random_state)
     
+    def hmmfit(self):
+        """
+        HMM paramter optimization by Forward-Backward algorithm, and state inference by Viterbi 
+        algorithm.
+        """
+        if self.n_data <= 0:
+            raise RuntimeError("Cannot start analysis before appending data.")
+        
+        self.data_raw_all = self.data_raw
+        self.states_list = [sf.states for sf in self]
+        
+        self._set_hmm_params()
+        
+        _data_reshaped = np.asarray(self.data_raw_all).reshape(-1, 1)
+        _lengths = [sf.data_raw.size for sf in self]
+        self.fit(_data_reshaped, lengths=_lengths)
+        
+        for sf in self:
+            sf.covars_ = [[self.covars_[0, 0, 0]]]
+            sf.min_covar = self.min_covar
+            sf.means_ = self.means_
+            sf.startprob_ = self.startprob_
+            sf.transmat_kernel = self.transmat_kernel
+            sf.states = sf.predict(np.asarray(sf.data_raw).reshape(-1, 1))
+            sf.viterbi = sf.means_[sf.states, 0]
+        del self.data_raw_all, self.states_list
+        return self
+    
+    def _set_covars(self):
+        step_fit = np.array(concat([sf.step.fit for sf in self]))
+        self.covars_ = [[np.var(self.data_raw - step_fit)]]
+        self.min_covar = np.min(self.covars_) * 0.015
+        return None
+    
+    def _set_transmat(self):
+        transmat_kernel = np.zeros(self.max_step_size*2 + 1)
+        dy = concat([np.diff(sf.states) for sf in self])
+        dy = np.clip(dy, -self.max_step_size, self.max_step_size)
+        dy_unique, counts = np.unique(dy,return_counts=True)
+        transmat_kernel[dy_unique + self.max_step_size] = counts
+        self.transmat_kernel = transmat_kernel/np.sum(transmat_kernel)
+        
+        return None
+    
     def tdp(self, **kwargs):
-        dy = [np.diff(sf.viterbi) for sf in self]
+        dy = concat([np.diff(sf.viterbi) for sf in self])
         dy = dy[dy!=0]
         with plt.style.context(self.__class__.styles):
             plt.hist(dy, **kwargs)
