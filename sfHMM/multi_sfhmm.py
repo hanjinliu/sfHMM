@@ -247,12 +247,12 @@ class sfHMMn(sfHMMBase):
     def tdp(self, **kwargs):
         """
         Pseudo transition density plot.
-        **kwargs: See plt.imshow().
         """
-        plt.figure()
-        means = self.means_.flatten()
-        axlim = (np.min(means) - 3 * self.sg0,
-                 np.max(means) + 3 * self.sg0)
+        means = self.means_.ravel()
+        cov = self.covars_.ravel()
+        
+        axlim = (np.min(means) - np.sqrt(cov.max()),
+                 np.max(means) + np.sqrt(cov.max()))
         axes = np.linspace(*axlim, 200)
                     
         x, y = np.meshgrid(axes, axes)
@@ -263,23 +263,26 @@ class sfHMMn(sfHMMBase):
                 mx = sf.viterbi[i]
                 my = sf.viterbi[i + 1]
                 if (mx != my):
-                    z += np.exp(-((x - mx)** 2 + (y - my)** 2) / (2 * self.sg0 ** 2))
+                    z += np.exp(-((x - mx)** 2 + (y - my)** 2) / (2 * cov[sf.states[i]]))
         
-        z /= 2 * np.pi * self.sg0 ** 2
+        
+        z /= np.max(z)
         
         kw = {"vmin":0, "cmap":"jet", "origin":"lower"}
         kw.update(kwargs)
         
-        plt.title("Transition Density Plot")
-        plt.imshow(z.T, **kw)
-        plt.colorbar()
-        pos = ((means - axlim[0]) / (axlim[1] - axlim[0]) * 200).astype("int16")
-        digit_0 = int(np.median(np.floor(np.log10(np.abs(means)))))
-        plt.xticks(pos, np.round(means, -digit_0 + 1))
-        plt.yticks(pos, np.round(means, -digit_0 + 1))
-        plt.xlabel("Before")
-        plt.ylabel("After")
-        plt.show()
+        with plt.style.context(self.__class__.styles):
+            plt.figure()
+            plt.title("Transition Density Plot")
+            plt.imshow(z.T, **kw)
+            plt.colorbar()
+            pos = ((means - axlim[0]) / (axlim[1] - axlim[0]) * 200).astype("int16")
+            digit_0 = int(np.median(np.floor(np.log10(np.abs(means)))))
+            plt.xticks(pos, np.round(means, -digit_0 + 1))
+            plt.yticks(pos, np.round(means, -digit_0 + 1))
+            plt.xlabel("Before")
+            plt.ylabel("After")
+            plt.show()
         return None
     
     def _init_sg0(self):

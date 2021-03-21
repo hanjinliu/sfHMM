@@ -90,7 +90,7 @@ class GaussMoment(Moment):
 class PoissonMoment(Moment):    
     @property
     def slogm(self):
-        return self.total[0] * np.log(self.total[0] / len(self))
+        return self.total[0] * np.log((self.total[0]+1e-12) / len(self))
     
     def get_optimal_splitter(self):
         n = np.arange(1, len(self))
