@@ -36,9 +36,9 @@ class sfHMM1motor(sfHMM1, sfHMMmotorBase):
         
     def gmmfit(self, method="bic", n_init=1, random_state=0, estimate_krange=True):
         if estimate_krange:
-            n_forward_step = np.sum(self.step.step_size_list > 0)
-            k = 2 * n_forward_step - len(self.step.step_size_list) + 1 # predicted number of new steps.
-            self.krange = [int(k*0.9), int(k*1.1)]
+            cumsum_ = np.cumsum(np.where(self.step.step_size_list > 0, 1, -1)).tolist() + [0]
+            k = np.max(cumsum_) - np.min(cumsum_)
+            self.krange = [int(k*0.8), int(k*1.2)]
         return super().gmmfit(method, n_init, random_state)
     
     def _set_covars(self):
@@ -90,10 +90,9 @@ class sfHMMnmotor(sfHMMn, sfHMMmotorBase):
     
     def gmmfit(self, method="bic", n_init=1, random_state=0, estimate_krange=True):
         if estimate_krange:
-            step_size_list = np.array(concat([sf.step.step_size_list for sf in self]))
-            n_forward_step = np.sum(step_size_list > 0)
-            k = 2 * n_forward_step - len(step_size_list) + 1 # predicted number of new steps.
-            self.krange = [int(k*0.9), int(k*1.1)]
+            cumsum_ = concat([np.cumsum(np.where(sf.step.step_size_list > 0, 1, -1)) for sf in self]) + [0]
+            k = np.max(cumsum_) - np.min(cumsum_)
+            self.krange = [int(k*0.8), int(k*1.2)]
         return super().gmmfit(method, n_init, random_state)
     
     def hmmfit(self):
@@ -141,7 +140,7 @@ class sfHMMnmotor(sfHMMn, sfHMMmotorBase):
         return None
     
     def tdp(self, **kwargs):
-        dy = concat([np.diff(sf.viterbi) for sf in self])
+        dy = np.array(concat([np.diff(sf.viterbi) for sf in self]))
         dy = dy[dy!=0]
         with plt.style.context(self.__class__.styles):
             plt.hist(dy, **kwargs)
