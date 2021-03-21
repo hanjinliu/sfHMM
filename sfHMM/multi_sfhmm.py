@@ -1,7 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from .func import *
-from .single_sfhmm import sfHMM1, GaussStep, PoissonStep
+from .single_sfhmm import sfHMM1
+from .step import GaussStep, PoissonStep
 from .base import sfHMMBase
 
 class sfHMMn(sfHMMBase):
