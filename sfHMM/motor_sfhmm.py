@@ -27,14 +27,14 @@ def normalize(A, axis=None, mask=None):
         A[inverted_mask] = np.finfo(float).eps
     return None
 
-class sfHMM1motor(sfHMM1, sfHMMmotorBase):
+class sfHMM1Motor(sfHMM1, sfHMMmotorBase):
     def __init__(self, data_raw, sg0:float=-1, psf:float=-1, krange=[1, 6],
                  model:str="g", name:str="", max_step_size:int=2):
         super().__init__(data_raw, sg0, psf, krange, model, name)
         self.max_step_size = max_step_size
         self.covariance_type = "tied"
         
-    def gmmfit(self, method="bic", n_init=1, random_state=0, estimate_krange=True):
+    def gmmfit(self, method="bic", n_init=2, random_state=0, estimate_krange=True):
         if estimate_krange:
             cumsum_ = np.cumsum(np.where(self.step.step_size_list > 0, 1, -1)).tolist() + [0]
             k = np.max(cumsum_) - np.min(cumsum_)
@@ -72,7 +72,8 @@ class sfHMM1motor(sfHMM1, sfHMMmotorBase):
             plt.show()
         return None
     
-class sfHMMnmotor(sfHMMn, sfHMMmotorBase):
+    
+class sfHMMnMotor(sfHMMn, sfHMMmotorBase):
     def __init__(self, sg0:float=-1, psf:float=-1, krange=[1, 6], 
                  model:str="g", name:str="", max_step_size:int=2):
         super().__init__(sg0, psf, krange, model, name)
@@ -80,7 +81,7 @@ class sfHMMnmotor(sfHMMn, sfHMMmotorBase):
         self.covariance_type = "tied"
     
     def append(self, data):
-        sf = sfHMM1motor(data, sg0=self.sg0, psf=self.psf, krange=self.krange,
+        sf = sfHMM1Motor(data, sg0=self.sg0, psf=self.psf, krange=self.krange,
                     model=self.model, name=self.name+f"[{self.n_data}]")
         self.n_data += 1
         self._sf_list.append(sf)
@@ -88,7 +89,7 @@ class sfHMMnmotor(sfHMMn, sfHMMmotorBase):
         self.ylim[1] = max(sf.ylim[1], self.ylim[1])
         return self
     
-    def gmmfit(self, method="bic", n_init=1, random_state=0, estimate_krange=True):
+    def gmmfit(self, method="bic", n_init=2, random_state=0, estimate_krange=True):
         if estimate_krange:
             cumsum_ = concat([np.cumsum(np.where(sf.step.step_size_list > 0, 1, -1)) for sf in self]) + [0]
             k = np.max(cumsum_) - np.min(cumsum_)

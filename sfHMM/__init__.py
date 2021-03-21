@@ -2,11 +2,11 @@ __version__ = "0.3.0"
 
 from .single_sfhmm import sfHMM1
 from .multi_sfhmm import sfHMMn
-from .motor_sfhmm import sfHMM1motor, sfHMMnmotor
+from .motor_sfhmm import sfHMM1Motor, sfHMMnMotor
 
 from .sampling import hmm_sampling
 
-__all__ = ["sfHMM1", "sfHMMn", "sfHMM1motor", "sfHMMnmotor", "hmm_sampling"]
+__all__ = ["sfHMM1", "sfHMMn", "sfHMM1Motor", "sfHMMnMotor", "hmm_sampling"]
 
 __doc__ = \
 r"""
