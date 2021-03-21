@@ -42,7 +42,7 @@ msf.run_all()
 
 # Details of Attributes and Methods
 
-`sfHMM1` class and `sfHMMn` class have a similar structure (both inherit `sfHMMBase`) so that they have many attributes and methods in common. Also `sfHMMBase` inherits `GaussianHMM` so that prediction, scoring methods in `hmmlearn` are all supported.
+`sfHMM1` class and `sfHMMn` class have a similar structure (both inherit `sfHMMBase`) so that they have many attributes and methods in common. Also, `sfHMMBase` inherits `GaussianHMM` in [hmmlearn](https://github.com/hmmlearn/hmmlearn) so that prediction, scoring methods of `GaussianHMM` are all supported.
 
 ## Parameters
 
@@ -55,7 +55,7 @@ All the parameters are optional.
 
 ## Attributes and Methods
 
-Analysis based on sfHMM is composed of four steps.
+sfHMM is composed of four steps.
 
 1. `step_finding()` ... Step finding by likelihood maximization.
 2. `denoising()` ... The standard deviation of noise is cut off to `sg0`.
@@ -84,7 +84,7 @@ Attributes are sequencially added to the object.
 
   - `gmm_opt` ... The optimal Gaussian mixture model in the form of `GMM1` object. `GMM1` inherits `sklearn.mixture.GaussianMixture`. The only Difference is that all the parameters are sorted after fitting.
 
-  - `gmm` ... `GMMn` object defined in `gmm` module. This object contains `GMM1` objects with different number of states. You can get `n`-state model by indexing like `gmm[n]`.
+  - `gmm` ... `GMMn` object defined in `gmm` module. This object contains `GMM1` objects with different number of states. You can get $n$-state model by indexing like `gmm[n]`.
   - `n_components` ... The number of states.
   - `states` ... State sequence, predicted only with the results in 1-3.
 
@@ -148,4 +148,3 @@ If you found sfHMM useful, please consider citing our paper.
 
 # References
 - Kalafut & Visscher
-- hmmlearn

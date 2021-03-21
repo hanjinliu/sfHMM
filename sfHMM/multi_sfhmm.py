@@ -100,14 +100,19 @@ class sfHMMn(sfHMMBase):
         return self
     
     
-    def gmmfit(self, method="bic"):
+    def gmmfit(self, method="bic", n_init=1, random_state=0):
         """
         Fit the denoised data to Gaussian mixture model.
         
         Paramters
         ---------
-        method: str, 'aic', 'bic' or 'Dirichlet'(not recommended)
-            How to determine the number of states.
+        method : str, optional
+            How to determine the optimal number of states. This parameter must be
+            'aic', 'bic' or 'Dirichlet'. By default "bic".
+        n_init : int, optional
+            How many times initialization will be performed in K-means, by default 1.
+        random_state : int , optional
+            Random seed for K-means initialization., by default 0.
         
         Raises
         ------
@@ -117,8 +122,7 @@ class sfHMMn(sfHMMBase):
         if self.n_data <= 0:
             raise RuntimeError("Cannot start analysis before appending data.")
         
-        step_fit = np.array(concat([sf.step.fit for sf in self]))
-        self._gmmfit(method, np.percentile(step_fit, [5, 95]))
+        self._gmmfit(method, n_init, random_state)
         
         for sf in self:
             sf.states = self.gmm_opt.predict(np.asarray(sf.step.fit).reshape(-1, 1))
@@ -143,7 +147,7 @@ class sfHMMn(sfHMMBase):
         self.fit(_data_reshaped, lengths=_lengths)
         
         for sf in self:
-            sf.covars_ = self.covars_.flatten()
+            sf.covars_ = self.covars_.ravel()
             sf.min_covar = self.min_covar
             sf.means_ = self.means_
             sf.startprob_ = self.startprob_
@@ -281,7 +285,7 @@ class sfHMMn(sfHMMBase):
     def _init_sg0(self):
         step_size_list = concat([sf.step.step_size_list for sf in self])
         if self.sg0 < 0:
-            if self.step is None:
+            if self[0].step is None:
                 raise RuntimeError("Steps are not detected yet.")
             elif len(step_size_list) > 0:
                 self.sg0 = np.percentile(np.abs(step_size_list), 25) * 0.2

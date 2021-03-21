@@ -55,7 +55,7 @@ class sfHMM1(sfHMMBase):
     def __init__(self, data_raw, sg0:float=-1, psf:float=-1, krange=[1, 6],
                  model:str="g", name:str=""):
 
-        self.data_raw = np.asarray(data_raw).flatten()
+        self.data_raw = np.asarray(data_raw).ravel()
         self.step = None
         self.data_fil = None
         self.gmm_opt = None
@@ -70,18 +70,15 @@ class sfHMM1(sfHMMBase):
         """
         Step finding by extended version of Kalafut-Visscher's algorithm.
         """
-        if (not 0 < self.psf < 0.5):
-            self.psf = 1/(1 + np.sqrt(self.data_raw.size))
-            
-        if self.model == "Poisson":
-            self.step = PoissonStep(self.data_raw, self.psf)
-        elif self.model == "Gauss":
+        if self.model == "Gauss":
             self.step = GaussStep(self.data_raw.astype("float64"), self.psf)
+        elif self.model == "Poisson":
+            self.step = PoissonStep(self.data_raw, self.psf)
         else:
             raise ValueError
         
         self.step.multi_step_finding()
-        
+        self.psf = self.step.p
         return self
     
     def denoising(self):
@@ -105,18 +102,18 @@ class sfHMM1(sfHMMBase):
         return self
     
     
-    def gmmfit(self, method="bic"):
+    def gmmfit(self, method="bic", n_init=1, random_state=0):
         """
         Fit the denoised data to Gaussian mixture model, and the optimal number of states
         will be determined. After that, state sequence 'states' will be initialized.
 
         Parameters
         ----------
-        n_init : int, optional
-            How many times initialization will be performed in K-means, by default 1.
         method : str, optional
             How to determine the optimal number of states. This parameter must be
-            'aic', 'bic' or 'Dirichlet'. by default "bic".
+            'aic', 'bic' or 'Dirichlet'. By default "bic".
+        n_init : int, optional
+            How many times initialization will be performed in K-means, by default 1.
         random_state : int , optional
             Random seed for K-means initialization., by default 0.
 
@@ -129,13 +126,8 @@ class sfHMM1(sfHMMBase):
         if self.data_fil is None:
             self.data_fil = self.data_raw
         
-        if self.step is None:
-            edge = np.percentile(self.data_fil, [5, 95])
-        else:
-            edge = np.percentile(self.step.fit, [5, 95])
-
         # Start GMM clustering and determine optimal number of states.
-        self._gmmfit(method, edge)
+        self._gmmfit(method, n_init, random_state)
         
         # If denoising is conducted without step finding, state sequence will be inferred
         # using 'self.data_fil'.

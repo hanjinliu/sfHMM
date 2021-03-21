@@ -1,10 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def gauss_mix(x, wt, mu, sg):
-    xs = np.array(x).reshape(-1,1) @ np.ones((1, len(wt)))
-    y = gauss(xs, wt, mu, sg)
-    return np.sum(y, axis=1)
+def gauss_mix(x, gmm):
+    return np.exp(gmm.score_samples(x.reshape(-1,1)))
 
 def gauss(x, wt, mu, sg):
     y = wt * np.exp(-(x - mu)** 2 / (2 * sg * sg)) / np.sqrt(2 * np.pi) / sg
@@ -84,8 +82,8 @@ def calc_covars(data_raw, states, n_components):
 
 def calc_startprob(d0_list, wt, mu, covars):
     logprob = np.zeros(len(wt))
-    mu = mu.flatten()
-    sg = np.sqrt(covars.flatten())
+    mu = mu.ravel()
+    sg = np.sqrt(covars.ravel())
     for d0 in d0_list:
         logprob += gauss(d0, wt, mu, sg) + 1e-12
     prob = np.exp(logprob)
