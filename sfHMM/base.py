@@ -94,9 +94,9 @@ class sfHMMBase(GaussianHMM):
         plt.ylim(self.ylim)
         n_bin = min(int(np.sqrt(self.data_raw.size*1.4)), 100)
         fit_x = np.linspace(self.ylim[0], self.ylim[1], 256)
-        fit_y = gauss_mix(fit_x, self.gmm_opt.weights_, self.gmm_opt.means_.flatten(), self.gmm_opt.sigma_)
-        peak_x = self.gmm_opt.means_.flatten()
-        peak_y = gauss_mix(peak_x, self.gmm_opt.weights_, self.gmm_opt.means_.flatten(), self.gmm_opt.sigma_)
+        fit_y = gauss_mix(fit_x, self.gmm_opt)
+        peak_x = self.gmm_opt.means_.ravel()
+        peak_y = gauss_mix(peak_x, self.gmm_opt)
         peak_y += np.max(peak_y) * 0.1
         plt.plot(fit_y, fit_x, color="red", linestyle="-.")
         plt.plot(peak_y, peak_x, "<", color = "red", markerfacecolor='pink', markersize=10)
@@ -108,19 +108,6 @@ class sfHMMBase(GaussianHMM):
         return None
     
     def _gmmfit(self, method, n_init, random_state):
-        """
-        Fit the denoised data to Gaussian mixture model.
-        
-        Paramters
-        ---------
-        method: str, 'aic', 'bic' or 'Dirichlet'
-            How to determine the number of states.
-        
-        Raises
-        ------
-        ValueError
-            If 'method' got an inappropriate string.
-        """
         # in case S.D. of noise was very small
         if len(self._sg_list) > 0:
             sg0_ = min(self.sg0, np.percentile(self._sg_list, 25))

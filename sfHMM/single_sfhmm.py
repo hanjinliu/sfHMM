@@ -102,18 +102,18 @@ class sfHMM1(sfHMMBase):
         return self
     
     
-    def gmmfit(self, method="bic",  n_init=1, random_state=0):
+    def gmmfit(self, method="bic", n_init=1, random_state=0):
         """
         Fit the denoised data to Gaussian mixture model, and the optimal number of states
         will be determined. After that, state sequence 'states' will be initialized.
 
         Parameters
         ----------
-        n_init : int, optional
-            How many times initialization will be performed in K-means, by default 1.
         method : str, optional
             How to determine the optimal number of states. This parameter must be
-            'aic', 'bic' or 'Dirichlet'. by default "bic".
+            'aic', 'bic' or 'Dirichlet'. By default "bic".
+        n_init : int, optional
+            How many times initialization will be performed in K-means, by default 1.
         random_state : int , optional
             Random seed for K-means initialization., by default 0.
 
