@@ -226,16 +226,7 @@ class sfHMM1(sfHMMBase):
         
         return None
     
-    
-    def tdp(self, **kwargs):
-        """
-        Pseudo transition density plot.
-        """
-        means = self.means_.ravel()
-        cov = self.covars_.ravel()
-        
-        axlim = (np.min(means) - np.sqrt(cov.max()),
-                 np.max(means) + np.sqrt(cov.max()))
+    def _accumulate_transitions(self, axlim, cov):
         axes = np.linspace(*axlim, 200)
                     
         x, y = np.meshgrid(axes, axes)
@@ -247,24 +238,7 @@ class sfHMM1(sfHMMBase):
             if (mx != my):
                 z += np.exp(-((x - mx)** 2 + (y - my)** 2) / (2 * cov[self.states[i]]))
         
-        z /= np.max(z)
-        
-        kw = {"vmin":0, "cmap":"jet", "origin":"lower"}
-        kw.update(kwargs)
-        
-        with plt.style.context(self.__class__.styles):
-            plt.figure()
-            plt.title("Transition Density Plot")
-            plt.imshow(z.T, **kw)
-            plt.colorbar()
-            pos = ((means - axlim[0]) / (axlim[1] - axlim[0]) * 200).astype("int16")
-            digit_0 = int(np.median(np.floor(np.log10(np.abs(means)))))
-            plt.xticks(pos, np.round(means, -digit_0 + 1))
-            plt.yticks(pos, np.round(means, -digit_0 + 1))
-            plt.xlabel("Before")
-            plt.ylabel("After")
-            plt.show()
-        return None
+        return z
 
 
     def _init_sg0(self):

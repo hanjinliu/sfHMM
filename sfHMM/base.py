@@ -141,6 +141,36 @@ class sfHMMBase(GaussianHMM):
         
         return None
     
+    def tdp(self, **kwargs):
+        """
+        Pseudo transition density plot.
+        """
+        means = self.means_.ravel()
+        cov = self.covars_.ravel()
+        
+        axlim = (np.min(means) - np.sqrt(cov.max()),
+                 np.max(means) + np.sqrt(cov.max()))
+                    
+        z = self._accumulate_transitions(axlim, cov)
+        z /= np.max(z)
+        
+        kw = {"vmin":0, "cmap":"jet", "origin":"lower"}
+        kw.update(kwargs)
+        
+        with plt.style.context(self.__class__.styles):
+            plt.figure()
+            plt.title("Transition Density Plot")
+            plt.imshow(z.T, **kw)
+            plt.colorbar()
+            pos = ((means - axlim[0]) / (axlim[1] - axlim[0]) * 200).astype("int16")
+            digit_0 = int(np.median(np.floor(np.log10(np.abs(means)))))
+            plt.xticks(pos, np.round(means, -digit_0 + 1))
+            plt.yticks(pos, np.round(means, -digit_0 + 1))
+            plt.xlabel("Before")
+            plt.ylabel("After")
+            plt.show()
+        return None
+    
     def _set_hmm_params(self):
         if not hasattr(self, "n_components"):
             raise AttributeError("'n_components' has yet been specified.")
@@ -198,6 +228,32 @@ class sfHMMmotorBase(sfHMMBase):
         mask = transmat > 0
         normalize(transmat, axis=1, mask=mask)
         return transmat
+    
+    def tdp(self, **kwargs):
+        dy_step, dy_vit = self._accumulate_transitions()
+        
+        with plt.style.context(self.__class__.styles):
+            xmin = min(dy_step.min(), dy_vit.min())
+            xmax = max(dy_step.max(), dy_vit.max())
+            plt.figure(figsize=(6, 4.4))
+            # plot step sizes using step finding result
+            plt.subplot(2, 1, 1)
+            kw = dict(bins=int((self.max_stride*2+1)*5),
+                      color=self.__class__.colors["step finding"])
+            kw.update(kwargs)
+            plt.hist(dy_step, **kw)
+            plt.xlim(xmin, xmax)
+            # plot step sizes using Viterbi path
+            plt.subplot(2, 1, 2)
+            kw = dict(bins=int((self.max_stride*2+1)*5),
+                      color=self.__class__.colors["Viterbi path"])
+            kw.update(kwargs)
+            plt.hist(dy_vit, **kw)
+            plt.xlim(xmin, xmax)
+            
+            plt.xlabel("step size")
+            plt.show()
+        return None
     
     def _check(self):
         self.startprob_ = np.asarray(self.startprob_)

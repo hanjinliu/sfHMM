@@ -1,4 +1,3 @@
-import matplotlib.pyplot as plt
 import numpy as np
 from .single_sfhmm import sfHMM1
 from .multi_sfhmm import sfHMMn
@@ -41,34 +40,12 @@ class sfHMM1Motor(sfHMM1, sfHMMmotorBase):
         
         return None
     
-    def tdp(self, **kwargs):
+    def _accumulate_transitions(self, axlim=None, cov=None):
         dy_step = np.diff(self.step.fit)
         dy_step = dy_step[dy_step!=0]
         dy_vit = np.diff(self.viterbi)
         dy_vit = dy_vit[dy_vit!=0]
-        
-        with plt.style.context(self.__class__.styles):
-            xmin = min(dy_step.min(), dy_vit.min())
-            xmax = max(dy_step.max(), dy_vit.max())
-            plt.figure(figsize=(6, 4.4))
-            # plot step sizes using step finding result
-            plt.subplot(2, 1, 1)
-            kw = dict(bins=int((self.max_stride*2+1)*5),
-                      color=self.__class__.colors["step finding"])
-            kw.update(kwargs)
-            plt.hist(dy_step, **kw)
-            plt.xlim(xmin, xmax)
-            # plot step sizes using Viterbi path
-            plt.subplot(2, 1, 2)
-            kw = dict(bins=int((self.max_stride*2+1)*5),
-                      color=self.__class__.colors["Viterbi path"])
-            kw.update(kwargs)
-            plt.hist(dy_vit, **kw)
-            plt.xlim(xmin, xmax)
-            
-            plt.xlabel("step size")
-            plt.show()
-        return None
+        return dy_step, dy_vit
     
     def _get_movement_range(self):
         all_move = np.hstack(([0], np.cumsum(np.where(self.step.step_size_list > 0, 1, -1))))
@@ -84,7 +61,8 @@ class sfHMMnMotor(sfHMMn, sfHMMmotorBase):
     
     def append(self, data):
         sf = sfHMM1Motor(data, sg0=self.sg0, psf=self.psf, krange=self.krange,
-                    model=self.model, name=self.name+f"[{self.n_data}]", max_stride=self.max_stride)
+                         model=self.model, name=self.name+f"[{self.n_data}]",
+                         max_stride=self.max_stride)
         self.n_data += 1
         self._sf_list.append(sf)
         self.ylim[0] = min(sf.ylim[0], self.ylim[0])
@@ -118,35 +96,12 @@ class sfHMMnMotor(sfHMMn, sfHMMmotorBase):
         
         return None
     
-    def tdp(self, **kwargs):        
+    def _accumulate_transitions(self, axlim=None, cov=None):
         dy_step = np.array(concat([np.diff(sf.step.fit) for sf in self]))
         dy_step = dy_step[dy_step!=0]
         dy_vit = np.array(concat([np.diff(sf.viterbi) for sf in self]))
         dy_vit = dy_vit[dy_vit!=0]
-        
-        with plt.style.context(self.__class__.styles):
-            xmin = min(dy_step.min(), dy_vit.min())
-            xmax = max(dy_step.max(), dy_vit.max())
-            plt.figure(figsize=(6, 4.4))
-            # plot step sizes using step finding result
-            plt.subplot(2, 1, 1)
-            plt.title("Step Size Distribution")
-            kw = dict(bins=int((self.max_stride*2+1)*5),
-                      color=self.__class__.colors["step finding"])
-            kw.update(kwargs)
-            plt.hist(dy_step, **kw)
-            plt.xlim(xmin, xmax)
-            # plot step sizes using Viterbi path
-            plt.subplot(2, 1, 2)
-            kw = dict(bins=int((self.max_stride*2+1)*5),
-                      color=self.__class__.colors["Viterbi path"])
-            kw.update(kwargs)
-            plt.hist(dy_vit, **kw)
-            plt.xlim(xmin, xmax)
-            
-            plt.xlabel("step size")
-            plt.show()
-        return None
+        return dy_step, dy_vit
     
     def _copy_params(self, sf):
         sf.covars_ = [[self.covars_[0,0,0]]]
