@@ -20,7 +20,7 @@ class sfHMM1(sfHMMBase):
         if 0 < p < 0.5 is not satisfied, the original Kalafut-Visscher's algorithm is executed.
     krange : int or list
         Minimum and maximum number of states to search in GMM clustering. If it is integer, then
-        it will be interpretted as [1, krange].
+        it will be interpretted as [krange, krange].
     model: str, optional
         Distribution of noise. Gauss and Poisson distribution are available for now.
     
@@ -143,11 +143,6 @@ class sfHMM1(sfHMMBase):
         """
         HMM paramter optimization by EM algorithm, and state inference by Viterbi 
         algorithm.
-
-        Raises
-        ------
-        AttributeError
-            If 'n_components' is not specified yet.
         """
         self._set_hmm_params()
         
@@ -160,14 +155,19 @@ class sfHMM1(sfHMMBase):
 
 
     def plot(self, trange=None):
-        """
+        """        
         Plot figures of:
             [1] raw data and step finding result (data_raw & step_fit)      ||  layout
             [2] raw data and denoised data (data_raw & data_fil)            ||  [ 1 ]
             [3] histograms of [2]                                           ||  [ 2 ][3]
             [4] raw data and HMM fitted data (data_raw & viterbi)           ||  [ 4 ]
+        
+        Parameters
+        ----------
+        trange : array like, optional
+            Range of x-axis to show, by default None
         """
-        # explicitly define xlim of 
+        
         if trange is None:
             sl = slice(None)
             ylim = self.ylim

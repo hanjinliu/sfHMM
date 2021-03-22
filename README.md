@@ -173,4 +173,4 @@ If you found sfHMM useful, please consider citing our paper.
  ...
 
 # References
-- Kalafut & Visscher
+- Kalafut, B., & Visscher, K. (2008). An objective, model-independent method for detection of non-uniform steps in noisy signals. Computer Physics Communications, 179(10), 716-723.
