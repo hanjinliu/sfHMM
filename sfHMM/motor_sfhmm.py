@@ -41,24 +41,32 @@ class sfHMM1Motor(sfHMM1, sfHMMmotorBase):
         
         return None
     
-    def tdp(self, data="Viterbi path", **kwargs):
-        if data == "Viterbi path":
-            d = self.viterbi
-        elif data == "step finding":
-            d = self.step.fit
-        else:
-            raise ValueError("'data' must be 'step finding' or 'Viterbi path'")
+    def tdp(self, **kwargs):
+        dy_step = np.diff(self.step.fit)
+        dy_step = dy_step[dy_step!=0]
+        dy_vit = np.diff(self.viterbi)
+        dy_vit = dy_vit[dy_vit!=0]
         
-        dy = np.diff(d)
-        dy = dy[dy!=0]
-        kw = dict(bins=int((self.max_stride*2+1)*5),
-                  color=self.__class__.colors[data])
-        kw.update(kwargs)
         with plt.style.context(self.__class__.styles):
-            xb = (self.max_stride+1)*self.sg0*5
-            plt.hist(dy, **kw)
+            xmin = min(dy_step.min(), dy_vit.min())
+            xmax = max(dy_step.max(), dy_vit.max())
+            plt.figure(figsize=(6, 4.4))
+            # plot step sizes using step finding result
+            plt.subplot(2, 1, 1)
+            kw = dict(bins=int((self.max_stride*2+1)*5),
+                      color=self.__class__.colors["step finding"])
+            kw.update(kwargs)
+            plt.hist(dy_step, **kw)
+            plt.xlim(xmin, xmax)
+            # plot step sizes using Viterbi path
+            plt.subplot(2, 1, 2)
+            kw = dict(bins=int((self.max_stride*2+1)*5),
+                      color=self.__class__.colors["Viterbi path"])
+            kw.update(kwargs)
+            plt.hist(dy_vit, **kw)
+            plt.xlim(xmin, xmax)
+            
             plt.xlabel("step size")
-            plt.xlim(-xb, xb)
             plt.show()
         return None
     
@@ -110,27 +118,33 @@ class sfHMMnMotor(sfHMMn, sfHMMmotorBase):
         
         return None
     
-    def tdp(self, data="Viterbi path", **kwargs):
-        diffs = []
-        for sf in self:
-            if data == "Viterbi path":
-                d = sf.viterbi
-            elif data == "step finding":
-                d = sf.step.fit
-            else:
-                raise ValueError("'data' must be 'step finding' or 'Viterbi path'")
-            diffs.append(np.diff(d))
-            
-        dy = np.array(concat(diffs))
-        dy = dy[dy!=0]
-        kw = dict(bins=int((self.max_stride*2+1)*5),
-                  color=self.__class__.colors[data])
-        kw.update(kwargs)
+    def tdp(self, **kwargs):        
+        dy_step = np.array(concat([np.diff(sf.step.fit) for sf in self]))
+        dy_step = dy_step[dy_step!=0]
+        dy_vit = np.array(concat([np.diff(sf.viterbi) for sf in self]))
+        dy_vit = dy_vit[dy_vit!=0]
+        
         with plt.style.context(self.__class__.styles):
-            xb = (self.max_stride+1)*self.sg0*5
-            plt.hist(dy, **kw)
+            xmin = min(dy_step.min(), dy_vit.min())
+            xmax = max(dy_step.max(), dy_vit.max())
+            plt.figure(figsize=(6, 4.4))
+            # plot step sizes using step finding result
+            plt.subplot(2, 1, 1)
+            plt.title("Step Size Distribution")
+            kw = dict(bins=int((self.max_stride*2+1)*5),
+                      color=self.__class__.colors["step finding"])
+            kw.update(kwargs)
+            plt.hist(dy_step, **kw)
+            plt.xlim(xmin, xmax)
+            # plot step sizes using Viterbi path
+            plt.subplot(2, 1, 2)
+            kw = dict(bins=int((self.max_stride*2+1)*5),
+                      color=self.__class__.colors["Viterbi path"])
+            kw.update(kwargs)
+            plt.hist(dy_vit, **kw)
+            plt.xlim(xmin, xmax)
+            
             plt.xlabel("step size")
-            plt.xlim(-xb, xb)
             plt.show()
         return None
     
