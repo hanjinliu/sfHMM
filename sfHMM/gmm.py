@@ -76,7 +76,11 @@ class GMMs:
             raise ValueError("'criterion' must be either 'aic' or 'bic'.")
         
         if only_valid:
-            cri_list[~self.isvalid()] = np.inf
+            ng = self.isvalid()
+            if ng.all():
+                pass
+            else:
+                cri_list[~self.isvalid()] = np.inf
                     
         k_best = self.klist[np.argmin(cri_list)]
         return self[k_best]
