@@ -142,16 +142,16 @@ plt.hist(msf.n_list) # show the histogram of data lengths.
 msf.plot_traces(filter_func=fil)
 ```
 
-## Application to Motor Stepping
+# Application to Motor Stepping
 
 sfHMM can be modified for application to motor stepping trajectories. `sfHMM1Motor` (for single trajectory) and `sfHMMnMotor` (for multiple trajectories) have similar API as `sfHMM1` and `sfHMMn` but there are slight differences due to specialization to motor stepping trajectories such as sparse transition and large number of states.
 
-### Difference in Parameters
+## Difference in Parameters
 
 - `krange` ... Because it is hard to define the number of states, this parameter is not needed to be predefined. This parameter can be estimated in `gmmfit()` based on the step finding results.
-- `max_step_size` ... The maximum size of state transition. Transition further than this will be ignored because transition probability for it will be near zero. For most motors this parameter should be set to 1 or 2.
+- `max_stride` ... The maximum size of state transition. Transition further than this will be ignored because transition probability for it will be near zero. For most motors this parameter should be set to 1 or 2.
 
-### Difference in Attributes and Methods
+## Difference in Attributes and Methods
 
 - `covariance_type` ... See `hmmlearn`. Because all the state should have the same distribution, this is set to `'tied'` here.
 - `transmat_kernel` ... Independent paramters in the transition probability matrix. This is passed to `transmat_` getter method every time to construct transition probability matrix. For example, when `transmat_kernel = [0.01, 0.97, 0.02]` then the generated `transmat_` will be:
@@ -164,10 +164,10 @@ sfHMM can be modified for application to motor stepping trajectories. `sfHMM1Mot
 - `gmmfit()` ... `n_init` is set to 2 by default because of the large number of states. Also, if you want to use the predifined `krange`, you need to explicitly add keyward argument `estimate_krange=False`.
 - `tdp()` ... In the case of motor stepping, transition desity plot is not a straightforward way to visualize transition. Histogram of transition frequency is plotted here.
 
-### Example
+## Example
 ```python
 from sfHMM import sfHMM1Motor
-sf = sfHMM1Motor(data, max_step_size=2)
+sf = sfHMM1Motor(data, max_stride=2)
 sf.run_all()
 ```
 
