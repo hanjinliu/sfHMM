@@ -144,4 +144,78 @@ class sfHMMBase(GaussianHMM):
         hasattr(self, "transmat_") or self._set_transmat()
         
         return None
+
+
+def normalize(A, axis=None, mask=None):
+    """
+    See: https://github.com/matthiasplappert/hmmlearn/tree/topology-fix
+    """
+    A += np.finfo(float).eps
+    if mask is None:
+        inverted_mask = None
+    else:
+        inverted_mask = np.invert(mask)
+        A[inverted_mask] = 0.0
+    Asum = A.sum(axis)
+
+    if axis and A.ndim > 1:
+        # Make sure we don't divide by zero.
+        Asum[Asum == 0] = 1
+        shape = list(A.shape)
+        shape[axis] = 1
+        Asum.shape = shape
+
+    A /= Asum
     
+    if inverted_mask is not None:
+        A[inverted_mask] = np.finfo(float).eps
+    return None
+
+class sfHMMmotorBase(sfHMMBase):
+    """
+    This base class enables sparse transition probability matrix aiming at motor
+    stepping trajectories. The attribute `transmat_` is generated from `transmat_kernel`
+    every time it is called. Also, during M-step transmat_kernel is updated.
+    """
+    def __init__(self, sg0:float=-1, psf:float=-1, krange=[1, 6],
+                 model:str="g", name:str="", max_stride:int=2):
+        super().__init__(sg0, psf, krange, model, name, covariance_type="tied")
+        self.max_stride = max_stride
+        
+    @property
+    def transmat_(self):
+        transmat = np.zeros((self.n_components, self.n_components))
+        for i, p in enumerate(self.transmat_kernel):
+            transmat += np.eye(self.n_components, k=i-self.max_stride)*p
+        
+        mask = transmat > 0
+        normalize(transmat, axis=1, mask=mask)
+        return transmat
+    
+    def _check(self):
+        self.startprob_ = np.asarray(self.startprob_)
+        if len(self.startprob_) != self.n_components:
+            raise ValueError("startprob_ must have length n_components")
+        if not np.allclose(self.startprob_.sum(), 1.0):
+            raise ValueError("startprob_ must sum to 1.0 (got {:.4f})"
+                             .format(self.startprob_.sum()))
+
+        # self.transmat_ = np.asarray(self.transmat_) <- skip
+        if self.transmat_.shape != (self.n_components, self.n_components):
+            raise ValueError(
+                "transmat_ must have shape (n_components, n_components)")
+        if not np.allclose(self.transmat_.sum(axis=1), 1.0):
+            raise ValueError("rows of transmat_ must sum to 1.0 (got {})"
+                             .format(self.transmat_.sum(axis=1)))
+    
+    def _do_mstep(self, stats):
+        if 's' in self.params:
+            startprob_ = np.maximum(self.startprob_prior - 1 + stats['start'], 0)
+            self.startprob_ = np.where(self.startprob_ == 0, 0, startprob_)
+            normalize(self.startprob_)
+        if 't' in self.params:
+            transmat_ = np.maximum(self.transmat_prior - 1 + stats['trans'], 0)
+            transmat_ = np.where(self.transmat_ == 0, 0, transmat_)
+            for i in range(len(self.transmat_kernel)):
+                self.transmat_kernel[i] = np.sum(np.diag(transmat_, k=i-self.max_stride))
+            self.transmat_kernel = self.transmat_kernel/np.sum(self.transmat_kernel)
