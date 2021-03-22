@@ -15,9 +15,9 @@ class sfHMM1Motor(sfHMM1, sfHMMmotorBase):
         
     def gmmfit(self, method="bic", n_init=2, random_state=0, estimate_krange=True):
         if estimate_krange:
-            cumsum_ = np.cumsum(np.where(self.step.step_size_list > 0, 1, -1)).tolist() + [0]
-            k = np.max(cumsum_) - np.min(cumsum_)
-            self.krange = [int(k-self.step.n_step*0.1), int(k+self.step.n_step*0.1)+1]
+            k = self._get_movement_range()
+            n = self.step.n_step
+            self.krange = (int(k-n*0.1), int(k+n*0.1)+1)
         return super().gmmfit(method, n_init, random_state)
     
     def _set_covars(self):
@@ -53,6 +53,10 @@ class sfHMM1Motor(sfHMM1, sfHMMmotorBase):
             plt.show()
         return None
     
+    def _get_movement_range(self):
+        all_move = np.hstack(([0], np.cumsum(np.where(self.step.step_size_list > 0, 1, -1))))
+        return all_move.max() - all_move.min() + 1
+    
     
 class sfHMMnMotor(sfHMMn, sfHMMmotorBase):
     def __init__(self, sg0:float=-1, psf:float=-1, krange=[1, 6], 
@@ -72,9 +76,13 @@ class sfHMMnMotor(sfHMMn, sfHMMmotorBase):
     
     def gmmfit(self, method="bic", n_init=2, random_state=0, estimate_krange=True):
         if estimate_krange:
-            cumsum_ = concat([np.cumsum(np.where(sf.step.step_size_list > 0, 1, -1)) for sf in self]) + [0]
-            k = np.max(cumsum_) - np.min(cumsum_)
-            self.krange = [int(k*0.8), int(k*1.2)+1]
+            k_list = [sf._get_movement_range() for sf in self]
+            n_list = [sf.step.n_step for sf in self]
+            argkmin = np.argmin(k_list)
+            argkmax = np.argmax(k_list)
+            kmin = int(k_list[argkmin] - n_list[argkmin]*0.1)
+            kmax = int(k_list[argkmax] + n_list[argkmax]*0.1)
+            self.krange = (kmin, kmax)
         return super().gmmfit(method, n_init, random_state)
         
     def _set_covars(self):
