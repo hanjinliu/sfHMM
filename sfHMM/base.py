@@ -122,7 +122,7 @@ class sfHMMBase(GaussianHMM):
             sg0_ = self.sg0
      
         if method in ("aic", "bic"):
-            gmm_ = GMMs(self.data_fil, self.krange, min_interval=sg0_*1.5, min_sg=sg0_*0.5)
+            gmm_ = GMMs(self.data_fil, self.krange, min_interval=sg0_*1.5, min_sg=sg0_*0.8)
             gmm_.fit(n_init=n_init, random_state=random_state)
             self.gmm = gmm_
             self.gmm_opt = self.gmm.get_optimal(method)
@@ -257,6 +257,24 @@ class sfHMMmotorBase(sfHMMBase):
             
             plt.xlabel("step size")
             plt.show()
+        return None
+    
+    def _gmmfit(self, method, n_init, random_state):
+        """
+        This function is overloaded because with many states GMM results usually
+        do not pass the min_sg check.
+        """        
+        if method in ("aic", "bic"):
+            gmm_ = GMMs(self.data_fil, self.krange)
+            gmm_.fit(n_init=n_init, random_state=random_state)
+            self.gmm = gmm_
+            self.gmm_opt = self.gmm.get_optimal(method)
+
+        else:
+            raise ValueError(f"method: {method}")
+        
+        self.n_components = self.gmm_opt.n_components
+        
         return None
     
     def _check(self):
