@@ -74,7 +74,7 @@ class sfHMMnMotor(sfHMMn, sfHMMmotorBase):
         if estimate_krange:
             cumsum_ = concat([np.cumsum(np.where(sf.step.step_size_list > 0, 1, -1)) for sf in self]) + [0]
             k = np.max(cumsum_) - np.min(cumsum_)
-            self.krange = [int(k*0.8), int(k*1.2)+1]
+            self.krange = [int(k - self.step.n_step*0.1), int(k+self.step.n_step*0.1)]
         return super().gmmfit(method, n_init, random_state)
         
     def _set_covars(self):
