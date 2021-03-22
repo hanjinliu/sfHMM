@@ -43,8 +43,11 @@ class sfHMM1Motor(sfHMM1, sfHMMmotorBase):
     def _accumulate_transitions(self, axlim=None, cov=None):
         dy_step = np.diff(self.step.fit)
         dy_step = dy_step[dy_step!=0]
-        dy_vit = np.diff(self.viterbi)
-        dy_vit = dy_vit[dy_vit!=0]
+        if self.viterbi is not None:
+            dy_vit = np.diff(self.viterbi)
+            dy_vit = dy_vit[dy_vit!=0]
+        else:
+            dy_vit = np.array([])
         return dy_step, dy_vit
     
     def _get_movement_range(self):
@@ -99,8 +102,12 @@ class sfHMMnMotor(sfHMMn, sfHMMmotorBase):
     def _accumulate_transitions(self, axlim=None, cov=None):
         dy_step = np.array(concat([np.diff(sf.step.fit) for sf in self]))
         dy_step = dy_step[dy_step!=0]
-        dy_vit = np.array(concat([np.diff(sf.viterbi) for sf in self]))
-        dy_vit = dy_vit[dy_vit!=0]
+        if self[0].viterbi is not None:
+            dy_vit = np.array(concat([np.diff(sf.viterbi) for sf in self]))
+            dy_vit = dy_vit[dy_vit!=0]
+        else:
+            dy_vit = np.array([])
+            
         return dy_step, dy_vit
     
     def _copy_params(self, sf):

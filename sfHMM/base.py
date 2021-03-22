@@ -122,7 +122,8 @@ class sfHMMBase(GaussianHMM):
             sg0_ = self.sg0
      
         if method in ("aic", "bic"):
-            gmm_ = GMMs(self.data_fil, self.krange, min_interval=sg0_*1.5, min_sg=sg0_*0.8)
+            # gmm_ = GMMs(self.data_fil, self.krange, min_interval=sg0_*1.5, min_sg=sg0_*0.8)
+            gmm_ = GMMs(self.data_fil, self.krange)
             gmm_.fit(n_init=n_init, random_state=random_state)
             self.gmm = gmm_
             self.gmm_opt = self.gmm.get_optimal(method)
@@ -233,8 +234,12 @@ class sfHMMmotorBase(sfHMMBase):
         dy_step, dy_vit = self._accumulate_transitions()
         
         with plt.style.context(self.__class__.styles):
-            xmin = min(dy_step.min(), dy_vit.min())
-            xmax = max(dy_step.max(), dy_vit.max())
+            if dy_vit.size>0:
+                xmin = min(dy_step.min(), dy_vit.min())
+                xmax = max(dy_step.max(), dy_vit.max())
+            else:
+                xmin = dy_step.min()
+                xmax = dy_step.max()
             plt.figure(figsize=(6, 4.4))
             # plot step sizes using step finding result
             plt.subplot(2, 1, 1)
