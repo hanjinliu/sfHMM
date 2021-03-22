@@ -189,14 +189,14 @@ class sfHMMn(sfHMMBase):
             plt.show()
         return None
         
-    def plot_traces(self, data:str="Viterbi pass", n_col:int=4, filter_func=None):
+    def plot_traces(self, data:str="Viterbi path", n_col:int=4, filter_func=None):
         """
         Plot all the trajectories.
 
         Parameters
         ----------
         data : str, optional
-            Which data to plot over the raw data trajectories, by default "Viterbi pass"
+            Which data to plot over the raw data trajectories, by default "Viterbi path"
         n_col : int, optional
             Number of columns of figure, by default 4
         filter_func : callable or None, optional
@@ -220,17 +220,17 @@ class sfHMMn(sfHMMBase):
             for i, ind in enumerate(indices):
                 sf = self[ind]
                 plt.subplot(n_row, n_col, i + 1)
-                if (data == "Viterbi pass"):
+                if data == "Viterbi path":
                     d = sf.viterbi
-                elif (data == "denoised"):
+                elif data == "denoised":
                     d = sf.data_fil
-                elif (data == "step finding"):
+                elif data == "step finding":
                     d = sf.step.fit
-                elif (data == "none"):
+                elif data == "none":
                     d = None
                 else:
                     raise ValueError("'data' must be 'step finding', 'denoised', "
-                                    "'Viterbi pass' or 'none'")
+                                    "'Viterbi path' or 'none'")
 
                 plot2(sf.data_raw, d, ylim=self.ylim, legend=False,
                     color1 = self.colors["raw data"], color=c_other)

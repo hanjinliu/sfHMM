@@ -9,7 +9,7 @@ class sfHMMBase(GaussianHMM):
     colors = {"raw data": "violet", 
               "step finding": "darkgreen",
               "denoised": "darkblue", 
-              "Viterbi pass": "black",
+              "Viterbi path": "black",
               }
     styles = {"font.size": 16, 
               "lines.linewidth": 1,
@@ -87,12 +87,19 @@ class sfHMMBase(GaussianHMM):
         self.__class__.count += 1
         return f"{self.__class__.__name__}-{self.__class__.count - 1}"
 
-    def _hist(self):
+    def _hist(self, trange=None, ylim=None):
         """
         Draw a histogram that is composed of raw data, denoised data and fitting curve of GMM.
         """
-        plt.ylim(self.ylim)
-        n_bin = min(int(np.sqrt(self.data_raw.size*1.4)), 100)
+        if trange is None:
+            trange = slice(None)
+            ylim = self.ylim
+        elif isinstance(trange, slice):
+            pass
+        else:
+            raise TypeError("trange must be a slice object.")
+        plt.ylim(ylim)
+        n_bin = min(int(np.sqrt(self.data_raw[trange].size*1.4)), 100)
         fit_x = np.linspace(self.ylim[0], self.ylim[1], 256)
         fit_y = gauss_mix(fit_x, self.gmm_opt)
         peak_x = self.gmm_opt.means_.ravel()
@@ -100,9 +107,9 @@ class sfHMMBase(GaussianHMM):
         peak_y += np.max(peak_y) * 0.1
         plt.plot(fit_y, fit_x, color="red", linestyle="-.")
         plt.plot(peak_y, peak_x, "<", color = "red", markerfacecolor='pink', markersize=10)
-        plt.hist(self.data_raw, bins=n_bin, color=self.colors["raw data"],
+        plt.hist(self.data_raw[trange], bins=n_bin, color=self.colors["raw data"],
                  orientation="horizontal", alpha=0.7, density=True)
-        plt.hist(self.data_fil, bins=n_bin, color=self.colors["denoised"],
+        plt.hist(self.data_fil[trange], bins=n_bin, color=self.colors["denoised"],
                  orientation="horizontal", histtype="step", density=True, lw=2)
         
         return None

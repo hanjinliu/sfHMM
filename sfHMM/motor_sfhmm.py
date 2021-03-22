@@ -7,13 +7,13 @@ from .func import *
 
 
 class sfHMM1Motor(sfHMM1, sfHMMmotorBase):
-    def __init__(self, data_raw, sg0:float=-1, psf:float=-1, krange=[1, 6],
+    def __init__(self, data_raw, sg0:float=-1, psf:float=-1, krange=(1, 6),
                  model:str="g", name:str="", max_stride:int=2):
         super().__init__(data_raw, sg0, psf, krange, model, name)
         self.max_stride = max_stride
         self.covariance_type = "tied"
         
-    def gmmfit(self, method="bic", n_init=2, random_state=0, estimate_krange=True):
+    def gmmfit(self, method="bic", n_init=3, random_state=0, estimate_krange=True):
         if estimate_krange:
             k = self._get_movement_range()
             n = self.step.n_step
@@ -41,15 +41,24 @@ class sfHMM1Motor(sfHMM1, sfHMMmotorBase):
         
         return None
     
-    def tdp(self, **kwargs):
-        dy = np.diff(self.viterbi)
+    def tdp(self, data="Viterbi path", **kwargs):
+        if data == "Viterbi path":
+            d = self.viterbi
+        elif data == "step finding":
+            d = self.step.fit
+        else:
+            raise ValueError("'data' must be 'step finding' or 'Viterbi path'")
+        
+        dy = np.diff(d)
         dy = dy[dy!=0]
         kw = dict(bins=int((self.max_stride*2+1)*5),
-                  color=self.__class__.colors["Viterbi pass"])
+                  color=self.__class__.colors[data])
         kw.update(kwargs)
         with plt.style.context(self.__class__.styles):
+            xb = (self.max_stride+1)*self.sg0*5
             plt.hist(dy, **kw)
             plt.xlabel("step size")
+            plt.xlim(-xb, xb)
             plt.show()
         return None
     
@@ -59,7 +68,7 @@ class sfHMM1Motor(sfHMM1, sfHMMmotorBase):
     
     
 class sfHMMnMotor(sfHMMn, sfHMMmotorBase):
-    def __init__(self, sg0:float=-1, psf:float=-1, krange=[1, 6], 
+    def __init__(self, sg0:float=-1, psf:float=-1, krange=(1, 6), 
                  model:str="g", name:str="", max_stride:int=2):
         super().__init__(sg0, psf, krange, model, name)
         self.max_stride = max_stride
@@ -74,7 +83,7 @@ class sfHMMnMotor(sfHMMn, sfHMMmotorBase):
         self.ylim[1] = max(sf.ylim[1], self.ylim[1])
         return self
     
-    def gmmfit(self, method="bic", n_init=2, random_state=0, estimate_krange=True):
+    def gmmfit(self, method="bic", n_init=3, random_state=0, estimate_krange=True):
         if estimate_krange:
             k_list = [sf._get_movement_range() for sf in self]
             n_list = [sf.step.n_step for sf in self]
@@ -101,15 +110,27 @@ class sfHMMnMotor(sfHMMn, sfHMMmotorBase):
         
         return None
     
-    def tdp(self, **kwargs):
-        dy = np.array(concat([np.diff(sf.viterbi) for sf in self]))
+    def tdp(self, data="Viterbi path", **kwargs):
+        diffs = []
+        for sf in self:
+            if data == "Viterbi path":
+                d = sf.viterbi
+            elif data == "step finding":
+                d = sf.step.fit
+            else:
+                raise ValueError("'data' must be 'step finding' or 'Viterbi path'")
+            diffs.append(np.diff(d))
+            
+        dy = np.array(concat(diffs))
         dy = dy[dy!=0]
         kw = dict(bins=int((self.max_stride*2+1)*5),
-                  color=self.__class__.colors["Viterbi pass"])
+                  color=self.__class__.colors[data])
         kw.update(kwargs)
         with plt.style.context(self.__class__.styles):
+            xb = (self.max_stride+1)*self.sg0*5
             plt.hist(dy, **kw)
             plt.xlabel("step size")
+            plt.xlim(-xb, xb)
             plt.show()
         return None
     
