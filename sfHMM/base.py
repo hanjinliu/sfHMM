@@ -172,16 +172,21 @@ def normalize(A, axis=None, mask=None):
     return None
 
 class sfHMMmotorBase(sfHMMBase):
+    """
+    This base class enables sparse transition probability matrix aiming at motor
+    stepping trajectories. The attribute `transmat_` is generated from `transmat_kernel`
+    every time it is called. Also, during M-step transmat_kernel is updated.
+    """
     def __init__(self, sg0:float=-1, psf:float=-1, krange=[1, 6],
-                 model:str="g", name:str="", max_step_size:int=2):
+                 model:str="g", name:str="", max_stride:int=2):
         super().__init__(sg0, psf, krange, model, name, covariance_type="tied")
-        self.max_step_size = max_step_size
+        self.max_stride = max_stride
         
     @property
     def transmat_(self):
         transmat = np.zeros((self.n_components, self.n_components))
         for i, p in enumerate(self.transmat_kernel):
-            transmat += np.eye(self.n_components, k=i-self.max_step_size)*p
+            transmat += np.eye(self.n_components, k=i-self.max_stride)*p
         
         mask = transmat > 0
         normalize(transmat, axis=1, mask=mask)
@@ -212,5 +217,5 @@ class sfHMMmotorBase(sfHMMBase):
             transmat_ = np.maximum(self.transmat_prior - 1 + stats['trans'], 0)
             transmat_ = np.where(self.transmat_ == 0, 0, transmat_)
             for i in range(len(self.transmat_kernel)):
-                self.transmat_kernel[i] = np.sum(np.diag(transmat_, k=i-self.max_step_size))
+                self.transmat_kernel[i] = np.sum(np.diag(transmat_, k=i-self.max_stride))
             self.transmat_kernel = self.transmat_kernel/np.sum(self.transmat_kernel)

@@ -8,9 +8,9 @@ from .func import *
 
 class sfHMM1Motor(sfHMM1, sfHMMmotorBase):
     def __init__(self, data_raw, sg0:float=-1, psf:float=-1, krange=[1, 6],
-                 model:str="g", name:str="", max_step_size:int=2):
+                 model:str="g", name:str="", max_stride:int=2):
         super().__init__(data_raw, sg0, psf, krange, model, name)
-        self.max_step_size = max_step_size
+        self.max_stride = max_stride
         self.covariance_type = "tied"
         
     def gmmfit(self, method="bic", n_init=2, random_state=0, estimate_krange=True):
@@ -32,11 +32,11 @@ class sfHMM1Motor(sfHMM1, sfHMMmotorBase):
         if self.states is None:
             raise RuntimeError("Cannot initialize 'transmat_' because the state sequence 'states' has" 
                                "yet been determined.")
-        transmat_kernel = np.zeros(self.max_step_size*2 + 1)
+        transmat_kernel = np.zeros(self.max_stride*2 + 1)
         dy = np.diff(self.states)
-        dy = dy[np.abs(dy)<=self.max_step_size]
+        dy = dy[np.abs(dy)<=self.max_stride]
         dy_unique, counts = np.unique(dy,return_counts=True)
-        transmat_kernel[dy_unique + self.max_step_size] = counts
+        transmat_kernel[dy_unique + self.max_stride] = counts
         self.transmat_kernel = transmat_kernel/np.sum(transmat_kernel)
         
         return None
@@ -44,7 +44,7 @@ class sfHMM1Motor(sfHMM1, sfHMMmotorBase):
     def tdp(self, **kwargs):
         dy = np.diff(self.viterbi)
         dy = dy[dy!=0]
-        kw = dict(bins=int((self.max_step_size*2+1)*5),
+        kw = dict(bins=int((self.max_stride*2+1)*5),
                   color=self.__class__.colors["Viterbi pass"])
         kw.update(kwargs)
         with plt.style.context(self.__class__.styles):
@@ -56,14 +56,14 @@ class sfHMM1Motor(sfHMM1, sfHMMmotorBase):
     
 class sfHMMnMotor(sfHMMn, sfHMMmotorBase):
     def __init__(self, sg0:float=-1, psf:float=-1, krange=[1, 6], 
-                 model:str="g", name:str="", max_step_size:int=2):
+                 model:str="g", name:str="", max_stride:int=2):
         super().__init__(sg0, psf, krange, model, name)
-        self.max_step_size = max_step_size
+        self.max_stride = max_stride
         self.covariance_type = "tied"
     
     def append(self, data):
         sf = sfHMM1Motor(data, sg0=self.sg0, psf=self.psf, krange=self.krange,
-                    model=self.model, name=self.name+f"[{self.n_data}]", max_step_size=self.max_step_size)
+                    model=self.model, name=self.name+f"[{self.n_data}]", max_stride=self.max_stride)
         self.n_data += 1
         self._sf_list.append(sf)
         self.ylim[0] = min(sf.ylim[0], self.ylim[0])
@@ -84,11 +84,11 @@ class sfHMMnMotor(sfHMMn, sfHMMmotorBase):
         return None
     
     def _set_transmat(self):
-        transmat_kernel = np.zeros(self.max_step_size*2 + 1)
+        transmat_kernel = np.zeros(self.max_stride*2 + 1)
         dy = np.array(concat([np.diff(sf.states) for sf in self]))
-        dy = dy[np.abs(dy) <= self.max_step_size]
+        dy = dy[np.abs(dy) <= self.max_stride]
         dy_unique, counts = np.unique(dy, return_counts=True)
-        transmat_kernel[dy_unique + self.max_step_size] = counts
+        transmat_kernel[dy_unique + self.max_stride] = counts
         self.transmat_kernel = transmat_kernel/np.sum(transmat_kernel)
         
         return None
@@ -96,7 +96,7 @@ class sfHMMnMotor(sfHMMn, sfHMMmotorBase):
     def tdp(self, **kwargs):
         dy = np.array(concat([np.diff(sf.viterbi) for sf in self]))
         dy = dy[dy!=0]
-        kw = dict(bins=int((self.max_step_size*2+1)*5),
+        kw = dict(bins=int((self.max_stride*2+1)*5),
                   color=self.__class__.colors["Viterbi pass"])
         kw.update(kwargs)
         with plt.style.context(self.__class__.styles):
