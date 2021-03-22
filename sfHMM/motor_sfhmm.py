@@ -17,7 +17,7 @@ class sfHMM1Motor(sfHMM1, sfHMMmotorBase):
         if estimate_krange:
             k = self._get_movement_range()
             n = self.step.n_step
-            self.krange = (int(k-n*0.1), int(k+n*0.1)+1)
+            self.krange = (max(1, int(k-n*0.1)), int(k+n*0.1)+1)
         return super().gmmfit(method, n_init, random_state)
     
     def _set_covars(self):
@@ -82,7 +82,7 @@ class sfHMMnMotor(sfHMMn, sfHMMmotorBase):
             argkmax = np.argmax(k_list)
             kmin = int(k_list[argkmin] - n_list[argkmin]*0.1)
             kmax = int(k_list[argkmax] + n_list[argkmax]*0.1)
-            self.krange = (kmin, kmax)
+            self.krange = (max(1, kmin), kmax)
         return super().gmmfit(method, n_init, random_state)
         
     def _set_covars(self):
