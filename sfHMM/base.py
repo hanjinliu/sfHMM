@@ -23,7 +23,7 @@ class sfHMMBase(GaussianHMM):
               "boxplot.meanprops.linewidth": 1,          
               }
     
-    def __init__(self, sg0:float=-1, psf:float=-1, krange=[1, 6],
+    def __init__(self, sg0:float=-1, psf:float=-1, krange=(1, 6),
                  model:str="g", name:str="", **hmmlearn_params):
         sg0, psf, krange, model = check(sg0, psf, krange, model)
         self.sg0 = sg0
@@ -177,7 +177,7 @@ class sfHMMmotorBase(sfHMMBase):
     stepping trajectories. The attribute `transmat_` is generated from `transmat_kernel`
     every time it is called. Also, during M-step transmat_kernel is updated.
     """
-    def __init__(self, sg0:float=-1, psf:float=-1, krange=[1, 6],
+    def __init__(self, sg0:float=-1, psf:float=-1, krange=(1, 6),
                  model:str="g", name:str="", max_stride:int=2):
         super().__init__(sg0, psf, krange, model, name, covariance_type="tied")
         self.max_stride = max_stride
