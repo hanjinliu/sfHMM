@@ -115,30 +115,40 @@ class sfHMMBase(GaussianHMM):
         
         return None
     
+    def _init_sg0(self, p=25):
+        """
+        Initialize 'sg0' if sg0 is negative.
+        """        
+        if self.sg0 < 0:
+            l = self._accumulate_step_sizes()
+            if len(l) > 0:
+                self.sg0 = np.percentile(l, p) * 0.2
+            else:
+                self.sg0 = np.std(self.data_raw)
+        
+        return None
+    
     def _gmmfit(self, method, n_init, random_state):
         # in case S.D. of noise was very small
         if len(self._sg_list) > 0:
             sg0_ = min(self.sg0, np.percentile(self._sg_list, 25))
         else:
             sg0_ = self.sg0
-     
-        if method in ("aic", "bic"):
-            gmm_ = GMMs(self.data_fil, self.krange, min_interval=sg0_*1.5, min_sg=sg0_*0.8)
+            
+        if method.lower() in ("aic", "bic"):
+            gmm_ = GMMs(self.data_fil, self.krange, min_interval=sg0_*1.5,  min_sg=sg0_*0.8, 
+                        covariance_type=self.covariance_type)
             gmm_.fit(n_init=n_init, random_state=random_state)
             self.gmm = gmm_
             self.gmm_opt = self.gmm.get_optimal(method)
-
-        elif method == "Dirichlet":
-            gmm_ = DPGMM(n_components=self.krange[1], n_init=n_init, 
+        elif method.lower() == "dirichlet":
+            gmm_ = DPGMM(n_components=self.krange[1], n_init=1, 
                          random_state=random_state,
-                         weight_concentration_prior=1,
-                         max_iter=1000,
                          mean_precision_prior=1/np.var(self.data_raw),
                          covariance_prior=sg0_**2,
-                         weight_concentration_prior_type="dirichlet_distribution")
+                         covariance_type=self.covariance_type)
             gmm_.fit(np.asarray(self.data_fil).reshape(-1,1))
             self.gmm_opt = gmm_
-
         else:
             raise ValueError(f"method: {method}")
         
@@ -264,39 +274,11 @@ class sfHMMmotorBase(sfHMMBase):
             plt.show()
         return None
     
-    def _gmmfit(self, method, n_init, random_state):
+    def _init_sg0(self, p=50):
         """
-        This function is overloaded because with many states GMM results usually
-        do not pass the min_sg check.
+        Initialize 'sg0' if sg0 is negative.
         """        
-        # in case S.D. of noise was very small
-        if len(self._sg_list) > 0:
-            sg0_ = min(self.sg0, np.percentile(self._sg_list, 25))
-        else:
-            sg0_ = self.sg0
-            
-        if method in ("aic", "bic"):
-            gmm_ = GMMs(self.data_fil, self.krange, covariance_type="tied")
-            gmm_.fit(n_init=n_init, random_state=random_state)
-            self.gmm = gmm_
-            self.gmm_opt = self.gmm.get_optimal(method)
-        elif method == "Dirichlet":
-            gmm_ = DPGMM(n_components=self.krange[1], n_init=1, 
-                         random_state=random_state,
-                         weight_concentration_prior=1,
-                         max_iter=1000,
-                         mean_precision_prior=1/np.var(self.data_raw),
-                         covariance_prior=[[sg0_**2]],
-                         covariance_type="tied",
-                         weight_concentration_prior_type="dirichlet_distribution")
-            gmm_.fit(np.asarray(self.data_fil).reshape(-1,1))
-            self.gmm_opt = gmm_
-        else:
-            raise ValueError(f"method: {method}")
-        
-        self.n_components = self.gmm_opt.n_components
-        
-        return None
+        return super()._init_sg0(p=p)
     
     def _check(self):
         self.startprob_ = np.asarray(self.startprob_)

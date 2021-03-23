@@ -239,21 +239,11 @@ class sfHMM1(sfHMMBase):
                 z += np.exp(-((x - mx)** 2 + (y - my)** 2) / (2 * cov[self.states[i]]))
         
         return z
-
-
-    def _init_sg0(self):
-        """
-        Initialize 'sg0' if sg0 is negative.
-        """        
-        if self.sg0 < 0:
-            if self.step is None:
+    
+    def _accumulate_step_sizes(self):
+        if self.step is None:
                 raise RuntimeError("Steps are not detected yet.")
-            elif len(self.step.step_size_list) > 0:
-                self.sg0 = np.percentile(np.abs(self.step.step_size_list), 25) * 0.2
-            else:
-                self.sg0 = np.std(self.data_raw)
-        
-        return None
+        return np.abs(self.step.step_size_list)
     
     def _set_covars(self):
         if self.states is None:

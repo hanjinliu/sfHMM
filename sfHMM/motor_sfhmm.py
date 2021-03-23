@@ -12,7 +12,7 @@ class sfHMM1Motor(sfHMM1, sfHMMmotorBase):
         self.max_stride = max_stride
         self.covariance_type = "tied"
         
-    def gmmfit(self, method="bic", n_init=3, random_state=0, estimate_krange=True):
+    def gmmfit(self, method="Dirichlet", n_init=1, random_state=0, estimate_krange=True):
         if estimate_krange:
             kmin, kmax = self._get_movement_range()
             k = kmax - kmin + 1
@@ -77,7 +77,7 @@ class sfHMMnMotor(sfHMMn, sfHMMmotorBase):
         self.ylim[1] = max(sf.ylim[1], self.ylim[1])
         return self
     
-    def gmmfit(self, method="bic", n_init=3, random_state=0, estimate_krange=True):
+    def gmmfit(self, method="Dirichlet", n_init=1, random_state=0, estimate_krange=True):
         if estimate_krange:
             k_list = np.array([sf._get_movement_range() for sf in self])
             n_list = [sf.step.n_step for sf in self]

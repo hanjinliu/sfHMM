@@ -114,12 +114,27 @@ class GMMs:
 
 
 class DPGMM(mixture.BayesianGaussianMixture):
-    def __init__(self, n_components, n_init, random_state, covariance_type="spherical",**kwargs):
+    def __init__(self, n_components, n_init, random_state, **kwargs):
+        # change default
+        kw = dict(weight_concentration_prior=1,
+                  weight_concentration_prior_type="dirichlet_distribution",
+                  covariance_type="spherical",
+                  max_iter=1000
+                  )
+        kw.update(kwargs)
+        
+        # different covariance types require different input        
+        if "covariance_prior" in kw:
+            c = kw["covariance_prior"]
+            if kw["covariance_type"] == "tied" and isinstance(c, (int, float)):
+                kw["covariance_prior"] = [[c]]
+            elif kw["covariance_type"] == "spherical" and isinstance(c, np.ndarray):
+                kw["covariance_prior"] = float(c)
+        
         super().__init__(n_components=n_components,
-                         covariance_type=covariance_type,
                          n_init=n_init,
                          random_state=random_state,
-                         **kwargs)
+                         **kw)
     
     def fit(self, data):
         super().fit(data)
