@@ -113,7 +113,7 @@ def _compute_log_xi_sum(int n_samples, int n_components,
                     p = j - i + max_stride
                     if 0 <= i and i < n_components:
                         work_buffer[i, j] = (fwdlattice[t, i]
-                                            + log_transmat_kernel[i, j]
+                                            + log_transmat_kernel[p]
                                             + framelogprob[t + 1, j]
                                             + bwdlattice[t + 1, j]
                                             - logprob)
