@@ -322,9 +322,9 @@ class sfHMMmotorBase(sfHMMBase):
         n_samples, n_components = framelogprob.shape
         fwdlattice = np.zeros((n_samples, n_components))
         _hmmc_motor._forward(n_samples, n_components,
-                       log_mask_zero(self.startprob_),
-                       log_mask_zero(self.transmat_kernel),
-                       framelogprob, fwdlattice, self.max_stride)
+                             log_mask_zero(self.startprob_),
+                             log_mask_zero(self.transmat_kernel),
+                             framelogprob, fwdlattice, self.max_stride)
         with np.errstate(under="ignore"):
             return special.logsumexp(fwdlattice[-1]), fwdlattice
 
@@ -332,7 +332,7 @@ class sfHMMmotorBase(sfHMMBase):
         n_samples, n_components = framelogprob.shape
         bwdlattice = np.zeros((n_samples, n_components))
         _hmmc_motor._backward(n_samples, n_components,
-                        log_mask_zero(self.startprob_),
-                        log_mask_zero(self.transmat_kernel),
-                        framelogprob, bwdlattice, self.max_stride)
+                              log_mask_zero(self.startprob_),
+                              log_mask_zero(self.transmat_kernel),
+                              framelogprob, bwdlattice, self.max_stride)
         return bwdlattice

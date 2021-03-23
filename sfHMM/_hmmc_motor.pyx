@@ -138,37 +138,37 @@ def _viterbi(int n_samples, int n_components,
         np.zeros((n_samples, n_components))
     cdef dtype_t[::view.contiguous] work_buffer = np.empty(len(log_transmat_kernel))
 
-    # with nogil:
-    for i in range(n_components):
-        viterbi_lattice[0, i] = log_startprob[i] + framelogprob[0, i]
-
-    # Induction
-    for t in range(1, n_samples):
+    with nogil:
         for i in range(n_components):
-            for j in range(i-max_stride, i+max_stride+1):
-                p = j - i + max_stride
-                if 0 <= j and j < n_components:
-                    work_buffer[p] = (log_transmat_kernel[p]
-                                    + viterbi_lattice[t - 1, j])
+            viterbi_lattice[0, i] = log_startprob[i] + framelogprob[0, i]
+
+        # Induction
+        for t in range(1, n_samples):
+            for i in range(n_components):
+                for j in range(i-max_stride, i+max_stride+1):
+                    p = j - i + max_stride
+                    if 0 <= j and j < n_components:
+                        work_buffer[p] = (log_transmat_kernel[p]
+                                        + viterbi_lattice[t - 1, j])
+                    else:
+                        work_buffer[p] = -INFINITY
+
+                viterbi_lattice[t, i] = _max(work_buffer) + framelogprob[t, i]
+
+        # Observation traceback
+        state_sequence[n_samples - 1] = where_from = \
+            _argmax(viterbi_lattice[n_samples - 1])
+        logprob = viterbi_lattice[n_samples - 1, where_from]
+
+        for t in range(n_samples - 2, -1, -1):
+            for i in range(where_from-max_stride, where_from+max_stride+1):
+                p = where_from - i + max_stride
+                if 0 <= i and i < n_components:
+                    work_buffer[p] = (viterbi_lattice[t, i]
+                                    + log_transmat_kernel[p])
                 else:
                     work_buffer[p] = -INFINITY
-
-            viterbi_lattice[t, i] = _max(work_buffer) + framelogprob[t, i]
-
-    # Observation traceback
-    state_sequence[n_samples - 1] = where_from = \
-        _argmax(viterbi_lattice[n_samples - 1])
-    logprob = viterbi_lattice[n_samples - 1, where_from]
-
-    for t in range(n_samples - 2, -1, -1):
-        for i in range(where_from-max_stride, where_from+max_stride+1):
-            p = where_from - i + max_stride
-            if 0 <= i and i < n_components:
-                work_buffer[p] = (viterbi_lattice[t, i]
-                                + log_transmat_kernel[p])
-            else:
-                work_buffer[p] = -INFINITY
-                
-        state_sequence[t] = where_from = - _argmax(work_buffer) + max_stride + where_from
+                    
+            state_sequence[t] = where_from = - _argmax(work_buffer) + max_stride + where_from
 
     return np.asarray(state_sequence), logprob
