@@ -150,7 +150,7 @@ sfHMM can be modified for application to motor stepping trajectories. `sfHMM1Mot
 
 ## Difference in Attributes and Methods
 
-- `covariance_type` ... See `hmmlearn`. Because all the state should have the same distribution, this is set to `'tied'` here.
+- `covariance_type` ... This is an attribute defined in `hmmlearn`. Because all the state should have the same distribution, this is set to `'tied'` here.
 - `transmat_kernel` ... Independent paramter set in the transition probability matrix. The length of this array is equal to `max_stride*2+1`. This is passed to `transmat_` getter method every time to construct transition probability matrix. For example, when `transmat_kernel = [0.01, 0.97, 0.02]` then the generated `transmat_` will be:
 ```python
 [[0.98, 0.02,    0,    0, ... ,    0], # on the boundaries, the diagonal
@@ -158,7 +158,7 @@ sfHMM can be modified for application to motor stepping trajectories. `sfHMM1Mot
  [   0, 0.01, 0.97, 0.02, ... ,    0],
  [   0, ...         ... , 0.01, 0.99]]
 ```
-- `gmmfit()` ... `n_init` is set to 2 by default because of the large number of states. Also, if you want to use the predifined `krange`, you need to explicitly add keyward argument `estimate_krange=False`.
+- `gmmfit()` ... `method="Dirichlet"` is default because it is precise enough and it is much faster for big data. Also, if you want to use the predifined `krange`, you need to explicitly add keyward argument `estimate_krange=False`.
 - `tdp()` ... In the case of motor stepping, transition desity plot is not a straightforward way to visualize transition. Histogram of transition frequency is plotted here.
 
 ## Example
@@ -173,4 +173,4 @@ If you found sfHMM useful, please consider citing our paper.
  ...
 
 # References
-- Kalafut & Visscher
+- Kalafut, B., & Visscher, K. (2008). An objective, model-independent method for detection of non-uniform steps in noisy signals. Computer Physics Communications, 179(10), 716-723.

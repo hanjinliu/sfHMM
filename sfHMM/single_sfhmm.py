@@ -20,7 +20,7 @@ class sfHMM1(sfHMMBase):
         if 0 < p < 0.5 is not satisfied, the original Kalafut-Visscher's algorithm is executed.
     krange : int or list
         Minimum and maximum number of states to search in GMM clustering. If it is integer, then
-        it will be interpretted as [1, krange].
+        it will be interpretted as [krange, krange].
     model: str, optional
         Distribution of noise. Gauss and Poisson distribution are available for now.
     
@@ -46,10 +46,10 @@ class sfHMM1(sfHMMBase):
         The optimal number of states. Same as 'gmm_opt.n_components'.
     states : np.ndarray
         The optimal state sequence. Before HMM fitting, this is determined from the results
-        of step finding and GMM clustering. After HMM fitting, this is Viterbi pass with
+        of step finding and GMM clustering. After HMM fitting, this is Viterbi path with
         values {0, 1, 2, ...}.
     viterbi : np.ndarray
-        Viterbi pass of 'data_raw', while takes value in 'means_'.
+        Viterbi path of 'data_raw', while takes value in 'means_'.
     """
     
     def __init__(self, data_raw, sg0:float=-1, psf:float=-1, krange=[1, 6],
@@ -143,11 +143,6 @@ class sfHMM1(sfHMMBase):
         """
         HMM paramter optimization by EM algorithm, and state inference by Viterbi 
         algorithm.
-
-        Raises
-        ------
-        AttributeError
-            If 'n_components' is not specified yet.
         """
         self._set_hmm_params()
         
@@ -159,60 +154,79 @@ class sfHMM1(sfHMMBase):
         return self
 
 
-    def plot(self):
-        """
+    def plot(self, trange=None):
+        """        
         Plot figures of:
             [1] raw data and step finding result (data_raw & step_fit)      ||  layout
             [2] raw data and denoised data (data_raw & data_fil)            ||  [ 1 ]
             [3] histograms of [2]                                           ||  [ 2 ][3]
             [4] raw data and HMM fitted data (data_raw & viterbi)           ||  [ 4 ]
+        
+        Parameters
+        ----------
+        trange : array like, optional
+            Range of x-axis to show, by default None
         """
+        
+        if trange is None:
+            sl = slice(0, self.data_raw.size)
+            ylim = self.ylim
+        elif isinstance(trange, (list, tuple, np.ndarray)):
+            sl = slice(*trange)
+            ylim = np.min(self.data_raw[sl]), np.max(self.data_raw[sl])
+        elif isinstance(trange, slice):
+            sl = trange
+            ylim = np.min(self.data_raw[sl]), np.max(self.data_raw[sl])
+        else:
+            raise TypeError(f"`trange` must be a slice or an array-like object, but got {type(trange)}")
         
         tasks = []
         showhist = self.gmm_opt is not None
         self.step is None or tasks.append("step finding")
         self.data_fil is None or tasks.append("denoised")
-        self.viterbi is None or tasks.append("Viterbi pass")
+        self.viterbi is None or tasks.append("Viterbi path")
         c_raw = self.__class__.colors["raw data"]
         n_row = max(len(tasks), 1)
         n_col = showhist + 1
         
         with plt.style.context(self.__class__.styles):
             plt.figure(figsize=(6*n_col, 4.2*n_row))
-            plt.suptitle(self.name, x=0.38, y=0.9, fontweight="bold")
+            plt.suptitle(self.name, x=0.38, y=0.93, fontweight="bold")
             
             for i, task in enumerate(tasks):
                 i += 1
                 plt.subplot(n_row, n_col, (i-1)*n_col + 1)
-                kw = dict(ylim=self.ylim, color1=c_raw, color=self.__class__.colors[task], label=task)
+                kw = dict(ylim=ylim, color1=c_raw, color=self.__class__.colors[task], label=task)
                 if task == "step finding":
-                    plot2(self.data_raw, self.step.fit, **kw)
+                    plot2(self.data_raw[sl], self.step.fit[sl], **kw)
                 elif task == "denoised":
-                    plot2(self.data_raw, self.data_fil, legend=False, **kw)
+                    plot2(self.data_raw[sl], self.data_fil[sl], legend=False, **kw)
                     if showhist:
                         plt.subplot(n_row, n_col*2, 2*(i-1)*n_col + 3)
-                        self._hist()
-                elif task == "Viterbi pass":
-                    plot2(self.data_raw, self.viterbi, **kw)
+                        self._hist(sl, ylim)
+                elif task == "Viterbi path":
+                    plot2(self.data_raw[sl], self.viterbi[sl], **kw)
                 else:
                     raise NotImplementedError
             
-            len(tasks) == 0 and plot2(self.data_raw, ylim=self.ylim, color1=c_raw)
+            if trange is not None:
+                ax = plt.subplot(6,4,7)
+                ax.plot(self.data_raw, color="gray", alpha=0.3)
+                ax.plot(np.arange(sl.start, sl.stop), self.data_raw[sl], color=self.__class__.colors["raw data"])
+                ax.set_xlim(0, self.data_raw.size)
+                ax.set_ylim(self.ylim)
+                ax.plot([sl.start, sl.stop, sl.stop, sl.start, sl.start],
+                         [ylim[0], ylim[0], ylim[1], ylim[1], ylim[0]], color="black")
+                ax.set_xticks([])
+                ax.set_yticks([])
+            
+            len(tasks) == 0 and plot2(self.data_raw[sl], ylim=ylim, color1=c_raw)
             
             plt.show()
         
         return None
     
-    
-    def tdp(self, **kwargs):
-        """
-        Pseudo transition density plot.
-        """
-        means = self.means_.ravel()
-        cov = self.covars_.ravel()
-        
-        axlim = (np.min(means) - np.sqrt(cov.max()),
-                 np.max(means) + np.sqrt(cov.max()))
+    def _accumulate_transitions(self, axlim, cov):
         axes = np.linspace(*axlim, 200)
                     
         x, y = np.meshgrid(axes, axes)
@@ -224,39 +238,12 @@ class sfHMM1(sfHMMBase):
             if (mx != my):
                 z += np.exp(-((x - mx)** 2 + (y - my)** 2) / (2 * cov[self.states[i]]))
         
-        z /= np.max(z)
-        
-        kw = {"vmin":0, "cmap":"jet", "origin":"lower"}
-        kw.update(kwargs)
-        
-        with plt.style.context(self.__class__.styles):
-            plt.figure()
-            plt.title("Transition Density Plot")
-            plt.imshow(z.T, **kw)
-            plt.colorbar()
-            pos = ((means - axlim[0]) / (axlim[1] - axlim[0]) * 200).astype("int16")
-            digit_0 = int(np.median(np.floor(np.log10(np.abs(means)))))
-            plt.xticks(pos, np.round(means, -digit_0 + 1))
-            plt.yticks(pos, np.round(means, -digit_0 + 1))
-            plt.xlabel("Before")
-            plt.ylabel("After")
-            plt.show()
-        return None
-
-
-    def _init_sg0(self):
-        """
-        Initialize 'sg0' if sg0 is negative.
-        """        
-        if self.sg0 < 0:
-            if self.step is None:
+        return z
+    
+    def _accumulate_step_sizes(self):
+        if self.step is None:
                 raise RuntimeError("Steps are not detected yet.")
-            elif len(self.step.step_size_list) > 0:
-                self.sg0 = np.percentile(np.abs(self.step.step_size_list), 25) * 0.2
-            else:
-                self.sg0 = np.std(self.data_raw)
-        
-        return None
+        return np.abs(self.step.step_size_list)
     
     def _set_covars(self):
         if self.states is None:

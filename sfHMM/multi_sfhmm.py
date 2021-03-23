@@ -189,14 +189,14 @@ class sfHMMn(sfHMMBase):
             plt.show()
         return None
         
-    def plot_traces(self, data:str="Viterbi pass", n_col:int=4, filter_func=None):
+    def plot_traces(self, data:str="Viterbi path", n_col:int=4, filter_func=None):
         """
         Plot all the trajectories.
 
         Parameters
         ----------
         data : str, optional
-            Which data to plot over the raw data trajectories, by default "Viterbi pass"
+            Which data to plot over the raw data trajectories, by default "Viterbi path"
         n_col : int, optional
             Number of columns of figure, by default 4
         filter_func : callable or None, optional
@@ -220,17 +220,17 @@ class sfHMMn(sfHMMBase):
             for i, ind in enumerate(indices):
                 sf = self[ind]
                 plt.subplot(n_row, n_col, i + 1)
-                if (data == "Viterbi pass"):
+                if data == "Viterbi path":
                     d = sf.viterbi
-                elif (data == "denoised"):
+                elif data == "denoised":
                     d = sf.data_fil
-                elif (data == "step finding"):
+                elif data == "step finding":
                     d = sf.step.fit
-                elif (data == "none"):
+                elif data == "none":
                     d = None
                 else:
                     raise ValueError("'data' must be 'step finding', 'denoised', "
-                                    "'Viterbi pass' or 'none'")
+                                    "'Viterbi path' or 'none'")
 
                 plot2(sf.data_raw, d, ylim=self.ylim, legend=False,
                     color1 = self.colors["raw data"], color=c_other)
@@ -241,15 +241,8 @@ class sfHMMn(sfHMMBase):
             plt.show()
         return None
     
-    def tdp(self, **kwargs):
-        """
-        Pseudo transition density plot.
-        """
-        means = self.means_.ravel()
-        cov = self.covars_.ravel()
-        
-        axlim = (np.min(means) - np.sqrt(cov.max()),
-                 np.max(means) + np.sqrt(cov.max()))
+    
+    def _accumulate_transitions(self, axlim, cov):
         axes = np.linspace(*axlim, 200)
                     
         x, y = np.meshgrid(axes, axes)
@@ -262,40 +255,19 @@ class sfHMMn(sfHMMBase):
                 if (mx != my):
                     z += np.exp(-((x - mx)** 2 + (y - my)** 2) / (2 * cov[sf.states[i]]))
         
-        
-        z /= np.max(z)
-        
-        kw = {"vmin":0, "cmap":"jet", "origin":"lower"}
-        kw.update(kwargs)
-        
-        with plt.style.context(self.__class__.styles):
-            plt.figure()
-            plt.title("Transition Density Plot")
-            plt.imshow(z.T, **kw)
-            plt.colorbar()
-            pos = ((means - axlim[0]) / (axlim[1] - axlim[0]) * 200).astype("int16")
-            digit_0 = int(np.median(np.floor(np.log10(np.abs(means)))))
-            plt.xticks(pos, np.round(means, -digit_0 + 1))
-            plt.yticks(pos, np.round(means, -digit_0 + 1))
-            plt.xlabel("Before")
-            plt.ylabel("After")
-            plt.show()
-        return None
-    
-    def _init_sg0(self):
-        step_size_list = concat([sf.step.step_size_list for sf in self])
-        if self.sg0 < 0:
-            if self[0].step is None:
+        return z
+
+    def _accumulate_step_sizes(self):
+        if self[0].step is None:
                 raise RuntimeError("Steps are not detected yet.")
-            elif len(step_size_list) > 0:
-                self.sg0 = np.percentile(np.abs(step_size_list), 25) * 0.2
-            else:
-                self.sg0 = np.std(self.data_raw)
-        
-        return None
+        step_size_list = concat([sf.step.step_size_list for sf in self])
+        return np.abs(step_size_list)
     
     def _copy_params(self, sf):
-        sf.covars_ = self.covars_.ravel()
+        if self.covariance_type == "spherical":
+            sf.covars_ = self.covars_.ravel()
+        else:
+            sf.covars_ = [[self.covars_[0,0,0]]]
         sf.min_covar = self.min_covar
         sf.means_ = self.means_
         sf.startprob_ = self.startprob_
