@@ -337,6 +337,26 @@ class sfHMMmotorBase(sfHMMBase):
                               framelogprob, bwdlattice, self.max_stride)
         return bwdlattice
     
+    def _accumulate_sufficient_statistics(self, stats, X, framelogprob,
+                                          posteriors, fwdlattice, bwdlattice):
+        stats['nobs'] += 1
+        if 's' in self.params:
+            stats['start'] += posteriors[0]
+        if 't' in self.params:
+            n_samples, n_components = framelogprob.shape
+            # when the sample is of length 1, it contains no transitions
+            # so there is no reason to update our trans. matrix estimate
+            if n_samples <= 1:
+                return
+
+            log_xi_sum = np.full((n_components, n_components), -np.inf)
+            _hmmc_motor._compute_log_xi_sum(n_samples, n_components, fwdlattice,
+                                      log_mask_zero(self.transmat_kernel),
+                                      bwdlattice, framelogprob,
+                                      log_xi_sum, self.max_stride)
+            with np.errstate(under="ignore"):
+                stats['trans'] += np.exp(log_xi_sum)
+    
     def _get_n_fit_scalars_per_param(self):
         nc = self.n_components
         nf = self.n_features
