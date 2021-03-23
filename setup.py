@@ -14,6 +14,7 @@ class build_ext(build_ext):
     def finalize_options(self):
         from Cython.Build import cythonize
         import numpy
+        import numpy.distutils
         sourcefiles = ["_hmmc_motor.pyx"]
         sourcefiles = [os.path.join("sfHMM", f) for f in sourcefiles]
         ext = Extension("sfHMM._hmmc_motor", 
