@@ -8,7 +8,6 @@ class GMM1(mixture.GaussianMixture):
     """    
     def __init__(self, n_components, **kwargs):
         super().__init__(n_components=n_components,
-                         covariance_type="spherical",
                          **kwargs)
         self.valid = False
     
@@ -20,9 +19,10 @@ class GMM1(mixture.GaussianMixture):
         order = np.argsort(self.means_.flat)
         self.weights_ = self.weights_[order]
         self.means_ = self.means_[order]
-        self.covariances_ = self.covariances_[order]
-        self.precisions_cholesky_ = self.precisions_cholesky_[order]
-        self.precisions_ = self.precisions_[order]
+        if self.covariance_type == "spherical":
+            self.covariances_ = self.covariances_[order]
+            self.precisions_cholesky_ = self.precisions_cholesky_[order]
+            self.precisions_ = self.precisions_[order]
         self.sigma_ = np.sqrt(self.covariances_.flat)
         
         return self
@@ -32,10 +32,12 @@ class GMMs:
     Gaussian mixture models with different states.
     The best model can be chosen by comparing AIC or BIC.
     """    
-    def __init__(self, data, krange, min_interval=None, min_sg=None):
+    def __init__(self, data, krange, covariance_type="spherical",
+                 min_interval=None, min_sg=None):
         self.data = data
         self.klist = list(range(krange[0], krange[1] + 1))
         self.results = None
+        self.covariance_type = covariance_type
         self.min_interval = min_interval if min_interval else -1
         self.min_sg = min_sg if min_sg else -1
     
@@ -56,7 +58,8 @@ class GMMs:
     def fit(self, n_init=1, random_state=0):
         d = np.asarray(self.data).reshape(-1, 1)
             
-        self.results = {k: GMM1(k, n_init=n_init, random_state=random_state) 
+        self.results = {k: GMM1(k, n_init=n_init, random_state=random_state, 
+                                covariance_type=self.covariance_type) 
                         for k in self.klist}
         
         for gmm1 in self.results.values():
@@ -111,9 +114,9 @@ class GMMs:
 
 
 class DPGMM(mixture.BayesianGaussianMixture):
-    def __init__(self, n_components, n_init, random_state, **kwargs):
+    def __init__(self, n_components, n_init, random_state, covariance_type="spherical",**kwargs):
         super().__init__(n_components=n_components,
-                         covariance_type="spherical",
+                         covariance_type=covariance_type,
                          n_init=n_init,
                          random_state=random_state,
                          **kwargs)
@@ -130,12 +133,16 @@ class DPGMM(mixture.BayesianGaussianMixture):
         order = np.argsort(self.means_.flat)
         self.weights_ = self.weights_[unique_labels][order]
         self.means_ = self.means_[order]
-        self.covariances_ = self.covariances_[unique_labels][order]
-        self.precisions_cholesky_ = self.precisions_cholesky_[unique_labels][order]
-        self.precisions_ = self.precisions_[unique_labels][order]
-        self.degrees_of_freedom_ = self.degrees_of_freedom_[unique_labels][order]
-        self.weight_concentration_ = (self.weight_concentration_[0][unique_labels][order],
-                                      self.weight_concentration_[1][unique_labels][order])
+        if self.covariance_prior == "spherical":
+            self.covariances_ = self.covariances_[unique_labels][order]
+            self.precisions_cholesky_ = self.precisions_cholesky_[unique_labels][order]
+            self.precisions_ = self.precisions_[unique_labels][order]
+            self.degrees_of_freedom_ = self.degrees_of_freedom_[unique_labels][order]
+        if self.weight_concentration_prior_type == "dirichlet_process":
+            self.weight_concentration_ = (self.weight_concentration_[0][unique_labels][order],
+                                        self.weight_concentration_[1][unique_labels][order])
+        else:
+            self.weight_concentration_ = self.weight_concentration_[unique_labels][order]
         self.mean_precision_ = self.mean_precision_[unique_labels][order]
         self.sigma_ = np.sqrt(self.covariances_.flat)
         

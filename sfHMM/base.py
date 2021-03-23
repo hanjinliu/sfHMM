@@ -87,29 +87,30 @@ class sfHMMBase(GaussianHMM):
         self.__class__.count += 1
         return f"{self.__class__.__name__}-{self.__class__.count - 1}"
 
-    def _hist(self, trange=None, ylim=None):
+    def _hist(self, sl=None, ylim=None):
         """
         Draw a histogram that is composed of raw data, denoised data and fitting curve of GMM.
         """
-        if trange is None:
-            trange = slice(None)
+        if sl is None:
+            sl = slice(None)
             ylim = self.ylim
-        elif isinstance(trange, slice):
-            pass
+            amp = 1
+        elif isinstance(sl, slice):
+            amp = self.data_raw.size / (sl.stop - sl.start)
         else:
-            raise TypeError("trange must be a slice object.")
+            raise TypeError("sl must be a slice object.")
         plt.ylim(ylim)
-        n_bin = min(int(np.sqrt(self.data_raw[trange].size*1.4)), 100)
+        n_bin = min(int(np.sqrt(self.data_raw[sl].size*2)), 256)
         fit_x = np.linspace(self.ylim[0], self.ylim[1], 256)
-        fit_y = gauss_mix(fit_x, self.gmm_opt)
+        fit_y = gauss_mix(fit_x, self.gmm_opt) * amp
         peak_x = self.gmm_opt.means_.ravel()
-        peak_y = gauss_mix(peak_x, self.gmm_opt)
+        peak_y = gauss_mix(peak_x, self.gmm_opt) * amp
         peak_y += np.max(peak_y) * 0.1
         plt.plot(fit_y, fit_x, color="red", linestyle="-.")
         plt.plot(peak_y, peak_x, "<", color = "red", markerfacecolor='pink', markersize=10)
-        plt.hist(self.data_raw[trange], bins=n_bin, color=self.colors["raw data"],
+        plt.hist(self.data_raw[sl], bins=n_bin, color=self.colors["raw data"],
                  orientation="horizontal", alpha=0.7, density=True)
-        plt.hist(self.data_fil[trange], bins=n_bin, color=self.colors["denoised"],
+        plt.hist(self.data_fil[sl], bins=n_bin, color=self.colors["denoised"],
                  orientation="horizontal", histtype="step", density=True, lw=2)
         
         return None
@@ -129,9 +130,9 @@ class sfHMMBase(GaussianHMM):
 
         elif method == "Dirichlet":
             gmm_ = DPGMM(n_components=self.krange[1], n_init=1, 
-                         random_state=0,
+                         random_state=random_state,
                          covariance_prior=sg0_**2)
-            gmm_.fit(np.asarray(self.data_fil.reshape(-1,1)))
+            gmm_.fit(np.asarray(self.data_fil).reshape(-1,1))
             self.gmm_opt = gmm_
 
         else:
@@ -264,12 +265,28 @@ class sfHMMmotorBase(sfHMMBase):
         This function is overloaded because with many states GMM results usually
         do not pass the min_sg check.
         """        
+        # in case S.D. of noise was very small
+        if len(self._sg_list) > 0:
+            sg0_ = min(self.sg0, np.percentile(self._sg_list, 25))
+        else:
+            sg0_ = self.sg0
+            
         if method in ("aic", "bic"):
-            gmm_ = GMMs(self.data_fil, self.krange)
+            gmm_ = GMMs(self.data_fil, self.krange, covariance_type="tied")
             gmm_.fit(n_init=n_init, random_state=random_state)
             self.gmm = gmm_
             self.gmm_opt = self.gmm.get_optimal(method)
-
+        elif method == "Dirichlet":
+            gmm_ = DPGMM(n_components=self.krange[1], n_init=1, 
+                         random_state=random_state,
+                         weight_concentration_prior=1,
+                         max_iter=1000,
+                         mean_precision_prior=1/np.var(self.data_raw),
+                         covariance_prior=[[sg0_**2]],
+                         covariance_type="tied",
+                         weight_concentration_prior_type='dirichlet_distribution')
+            gmm_.fit(np.asarray(self.data_fil).reshape(-1,1))
+            self.gmm_opt = gmm_
         else:
             raise ValueError(f"method: {method}")
         

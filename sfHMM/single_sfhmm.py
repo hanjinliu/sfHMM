@@ -169,7 +169,7 @@ class sfHMM1(sfHMMBase):
         """
         
         if trange is None:
-            sl = slice(None)
+            sl = slice(0, self.data_raw.size)
             ylim = self.ylim
         elif isinstance(trange, (list, tuple, np.ndarray)):
             sl = slice(*trange)
