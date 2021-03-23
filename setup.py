@@ -18,9 +18,14 @@ class build_ext(build_ext):
         sourcefiles = [os.path.join("sfHMM", f) for f in sourcefiles]
         ext = Extension("sfHMM._hmmc_motor", 
                         sources=sourcefiles, 
-                        include_dirs = [numpy.get_include(), "sfHMM"],
+                        include_dirs = ["sfHMM", numpy.get_include()],
                         )
-        self.distribution.ext_modules[:] = cythonize(ext, include_path=[numpy.get_include()])
+        self.distribution.ext_modules[:] = cythonize(ext)
+        
+        for ext in self.distribution.ext_modules:
+            for k, v in numpy.distutils.misc_util.get_info("npymath").items():
+                setattr(ext, k, v)
+            ext.include_dirs = [numpy.get_include()]
         super().finalize_options()
         
 kwargs = dict(name="sfHMM",
