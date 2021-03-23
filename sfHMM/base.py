@@ -3,6 +3,9 @@ import matplotlib.pyplot as plt
 from hmmlearn.hmm import GaussianHMM
 from .func import *
 from .gmm import GMMs, DPGMM
+from . import _hmmc_motor
+from hmmlearn.utils import log_mask_zero
+from scipy import special
 
 class sfHMMBase(GaussianHMM):
     count = 0
@@ -307,3 +310,29 @@ class sfHMMmotorBase(sfHMMBase):
             for i in range(len(self.transmat_kernel)):
                 self.transmat_kernel[i] = np.sum(np.diag(transmat_, k=i-self.max_stride))
             self.transmat_kernel = self.transmat_kernel/np.sum(self.transmat_kernel)
+    
+    def _do_viterbi_pass(self, framelogprob):
+        n_samples, n_components = framelogprob.shape
+        state_sequence, logprob = _hmmc_motor._viterbi(
+            n_samples, n_components, log_mask_zero(self.startprob_),
+            log_mask_zero(self.transmat_kernel), framelogprob, self.max_stride)
+        return logprob, state_sequence
+
+    def _do_forward_pass(self, framelogprob):
+        n_samples, n_components = framelogprob.shape
+        fwdlattice = np.zeros((n_samples, n_components))
+        _hmmc_motor._forward(n_samples, n_components,
+                       log_mask_zero(self.startprob_),
+                       log_mask_zero(self.transmat_kernel),
+                       framelogprob, fwdlattice, self.max_stride)
+        with np.errstate(under="ignore"):
+            return special.logsumexp(fwdlattice[-1]), fwdlattice
+
+    def _do_backward_pass(self, framelogprob):
+        n_samples, n_components = framelogprob.shape
+        bwdlattice = np.zeros((n_samples, n_components))
+        _hmmc_motor._backward(n_samples, n_components,
+                        log_mask_zero(self.startprob_),
+                        log_mask_zero(self.transmat_kernel),
+                        framelogprob, bwdlattice, self.max_stride)
+        return bwdlattice
