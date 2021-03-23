@@ -1,9 +1,10 @@
 from cython cimport view
 from numpy.math cimport expl, logl, log1pl, isinf, fabsl, INFINITY
 import numpy as np
-from libc.stdio cimport printf
 
 ctypedef double dtype_t
+
+# modified from hmmlearn._hmmc.pyx
 
 cdef inline int _argmax(dtype_t[:] X) nogil:
     cdef dtype_t X_max = -INFINITY
@@ -47,7 +48,15 @@ def _forward(int n_samples, int n_components,
              dtype_t[:, :] framelogprob,
              dtype_t[:, :] fwdlattice,
              int max_stride):
+    """
+    t-1  t  ...
+    ---------
 
+         j
+     : /     -> forward algorithm
+     i
+     :
+    """    
     cdef int t, i, j, p
     cdef dtype_t[::view.contiguous] work_buffer = np.zeros(len(log_transmat_kernel))
 
@@ -72,6 +81,16 @@ def _backward(int n_samples, int n_components,
               dtype_t[:, :] framelogprob,
               dtype_t[:, :] bwdlattice,
               int max_stride):
+
+    """
+     t  t+1 ...
+    ---------
+
+         j
+     : /     <- backward algorithm
+     i
+     :
+    """
 
     cdef int t, i, j, p
     cdef dtype_t[::view.contiguous] work_buffer = np.zeros(len(log_transmat_kernel))

@@ -39,7 +39,7 @@ class sfHMM1Motor(sfHMM1, sfHMMmotorBase):
         
         return None
     
-    def _accumulate_transitions(self, axlim=None, cov=None):
+    def accumulate_transitions(self, axlim=None, cov=None):
         dy_step = np.diff(self.step.fit)
         dy_step = dy_step[dy_step!=0]
         if self.viterbi is not None:
@@ -90,7 +90,7 @@ class sfHMMnMotor(sfHMMn, sfHMMmotorBase):
         
         return None
     
-    def _accumulate_transitions(self, axlim=None, cov=None):
+    def accumulate_transitions(self, axlim=None, cov=None):
         dy_step = np.array(concat([np.diff(sf.step.fit) for sf in self]))
         dy_step = dy_step[dy_step!=0]
         if self[0].viterbi is not None:

@@ -228,7 +228,7 @@ def normalize(A, axis=None, mask=None):
 
 class sfHMMmotorBase(sfHMMBase):
     """
-    This base class enables sparse transition probability matrix aiming at motor
+    This base class enables sparse transition probability matrix aiming at analyzing motor
     stepping trajectories. The attribute `transmat_` is generated from `transmat_kernel`
     every time it is called. Also, during M-step transmat_kernel is updated.
     """
@@ -247,8 +247,15 @@ class sfHMMmotorBase(sfHMMBase):
         normalize(transmat, axis=1, mask=mask)
         return transmat
     
+    def accumulate_transitions(self):
+        """
+        This function returns all the transitions occurred in the trajectory, which
+        is calculated using `self.step.step_size_list` or `self.viterbi`.
+        """        
+        pass
+        
     def tdp(self, **kwargs):
-        dy_step, dy_vit = self._accumulate_transitions()
+        dy_step, dy_vit = self.accumulate_transitions()
         
         with plt.style.context(self.__class__.styles):
             if dy_vit.size>0:
