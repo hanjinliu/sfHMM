@@ -1,6 +1,7 @@
 from cython cimport view
 from numpy.math cimport expl, logl, log1pl, isinf, fabsl, INFINITY
 import numpy as np
+from libc.stdio cimport printf
 
 ctypedef double dtype_t
 
@@ -101,7 +102,7 @@ def _compute_log_xi_sum(int n_samples, int n_components,
                         dtype_t[:, :] log_xi_sum,
                         int max_stride):
 
-    cdef int t, i, j
+    cdef int t, i, j, p
     cdef dtype_t[:, ::view.contiguous] work_buffer = \
         np.full((n_components, n_components), -INFINITY)
     cdef dtype_t logprob = _logsumexp(fwdlattice[n_samples - 1])
@@ -111,19 +112,17 @@ def _compute_log_xi_sum(int n_samples, int n_components,
             for i in range(n_components):
                 for j in range(i-max_stride, i+max_stride+1):
                     p = j - i + max_stride
-                    if 0 <= i and i < n_components:
+                    if 0 <= j and j < n_components:
                         work_buffer[i, j] = (fwdlattice[t, i]
                                             + log_transmat_kernel[p]
                                             + framelogprob[t + 1, j]
                                             + bwdlattice[t + 1, j]
                                             - logprob)
-                    else:
-                        work_buffer[i, j] = -INFINITY
                     
             
             for i in range(n_components):
                 for j in range(i-max_stride, i+max_stride+1):
-                    if 0 <= i and i < n_components:
+                    if 0 <= j and j < n_components:
                         log_xi_sum[i, j] = _logaddexp(log_xi_sum[i, j],
                                                       work_buffer[i, j])
 
