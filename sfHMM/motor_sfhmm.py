@@ -14,10 +14,8 @@ class sfHMM1Motor(sfHMM1, sfHMMmotorBase):
         
     def gmmfit(self, method="Dirichlet", n_init=1, random_state=0, estimate_krange=True):
         if estimate_krange:
-            kmin, kmax = self._get_movement_range()
-            k = kmax - kmin + 1
-            n = self.step.n_step
-            self.krange = (max(1, int(k-n*0.2)), int(k+n*0.2))
+            k = int((self.step.fit.max() - self.step.fit.min())/(self.sg0*5) + 0.5) + 1
+            self.krange = (max(1, int(k*0.9)), int(k*1.1))
         return super().gmmfit(method, n_init, random_state)
     
     def _set_covars(self):
@@ -51,14 +49,6 @@ class sfHMM1Motor(sfHMM1, sfHMMmotorBase):
             dy_vit = np.array([])
         return dy_step, dy_vit
     
-    def _get_movement_range(self):
-        """
-        self.step.step_size_list[i] > 0 is considerred to be forward step, and < 0 vice versa.
-        This function estimates the maximum reach of motor.
-        """        
-        all_move = np.hstack(([0], np.cumsum(np.where(self.step.step_size_list > 0, 1, -1))))
-        return all_move.min(), all_move.max()
-    
     
 class sfHMMnMotor(sfHMMn, sfHMMmotorBase):
     def __init__(self, sg0:float=-1, psf:float=-1, krange=(1, 6), 
@@ -79,16 +69,9 @@ class sfHMMnMotor(sfHMMn, sfHMMmotorBase):
     
     def gmmfit(self, method="Dirichlet", n_init=1, random_state=0, estimate_krange=True):
         if estimate_krange:
-            k_list = np.array([sf._get_movement_range() for sf in self])
-            n_list = [sf.step.n_step for sf in self]
-            argkmin = np.argmin(k_list[:,0])
-            argkmax = np.argmax(k_list[:,1])
-            dkmin = k_list[argkmin, 0]
-            dkmax = k_list[argkmax, 1]
-            k = dkmax - dkmin + 1
-            kmin = int(k - n_list[argkmin]*0.2)
-            kmax = int(k + n_list[argkmax]*0.2)
-            self.krange = (max(1, kmin), kmax)
+            step_fit = np.array(concat([sf.step.fit for sf in self]))
+            k = int((step_fit.max() - step_fit.min())/(self.sg0*5) + 0.5) + 1
+            self.krange = (max(1, int(k*0.9)), int(k*1.1))
         return super().gmmfit(method, n_init, random_state)
         
     def _set_covars(self):
@@ -119,7 +102,10 @@ class sfHMMnMotor(sfHMMn, sfHMMmotorBase):
         return dy_step, dy_vit
     
     def _copy_params(self, sf):
-        sf.covars_ = [[self.covars_[0,0,0]]]
+        if self.covariance_type == "spherical":
+            sf.covars_ = self.covars_.ravel()
+        else:
+            sf.covars_ = [[self.covars_[0,0,0]]]
         sf.min_covar = self.min_covar
         sf.means_ = self.means_
         sf.startprob_ = self.startprob_

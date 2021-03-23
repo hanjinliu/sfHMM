@@ -264,7 +264,10 @@ class sfHMMn(sfHMMBase):
         return np.abs(step_size_list)
     
     def _copy_params(self, sf):
-        sf.covars_ = self.covars_.ravel()
+        if self.covariance_type == "spherical":
+            sf.covars_ = self.covars_.ravel()
+        else:
+            sf.covars_ = [[self.covars_[0,0,0]]]
         sf.min_covar = self.min_covar
         sf.means_ = self.means_
         sf.startprob_ = self.startprob_
