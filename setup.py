@@ -18,8 +18,7 @@ class build_ext(build_ext):
         sourcefiles = [os.path.join("sfHMM", f) for f in sourcefiles]
         ext = Extension("sfHMM._hmmc_motor", 
                         sources=sourcefiles, 
-                        include_dirs = ["sfHMM",
-                                        numpy.get_include()],
+                        include_dirs = [numpy.get_include(), "sfHMM"],
                         )
         self.distribution.ext_modules[:] = cythonize(ext)
         super().finalize_options()
