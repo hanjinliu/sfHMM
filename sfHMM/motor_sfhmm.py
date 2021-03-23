@@ -52,6 +52,10 @@ class sfHMM1Motor(sfHMM1, sfHMMmotorBase):
         return dy_step, dy_vit
     
     def _get_movement_range(self):
+        """
+        self.step.step_size_list[i] > 0 is considerred to be forward step, and < 0 vice versa.
+        This function estimates the maximum reach of motor.
+        """        
         all_move = np.hstack(([0], np.cumsum(np.where(self.step.step_size_list > 0, 1, -1))))
         return all_move.min(), all_move.max()
     

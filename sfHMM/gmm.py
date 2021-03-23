@@ -133,11 +133,12 @@ class DPGMM(mixture.BayesianGaussianMixture):
         order = np.argsort(self.means_.flat)
         self.weights_ = self.weights_[unique_labels][order]
         self.means_ = self.means_[order]
-        if self.covariance_prior == "spherical":
+        if self.covariance_type == "spherical":
             self.covariances_ = self.covariances_[unique_labels][order]
             self.precisions_cholesky_ = self.precisions_cholesky_[unique_labels][order]
             self.precisions_ = self.precisions_[unique_labels][order]
             self.degrees_of_freedom_ = self.degrees_of_freedom_[unique_labels][order]
+            
         if self.weight_concentration_prior_type == "dirichlet_process":
             self.weight_concentration_ = (self.weight_concentration_[0][unique_labels][order],
                                         self.weight_concentration_[1][unique_labels][order])

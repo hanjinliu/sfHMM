@@ -158,7 +158,7 @@ sfHMM can be modified for application to motor stepping trajectories. `sfHMM1Mot
  [   0, 0.01, 0.97, 0.02, ... ,    0],
  [   0, ...         ... , 0.01, 0.99]]
 ```
-- `gmmfit()` ... `n_init=3` is default setting because of the large number of states. Also, if you want to use the predifined `krange`, you need to explicitly add keyward argument `estimate_krange=False`.
+- `gmmfit()` ... `method="Dirichlet"` is default because it is precise enough and it is much faster for big data. Also, if you want to use the predifined `krange`, you need to explicitly add keyward argument `estimate_krange=False`.
 - `tdp()` ... In the case of motor stepping, transition desity plot is not a straightforward way to visualize transition. Histogram of transition frequency is plotted here.
 
 ## Example

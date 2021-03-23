@@ -129,9 +129,13 @@ class sfHMMBase(GaussianHMM):
             self.gmm_opt = self.gmm.get_optimal(method)
 
         elif method == "Dirichlet":
-            gmm_ = DPGMM(n_components=self.krange[1], n_init=1, 
+            gmm_ = DPGMM(n_components=self.krange[1], n_init=n_init, 
                          random_state=random_state,
-                         covariance_prior=sg0_**2)
+                         weight_concentration_prior=1,
+                         max_iter=1000,
+                         mean_precision_prior=1/np.var(self.data_raw),
+                         covariance_prior=sg0_**2,
+                         weight_concentration_prior_type="dirichlet_distribution")
             gmm_.fit(np.asarray(self.data_fil).reshape(-1,1))
             self.gmm_opt = gmm_
 
@@ -284,7 +288,7 @@ class sfHMMmotorBase(sfHMMBase):
                          mean_precision_prior=1/np.var(self.data_raw),
                          covariance_prior=[[sg0_**2]],
                          covariance_type="tied",
-                         weight_concentration_prior_type='dirichlet_distribution')
+                         weight_concentration_prior_type="dirichlet_distribution")
             gmm_.fit(np.asarray(self.data_fil).reshape(-1,1))
             self.gmm_opt = gmm_
         else:
