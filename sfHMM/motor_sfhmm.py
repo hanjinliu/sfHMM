@@ -111,18 +111,3 @@ class sfHMMnMotor(sfHMMn, sfHMMmotorBase):
         sf.startprob_ = self.startprob_
         sf.transmat_kernel = self.transmat_kernel
         return None
-    
-    def _get_n_fit_scalars_per_param(self):
-        nc = self.n_components
-        nf = self.n_features
-        return {
-            "s": nc - 1,
-            "t": self.max_stride*2 + 1,
-            "m": nc * nf,
-            "c": {
-                "spherical": nc,
-                "diag": nc * nf,
-                "full": nc * nf * (nf + 1) // 2,
-                "tied": nf * (nf + 1) // 2,
-            }[self.covariance_type],
-        }

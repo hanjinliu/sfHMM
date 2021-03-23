@@ -336,3 +336,18 @@ class sfHMMmotorBase(sfHMMBase):
                               log_mask_zero(self.transmat_kernel),
                               framelogprob, bwdlattice, self.max_stride)
         return bwdlattice
+    
+    def _get_n_fit_scalars_per_param(self):
+        nc = self.n_components
+        nf = self.n_features
+        return {
+            "s": nc - 1,
+            "t": self.max_stride*2 + 1,
+            "m": nc * nf,
+            "c": {
+                "spherical": nc,
+                "diag": nc * nf,
+                "full": nc * nf * (nf + 1) // 2,
+                "tied": nf * (nf + 1) // 2,
+            }[self.covariance_type],
+        }

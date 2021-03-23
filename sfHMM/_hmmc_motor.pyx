@@ -1,10 +1,8 @@
 from cython cimport view
 from numpy.math cimport expl, logl, log1pl, isinf, fabsl, INFINITY
-
 import numpy as np
 
 ctypedef double dtype_t
-
 
 cdef inline int _argmax(dtype_t[:] X) nogil:
     cdef dtype_t X_max = -INFINITY
@@ -97,10 +95,11 @@ def _backward(int n_samples, int n_components,
 
 def _compute_log_xi_sum(int n_samples, int n_components,
                         dtype_t[:, :] fwdlattice,
-                        dtype_t[:, :] log_transmat,
+                        dtype_t[:] log_transmat_kernel,
                         dtype_t[:, :] bwdlattice,
                         dtype_t[:, :] framelogprob,
-                        dtype_t[:, :] log_xi_sum):
+                        dtype_t[:, :] log_xi_sum,
+                        int max_stride):
 
     cdef int t, i, j
     cdef dtype_t[:, ::view.contiguous] work_buffer = \
@@ -110,17 +109,23 @@ def _compute_log_xi_sum(int n_samples, int n_components,
     with nogil:
         for t in range(n_samples - 1):
             for i in range(n_components):
-                for j in range(n_components):
-                    work_buffer[i, j] = (fwdlattice[t, i]
-                                         + log_transmat[i, j]
-                                         + framelogprob[t + 1, j]
-                                         + bwdlattice[t + 1, j]
-                                         - logprob)
-
+                for j in range(i-max_stride, i+max_stride+1):
+                    p = j - i + max_stride
+                    if 0 <= i and i < n_components:
+                        work_buffer[i, j] = (fwdlattice[t, i]
+                                            + log_transmat_kernel[i, j]
+                                            + framelogprob[t + 1, j]
+                                            + bwdlattice[t + 1, j]
+                                            - logprob)
+                    else:
+                        work_buffer[i, j] = -INFINITY
+                    
+            
             for i in range(n_components):
-                for j in range(n_components):
-                    log_xi_sum[i, j] = _logaddexp(log_xi_sum[i, j],
-                                                  work_buffer[i, j])
+                for j in range(i-max_stride, i+max_stride+1):
+                    if 0 <= i and i < n_components:
+                        log_xi_sum[i, j] = _logaddexp(log_xi_sum[i, j],
+                                                      work_buffer[i, j])
 
 
 def _viterbi(int n_samples, int n_components,
