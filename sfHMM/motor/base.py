@@ -23,7 +23,7 @@ class sfHMMmotorBase(sfHMMBase):
         for i, p in enumerate(self.transmat_kernel):
             transmat += np.eye(self.n_components, k=i-self.max_stride)*p
         
-        normalize(transmat)
+        normalize(transmat, axis=1)
         return transmat
 
         
