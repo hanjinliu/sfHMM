@@ -242,26 +242,14 @@ class sfHMMn(sfHMMBase):
         return None
     
     
-    def _accumulate_transitions(self, axlim, cov):
-        axes = np.linspace(*axlim, 200)
-                    
-        x, y = np.meshgrid(axes, axes)
-        z = np.zeros((200, 200))
+    def accumulate_transitions(self):
+        return concat([sf.accumulate_transitions() for sf in self])
 
-        for sf in self:
-            for i in range(sf.viterbi.size - 1):
-                mx = sf.viterbi[i]
-                my = sf.viterbi[i + 1]
-                if (mx != my):
-                    z += np.exp(-((x - mx)** 2 + (y - my)** 2) / (2 * cov[sf.states[i]]))
-        
-        return z
 
     def _accumulate_step_sizes(self):
         if self[0].step is None:
                 raise RuntimeError("Steps are not detected yet.")
-        step_size_list = concat([sf.step.step_size_list for sf in self])
-        return np.abs(step_size_list)
+        return np.array(concat([sf.step.step_size_list for sf in self]))
     
     def _copy_params(self, sf):
         if self.covariance_type == "spherical":

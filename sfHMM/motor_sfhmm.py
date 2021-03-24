@@ -39,16 +39,6 @@ class sfHMM1Motor(sfHMM1, sfHMMmotorBase):
         
         return None
     
-    def accumulate_transitions(self, axlim=None, cov=None):
-        dy_step = np.diff(self.step.fit)
-        dy_step = dy_step[dy_step!=0]
-        if self.viterbi is not None:
-            dy_vit = np.diff(self.viterbi)
-            dy_vit = dy_vit[dy_vit!=0]
-        else:
-            dy_vit = np.array([])
-        return dy_step, dy_vit
-    
     
 class sfHMMnMotor(sfHMMn, sfHMMmotorBase):
     def __init__(self, sg0:float=-1, psf:float=-1, krange=(1, 6), 
@@ -90,16 +80,15 @@ class sfHMMnMotor(sfHMMn, sfHMMmotorBase):
         
         return None
     
-    def accumulate_transitions(self, axlim=None, cov=None):
-        dy_step = np.array(concat([np.diff(sf.step.fit) for sf in self]))
-        dy_step = dy_step[dy_step!=0]
-        if self[0].viterbi is not None:
-            dy_vit = np.array(concat([np.diff(sf.viterbi) for sf in self]))
-            dy_vit = dy_vit[dy_vit!=0]
-        else:
-            dy_vit = np.array([])
+    # def accumulate_transitions(self):
+    #     dy_step = np.array(concat([sf.step.step_size_list for sf in self]))
+    #     if self[0].viterbi is not None:
+    #         dy_vit = np.array(concat([np.diff(sf.viterbi) for sf in self]))
+    #         dy_vit = dy_vit[dy_vit!=0]
+    #     else:
+    #         dy_vit = np.array([])
             
-        return dy_step, dy_vit
+    #     return dy_step, dy_vit
     
     def _copy_params(self, sf):
         if self.covariance_type == "spherical":

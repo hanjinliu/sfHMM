@@ -4,7 +4,7 @@ from hmmlearn.hmm import GaussianHMM
 from .func import *
 from .gmm import GMMs, DPGMM
 from . import _hmmc_motor
-from hmmlearn.utils import log_mask_zero
+from hmmlearn.utils import log_mask_zero, normalize
 from scipy import special
 
 class sfHMMBase(GaussianHMM):
@@ -86,6 +86,13 @@ class sfHMMBase(GaussianHMM):
         
         return self
     
+    def accumulate_transitions(self):
+        """
+        This function returns all the transitions occurred in the trajectory, which
+        is calculated using `self.step.step_size_list` or `self.viterbi`.
+        """        
+        pass
+    
     def _name(self):
         self.__class__.count += 1
         return f"{self.__class__.__name__}-{self.__class__.count - 1}"
@@ -123,7 +130,7 @@ class sfHMMBase(GaussianHMM):
         Initialize 'sg0' if sg0 is negative.
         """        
         if self.sg0 < 0:
-            l = self._accumulate_step_sizes()
+            l = np.abs(self._accumulate_step_sizes())
             if len(l) > 0:
                 self.sg0 = np.percentile(l, p) * 0.2
             else:
@@ -169,7 +176,18 @@ class sfHMMBase(GaussianHMM):
         axlim = (np.min(means) - np.sqrt(cov.max()),
                  np.max(means) + np.sqrt(cov.max()))
                     
-        z = self._accumulate_transitions(axlim, cov)
+        tr = self.accumulate_transitions()
+        
+        axes = np.linspace(*axlim, 200)
+                    
+        x, y = np.meshgrid(axes, axes)
+        z = np.zeros((200, 200))
+
+        for sx, sy in tr:
+            mx = self.means_[sx]
+            my = self.means_[sy]
+            z += np.exp(-((x - mx)**2/(2*cov[sx]) + (y - my)**2/(2*cov[sy])))
+        
         z /= np.max(z)
         
         kw = {"vmin":0, "cmap":"jet", "origin":"lower"}
@@ -201,31 +219,6 @@ class sfHMMBase(GaussianHMM):
         return None
 
 
-def normalize(A, axis=None, mask=None):
-    """
-    See: https://github.com/matthiasplappert/hmmlearn/tree/topology-fix
-    """
-    A += np.finfo(float).eps
-    if mask is None:
-        inverted_mask = None
-    else:
-        inverted_mask = np.invert(mask)
-        A[inverted_mask] = 0.0
-    Asum = A.sum(axis)
-
-    if axis and A.ndim > 1:
-        # Make sure we don't divide by zero.
-        Asum[Asum == 0] = 1
-        shape = list(A.shape)
-        shape[axis] = 1
-        Asum.shape = shape
-
-    A /= Asum
-    
-    if inverted_mask is not None:
-        A[inverted_mask] = np.finfo(float).eps
-    return None
-
 class sfHMMmotorBase(sfHMMBase):
     """
     This base class enables sparse transition probability matrix aiming at analyzing motor
@@ -243,19 +236,14 @@ class sfHMMmotorBase(sfHMMBase):
         for i, p in enumerate(self.transmat_kernel):
             transmat += np.eye(self.n_components, k=i-self.max_stride)*p
         
-        mask = transmat > 0
-        normalize(transmat, axis=1, mask=mask)
+        normalize(transmat)
         return transmat
-    
-    def accumulate_transitions(self):
-        """
-        This function returns all the transitions occurred in the trajectory, which
-        is calculated using `self.step.step_size_list` or `self.viterbi`.
-        """        
-        pass
+
         
     def tdp(self, **kwargs):
-        dy_step, dy_vit = self.accumulate_transitions()
+        dy_step = self._accumulate_step_sizes()
+        dy_vit = np.array([self.means_[sy]-self.means_[sx]
+                           for sx, sy in self.accumulate_transitions()])
         
         with plt.style.context(self.__class__.styles):
             if dy_vit.size>0:
@@ -297,14 +285,10 @@ class sfHMMmotorBase(sfHMMBase):
         if not np.allclose(self.startprob_.sum(), 1.0):
             raise ValueError("startprob_ must sum to 1.0 (got {:.4f})"
                              .format(self.startprob_.sum()))
-
-        # self.transmat_ = np.asarray(self.transmat_) <- skip
-        if self.transmat_.shape != (self.n_components, self.n_components):
-            raise ValueError(
-                "transmat_ must have shape (n_components, n_components)")
-        if not np.allclose(self.transmat_.sum(axis=1), 1.0):
-            raise ValueError("rows of transmat_ must sum to 1.0 (got {})"
-                             .format(self.transmat_.sum(axis=1)))
+            
+        if not np.allclose(self.transmat_kernel.sum(), 1.0):
+            raise ValueError("transmat_kernel must sum to 1.0"
+                             f" (got {self.transmat_kernel.sum()})")
     
     def _do_mstep(self, stats):
         if 's' in self.params:
@@ -316,7 +300,7 @@ class sfHMMmotorBase(sfHMMBase):
             transmat_ = np.where(self.transmat_ == 0, 0, transmat_)
             for i in range(len(self.transmat_kernel)):
                 self.transmat_kernel[i] = np.sum(np.diag(transmat_, k=i-self.max_stride))
-            self.transmat_kernel = self.transmat_kernel/np.sum(self.transmat_kernel)
+            normalize(self.transmat_kernel)
     
     def _do_viterbi_pass(self, framelogprob):
         n_samples, n_components = framelogprob.shape

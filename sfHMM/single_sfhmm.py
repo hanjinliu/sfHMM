@@ -226,24 +226,17 @@ class sfHMM1(sfHMMBase):
         
         return None
     
-    def _accumulate_transitions(self, axlim, cov):
-        axes = np.linspace(*axlim, 200)
-                    
-        x, y = np.meshgrid(axes, axes)
-        z = np.zeros((200, 200))
-
-        for i in range(self.viterbi.size - 1):
-            mx = self.viterbi[i]
-            my = self.viterbi[i + 1]
-            if (mx != my):
-                z += np.exp(-((x - mx)** 2 + (y - my)** 2) / (2 * cov[self.states[i]]))
+    def accumulate_transitions(self):
+        if not hasattr(self, "states"):
+            return np.array([], dtype="float64")
+        return [(self.states[i], self.states[i+1]) 
+                for i in range(self.states.size - 1)
+                if self.states[i] != self.states[i+1]]
         
-        return z
-    
     def _accumulate_step_sizes(self):
         if self.step is None:
                 raise RuntimeError("Steps are not detected yet.")
-        return np.abs(self.step.step_size_list)
+        return self.step.step_size_list
     
     def _set_covars(self):
         if self.states is None:
