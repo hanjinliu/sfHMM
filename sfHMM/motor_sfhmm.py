@@ -12,7 +12,7 @@ class sfHMM1Motor(sfHMM1, sfHMMmotorBase):
         self.max_stride = max_stride
         self.covariance_type = "tied"
         
-    def gmmfit(self, method="Dirichlet", n_init=1, random_state=0, estimate_krange=True):
+    def gmmfit(self, method:str="Dirichlet", n_init:int=1, random_state:int=0, estimate_krange:bool=True):
         if estimate_krange:
             k = int((self.step.fit.max() - self.step.fit.min())/(self.sg0*5) + 0.5) + 1
             self.krange = (max(1, int(k*0.9)), int(k*1.1))
@@ -57,7 +57,7 @@ class sfHMMnMotor(sfHMMn, sfHMMmotorBase):
         self.ylim[1] = max(sf.ylim[1], self.ylim[1])
         return self
     
-    def gmmfit(self, method="Dirichlet", n_init=1, random_state=0, estimate_krange=True):
+    def gmmfit(self, method="Dirichlet", n_init:int=1, random_state:int=0, estimate_krange:bool=True):
         if estimate_krange:
             step_fit = np.array(concat([sf.step.fit for sf in self]))
             k = int((step_fit.max() - step_fit.min())/(self.sg0*5) + 0.5) + 1
@@ -79,16 +79,6 @@ class sfHMMnMotor(sfHMMn, sfHMMmotorBase):
         self.transmat_kernel = transmat_kernel/np.sum(transmat_kernel)
         
         return None
-    
-    # def accumulate_transitions(self):
-    #     dy_step = np.array(concat([sf.step.step_size_list for sf in self]))
-    #     if self[0].viterbi is not None:
-    #         dy_vit = np.array(concat([np.diff(sf.viterbi) for sf in self]))
-    #         dy_vit = dy_vit[dy_vit!=0]
-    #     else:
-    #         dy_vit = np.array([])
-            
-    #     return dy_step, dy_vit
     
     def _copy_params(self, sf):
         if self.covariance_type == "spherical":

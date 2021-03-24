@@ -88,8 +88,7 @@ class sfHMMBase(GaussianHMM):
     
     def accumulate_transitions(self):
         """
-        This function returns all the transitions occurred in the trajectory, which
-        is calculated using `self.step.step_size_list` or `self.viterbi`.
+        This function returns all the transitions occurred in the trajectory.
         """        
         pass
     
@@ -125,9 +124,9 @@ class sfHMMBase(GaussianHMM):
         
         return None
     
-    def _init_sg0(self, p=25):
+    def _init_sg0(self, p:float=25):
         """
-        Initialize 'sg0' if sg0 is negative.
+        Initialize 'sg0' if it is negative.
         """        
         if self.sg0 < 0:
             l = np.abs(self._accumulate_step_sizes())
@@ -138,7 +137,7 @@ class sfHMMBase(GaussianHMM):
         
         return None
     
-    def _gmmfit(self, method, n_init, random_state):
+    def _gmmfit(self, method:str, n_init:int, random_state:int):
         # in case S.D. of noise was very small
         if len(self._sg_list) > 0:
             sg0_ = min(self.sg0, np.percentile(self._sg_list, 25))
@@ -272,7 +271,7 @@ class sfHMMmotorBase(sfHMMBase):
             plt.show()
         return None
     
-    def _init_sg0(self, p=50):
+    def _init_sg0(self, p:float=50):
         """
         Initialize 'sg0' if sg0 is negative.
         """        
