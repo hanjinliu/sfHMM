@@ -67,6 +67,19 @@ class sfHMMn(sfHMMBase):
         self.ylim[1] = max(sf.ylim[1], self.ylim[1])
         return self
     
+    def appendn(self, datalist):
+        """
+        Append all the data in the list
+
+        Parameters
+        ----------
+        datalist : an iterable object with array-like objects
+            list of data
+        """        
+        for data in datalist:
+            self.append(data)
+        return self
+    
     def step_finding(self):
         """
         Step finding by extended version of Kalafut-Visscher's algorithm.

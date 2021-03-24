@@ -1,8 +1,8 @@
 import numpy as np
-from .single_sfhmm import sfHMM1
-from .multi_sfhmm import sfHMMn
+from ..single_sfhmm import sfHMM1
+from ..multi_sfhmm import sfHMMn
 from .base import sfHMMmotorBase
-from .func import *
+from ..func import *
 
 
 class sfHMM1Motor(sfHMM1, sfHMMmotorBase):
@@ -90,3 +90,17 @@ class sfHMMnMotor(sfHMMn, sfHMMmotorBase):
         sf.startprob_ = self.startprob_
         sf.transmat_kernel = self.transmat_kernel
         return None
+
+    def align(self):
+        if self[0].step is None:
+            raise RuntimeError("Cannot align datasets before step finding.")
+        ori = [sf.step.fit[0] for sf in self]
+        ori_m = np.mean(ori)
+        for sf, o in zip(self, ori):
+            dy = (o - ori_m)
+            sf.data_raw -= dy
+            sf.ylim -= dy
+            sf.step.fit -= dy
+            sf.step.mu_list -= dy
+            if sf.data_fil is not None:
+                sf.data_fil -= dy

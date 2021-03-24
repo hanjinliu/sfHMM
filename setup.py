@@ -16,10 +16,10 @@ class build_ext(build_ext):
         import numpy
         import numpy.distutils
         sourcefiles = ["_hmmc_motor.pyx"]
-        sourcefiles = [os.path.join("sfHMM", f) for f in sourcefiles]
-        ext = Extension("sfHMM._hmmc_motor", 
+        sourcefiles = [os.path.join("sfHMM", "motor", f) for f in sourcefiles]
+        ext = Extension("sfHMM.motor._hmmc_motor", 
                         sources=sourcefiles, 
-                        include_dirs = ["sfHMM", numpy.get_include()],
+                        include_dirs = ["sfHMM.motor", numpy.get_include()],
                         )
         self.distribution.ext_modules[:] = cythonize(ext)
         
