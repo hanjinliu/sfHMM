@@ -162,9 +162,9 @@ class SDFixedGaussStep(RecursiveStep):
 
 class TtestStep(RecursiveStep):
     """
-    Shuang B, Cooper D, Taylor JN, Kisley L, Chen J, Wang W, Li CB, Komatsuzaki T, 
-    Landes CF. 2014. Fast step transition and state identification (STaSI) for discrete 
-    Single-Molecule data analysis. The Journal of Physical Chemistry Letters 5:3157–3161.
+    Shuang, B., Cooper, D., Taylor, J. N., Kisley, L., Chen, J., Wang, W., ... & Landes, 
+    C. F. (2014). Fast step transition and state identification (STaSI) for discrete
+    single-molecule data analysis. The journal of physical chemistry letters, 5(18), 3157-3161.
     https://doi.org/10.1021/jz501435p
     """    
     def __init__(self, data, alpha=0.05, sigma=-1):
