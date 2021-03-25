@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from hmmlearn.hmm import GaussianHMM
 from .func import *
 from .gmm import GMMs, DPGMM
+from .step import GaussStep, PoissonStep
 
 class sfHMMBase(GaussianHMM):
     count = 0
@@ -25,7 +26,6 @@ class sfHMMBase(GaussianHMM):
     
     def __init__(self, sg0:float=-1, psf:float=-1, krange=(1, 6),
                  model:str="g", name:str="", **hmmlearn_params):
-        sg0, psf, krange, model = check(sg0, psf, krange, model)
         self.sg0 = sg0
         self.psf = psf
         self.krange = krange
@@ -35,6 +35,34 @@ class sfHMMBase(GaussianHMM):
         super().__init__(self, **params)
         self.n_features = 1
         self.name = name if name else self._name()
+        
+    @property
+    def krange(self):
+        return self._krange
+    
+    @krange.setter
+    def krange(self, value):
+        if isinstance(value, int):
+            value = (value, value)
+        else:
+            kmin, kmax = value
+            value = (kmin, kmax)
+        self._krange = value
+    
+    @property
+    def model(self):
+        return self._model
+    
+    @model.setter
+    def model(self, s):
+        if s.lower() in ("g", "gauss"):
+            self._model = "Gauss"
+            self.StepClass = GaussStep
+        elif s.lower() in ("p", "poisson"):
+            self._model = "Poisson"
+            self.StepClass = PoissonStep
+        else:
+            raise ValueError(f"Invalid model identifier: {s}")
     
     def get_params(self, deep=True):
         out = dict()

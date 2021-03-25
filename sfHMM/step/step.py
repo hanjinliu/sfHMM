@@ -1,5 +1,6 @@
 import numpy as np
-from .moment import GaussMoment, PoissonMoment
+from scipy import stats
+from .moment import GaussMoment, SDFixedGaussMoment, TtestMoment, PoissonMoment
 import heapq
 
 """
@@ -83,6 +84,30 @@ class BaseStep:
         
         return None
 
+class RecursiveStep(BaseStep):
+    def _append_steps(self, mom, x0:int=0):
+        if len(mom) < 3:
+            return None
+        dlogL, dx = mom.get_optimal_splitter()
+        dlogL_tot = self.penalty + dlogL
+        if dlogL_tot > 0:
+            self.step_list.append(x0+dx)
+            mom1, mom2 = mom.split(dx)
+            self._append_steps(mom1, x0=x0)
+            self._append_steps(mom2, x0=x0+dx)
+        else:
+            pass
+        return None
+    
+    def _init_momemt(self):
+        pass
+    
+    def multi_step_finding(self):
+        mom = self._init_moment()
+        self.fit = np.full(self.len, mom.total[0]/self.len)
+        self._append_steps(mom)
+        self._finalize()
+        return self
         
 class GaussStep(BaseStep):
     """
@@ -98,10 +123,10 @@ class GaussStep(BaseStep):
             Probability of transition (signal change). If not in a proper range 0<p<0.5,
             then This algorithm will be identical to the original Kalafut-Visscher's.
         """
-        super().__init__(data, p)
+        super().__init__(np.asarray(data, dtype="float64"), p)
         
     def multi_step_finding(self):
-        g = GaussMoment().init(self.data, order=2)
+        g = GaussMoment().init(self.data)
         self.fit = np.full(self.len, g.total[0]/self.len)
         chi2 = g.chi2   # initialize total chi^2
         heap = Heap()   # chi^2 change (<0), dx, x0, GaussMoment object of the step
@@ -124,8 +149,39 @@ class GaussStep(BaseStep):
         self._finalize()
         return self
 
+class SDFixedGaussStep(RecursiveStep):
+    def __init__(self, data, p=-1, sigma=-1):
+        super().__init__(np.asarray(data, dtype="float64"), p)
+        if sigma < 0:
+            sigma = np.percentile(np.diff(self.data), 84.13)/np.sqrt(2)
+        self.penalty *= 2*sigma*sigma
+        self.sigma = sigma
+    
+    def _init_moment(self):
+        return SDFixedGaussMoment().init(self.data)
 
-class PoissonStep(BaseStep):
+class TtestStep(RecursiveStep):
+    """
+    Shuang B, Cooper D, Taylor JN, Kisley L, Chen J, Wang W, Li CB, Komatsuzaki T, 
+    Landes CF. 2014. Fast step transition and state identification (STaSI) for discrete 
+    Single-Molecule data analysis. The Journal of Physical Chemistry Letters 5:3157–3161.
+    https://doi.org/10.1021/jz501435p
+    """    
+    def __init__(self, data, alpha=0.05, sigma=-1):
+        self.data = np.asarray(data, dtype="float64")
+        self.len = self.data.size
+        self.n_step = 1
+        self.step_list = [0, self.len]
+        if sigma < 0:
+            sigma = np.percentile(np.diff(self.data), 84.13)/np.sqrt(2)
+        
+        self.penalty = -stats.t.ppf(1-alpha/2, len(data))*sigma
+        self.sigma = sigma
+    
+    def _init_moment(self):
+        return TtestMoment().init(self.data)
+
+class PoissonStep(RecursiveStep):
     """
     Step finding algorithm for trajectories that follow Poisson distribution.
     """    
@@ -136,23 +192,5 @@ class PoissonStep(BaseStep):
         elif np.any(self.data < 0):
             raise ValueError("Input data contains negative values.")
 
-    def multi_step_finding(self):
-        p = PoissonMoment().init(self.data, order=1)
-        self.fit = np.full(self.len, p.total[0]/self.len)
-        self._append_steps(p)
-        self._finalize()
-        return None
-    
-    def _append_steps(self, p:PoissonMoment, x0:int=0):
-        if len(p) < 3:
-            return None
-        slogm, dx = p.get_optimal_splitter()
-        dlogL = self.penalty + slogm
-        if dlogL > 0:
-            self.step_list.append(x0+dx)
-            p1, p2 = p.split(dx)
-            self._append_steps(p1, x0=x0)
-            self._append_steps(p2, x0=x0+dx)
-        else:
-            pass
-        return None
+    def _init_momemt(self):
+        return PoissonMoment().init(self.data)

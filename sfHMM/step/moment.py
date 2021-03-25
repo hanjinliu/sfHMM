@@ -72,7 +72,7 @@ class Moment:
         pass
 
 @dataclass
-class GaussMoment(Moment):    
+class GaussMoment(Moment):
     @property
     def chi2(self):
         return self.total[1] - self.total[0]**2/len(self)
@@ -84,8 +84,32 @@ class GaussMoment(Moment):
         chi2 = chi2_fw + chi2_bw
         x = np.argmin(chi2)
         return chi2[x] - self.chi2, x + 1
+    
+    def init(self, data):
+        return super().init(data, order=2)
 
+@dataclass
+class SDFixedGaussMoment(Moment):
+    @property
+    def chi2(self):
+        return (2 - 1/len(self))/len(self)*self.total[0]**2
+    
+    def get_optimal_splitter(self):
+        n = np.arange(1, len(self))
+        chi2_fw = (2 - 1/n)/n*self.fw[0]**2
+        chi2_bw = (2 - 1/n[::-1])/n[::-1]*self.bw[0]**2
+        chi2 = chi2_fw + chi2_bw
+        x = np.argmax(chi2)
+        return chi2[x] - self.chi2, x + 1
 
+@dataclass
+class TtestMoment(Moment):
+    def get_optimal_splitter(self):
+        n = np.arange(1, len(self))
+        tk = np.abs(self.fw[0]/n - self.bw[0]/n[::-1]) / np.sqrt(1/n + 1/(n[::-1]))
+        x = np.argmax(tk)
+        return tk[x], x + 1
+    
 @dataclass
 class PoissonMoment(Moment):    
     @property

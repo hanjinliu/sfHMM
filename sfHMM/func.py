@@ -19,30 +19,6 @@ def concat(list_of_list):
         out += list(list_)
     return out
 
-def check(sg0, psf, krange, model):
-    sg0 = float(sg0)
-    psf = float(psf)
-    
-    if isinstance(krange, int):
-        krange = (krange, krange)
-    elif isinstance(krange, (list, tuple)):
-        if len(krange) != 2:
-            raise ValueError("'krange' must be in [kmin, kmax] form.")
-        elif (krange[0] > krange[1]):
-            raise ValueError("kmin is larger than kmax in 'krange'.")
-    else:
-        raise TypeError("'krange' must be int, list or tuple")
-
-    if model in ("g", "G", "gauss", "Gauss"):
-        model = "Gauss"
-    elif model in ("p", "P", "poisson", "Poisson"):
-        model = "Poisson"
-    else:
-        raise ValueError(f"Invalid model identifier: {model}")
-    
-    return sg0, psf, krange, model
-
-
 def plot2(data1, data2=None, ylim=None, legend=True, color1=None, **kwargs):
     """
     dict_ = {"color": ___, "label": ___}

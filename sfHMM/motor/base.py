@@ -33,7 +33,10 @@ class sfHMMmotorBase(sfHMMBase):
                            for sx, sy in self.accumulate_transitions()])
         
         with plt.style.context(self.__class__.styles):
-            if dy_vit.size>0:
+            if dy_step.size == 0:
+                print("no step found")
+                return None
+            elif dy_vit.size > 0:
                 xmin = min(dy_step.min(), dy_vit.min())
                 xmax = max(dy_step.max(), dy_vit.max())
             else:

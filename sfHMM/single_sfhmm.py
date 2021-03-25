@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from .step import GaussStep, PoissonStep
 from .base import sfHMMBase
 from .func import *
 
@@ -70,13 +69,7 @@ class sfHMM1(sfHMMBase):
         """
         Step finding by extended version of Kalafut-Visscher's algorithm.
         """
-        if self.model == "Gauss":
-            self.step = GaussStep(self.data_raw.astype("float64"), self.psf)
-        elif self.model == "Poisson":
-            self.step = PoissonStep(self.data_raw, self.psf)
-        else:
-            raise ValueError
-        
+        self.step = self.StepClass(self.data_raw, self.psf)
         self.step.multi_step_finding()
         self.psf = self.step.p
         return self
