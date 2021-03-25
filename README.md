@@ -17,10 +17,11 @@ pip install git+https://github.com/hanjinliu/sfHMM
   - `hmm_sampling` ... sample data generation of FRET-like data.
   - `motor_sampling` ... sample data generation of motor-like data.
 - `sfHMM.step` module
-  - `GaussStep` ... step finding for Gauss distribution.
+  - `GaussStep` ... step finding for Gauss distribution[^1].
   - `PoissonStep` ... step finding for Poisson distribution.
   - `SDFixedGaussStep` ... step finding for Gauss distribution with fixed standard deviation.
-  - `TtestStep` ... step finding using T-test.
+  - `TtestStep` ... step finding using T-test[^2].
+  - `BayesianPoissonStep` ... step finding in Bayesian method[^3].
 - `sfHMM.motor` module
   - `sfHMM1Motor` ... sfHMM for single motor-stepping trajectory.
   - `sfHMMnMotor` ... sfHMM for multiple motor-stepping trajectories.
@@ -64,4 +65,8 @@ If you found sfHMM useful, please consider citing our paper.
  ...
 
 # References
-- Kalafut, B., & Visscher, K. (2008). An objective, model-independent method for detection of non-uniform steps in noisy signals. Computer Physics Communications, 179(10), 716-723.
+[^1]: Kalafut, B., & Visscher, K. (2008). An objective, model-independent method for detection of non-uniform steps in noisy signals. Computer Physics Communications, 179(10), 716-723.
+
+[^2]: Shuang B, Cooper D, Taylor JN, Kisley L, Chen J, Wang W, Li CB, Komatsuzaki T, Landes CF. 2014. Fast step transition and state identification (STaSI) for discrete Single-Molecule data analysis. The Journal of Physical Chemistry Letters 5:3157–3161.
+
+[^3]: Ensign, D. L., & Pande, V. S. (2010). Bayesian detection of intensity changes in  single molecule and molecular dynamics trajectories. Journal of Physical Chemistry B, 114(1), 280–292.

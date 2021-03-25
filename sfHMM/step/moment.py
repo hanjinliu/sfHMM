@@ -1,5 +1,6 @@
 import numpy as np
 from dataclasses import dataclass
+from scipy.special import gammaln, logsumexp
 
 # Ideally we should prepare `n = np.arange(1, len(data))` first, and view
 # it many times in get_optimal_splitter like n[:len(self.fw)], but this
@@ -123,4 +124,16 @@ class PoissonMoment(Moment):
         slogm = slogm_fw + slogm_bw
         x = np.argmax(slogm)
         return slogm[x] - self.slogm, x + 1
-    
+
+@dataclass
+class BayesianPoissonMoment(Moment):
+    def get_optimal_splitter(self):
+        n = np.arange(1, len(self))
+        g1 = gammaln(self.fw[0] + 1)
+        g2 = gammaln(self.bw[0] + 1)
+        logprob = g1 + g2 - (self.fw[0] + 1) * np.log(n) - (self.bw[0] + 1) * np.log(n[::-1]) \
+            - np.log((self.fw[0]/n)**2 + (self.bw[0]/n[::-1])**2)
+        logC = np.log(2 / np.pi / (len(self) - 1)) - gammaln(self.total[0]) \
+            + self.total[0]*np.log(len(self))
+        logBayesFactor = logC + logsumexp(logprob)
+        return logBayesFactor, np.argmax(logprob) + 1

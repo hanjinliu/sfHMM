@@ -1,6 +1,6 @@
 import numpy as np
 from scipy import stats
-from .moment import GaussMoment, SDFixedGaussMoment, TtestMoment, PoissonMoment
+from .moment import GaussMoment, SDFixedGaussMoment, TtestMoment, PoissonMoment, BayesianPoissonMoment
 import heapq
 
 """
@@ -159,6 +159,7 @@ class SDFixedGaussStep(RecursiveStep):
     def _init_moment(self):
         return SDFixedGaussMoment().init(self.data)
 
+
 class TtestStep(RecursiveStep):
     """
     Shuang B, Cooper D, Taylor JN, Kisley L, Chen J, Wang W, Li CB, Komatsuzaki T, 
@@ -171,14 +172,29 @@ class TtestStep(RecursiveStep):
         self.len = self.data.size
         self.n_step = 1
         self.step_list = [0, self.len]
+        self.alpha = alpha
+        
         if sigma < 0:
             sigma = np.percentile(np.diff(self.data), 84.13)/np.sqrt(2)
         
-        self.penalty = -stats.t.ppf(1-alpha/2, len(data))*sigma
         self.sigma = sigma
     
     def _init_moment(self):
         return TtestMoment().init(self.data)
+    
+    def _append_steps(self, mom, x0:int=0):
+        if len(mom) < 3:
+            return None
+        tk, dx = mom.get_optimal_splitter()
+        t_cri = stats.t.ppf(1-self.alpha/2, len(mom))
+        if t_cri < tk:
+            self.step_list.append(x0+dx)
+            mom1, mom2 = mom.split(dx)
+            self._append_steps(mom1, x0=x0)
+            self._append_steps(mom2, x0=x0+dx)
+        else:
+            pass
+        return None
 
 class PoissonStep(RecursiveStep):
     """
@@ -191,5 +207,35 @@ class PoissonStep(RecursiveStep):
         elif np.any(self.data < 0):
             raise ValueError("Input data contains negative values.")
 
-    def _init_momemt(self):
+    def _init_moment(self):
         return PoissonMoment().init(self.data)
+
+
+class BayesianPoissonStep(RecursiveStep):
+    """
+    Ensign, D. L., & Pande, V. S. (2010). Bayesian detection of intensity changes in 
+    single molecule and molecular dynamics trajectories. Journal of Physical Chemistry
+    B, 114(1), 280–292. https://doi.org/10.1021/jp906786b
+    """    
+    def __init__(self, data, skept=10):
+        self.data = np.asarray(data, dtype="float64")
+        self.len = self.data.size
+        self.n_step = 1
+        self.step_list = [0, self.len]
+        self.skept = skept
+    
+    def _init_moment(self):
+        return BayesianPoissonMoment().init(self.data)
+    
+    def _append_steps(self, mom, x0:int=0):
+        if len(mom) < 3:
+            return None
+        logbf, dx = mom.get_optimal_splitter()
+        if np.log(self.skept) < logbf:
+            self.step_list.append(x0+dx)
+            mom1, mom2 = mom.split(dx)
+            self._append_steps(mom1, x0=x0)
+            self._append_steps(mom2, x0=x0+dx)
+        else:
+            pass
+        return None
