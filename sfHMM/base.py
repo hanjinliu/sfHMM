@@ -78,20 +78,11 @@ class sfHMMBase(GaussianHMM):
         out.pop("data_raw", None)
         return out
 
-    def step_finding(self):
-        pass
-    
-    def denoising(self):
-        pass
-    
-    def gmmfit(self, method):
-        pass
-    
-    def hmmfit(self):
-        pass
-    
-    def plot(self):
-        pass
+    def step_finding(self): ...
+    def denoising(self): ...
+    def gmmfit(self, method): ...
+    def hmmfit(self): ...
+    def plot(self): ...
     
     def run_all(self, plot:bool=True):
         """
@@ -114,8 +105,7 @@ class sfHMMBase(GaussianHMM):
     def accumulate_transitions(self):
         """
         This function returns all the transitions occurred in the trajectory.
-        """        
-        pass
+        """
     
     def _name(self):
         self.__class__.count += 1
@@ -203,7 +193,6 @@ class sfHMMBase(GaussianHMM):
         tr = self.accumulate_transitions()
         
         axes = np.linspace(*axlim, 200)
-                    
         x, y = np.meshgrid(axes, axes)
         z = np.zeros((200, 200))
 

@@ -178,7 +178,8 @@ class sfHMMn(sfHMMBase):
     
     def _set_startprob(self):
         d0_list = [sf.data_raw[0] for sf in self]
-        self.startprob_ = calc_startprob(d0_list, self.gmm_opt.weights_, self.gmm_opt.means_, self.covars_)
+        # self.startprob_ = calc_startprob(d0_list, self.gmm_opt.weights_, self.gmm_opt.means_, self.covars_)
+        self.startprob_ = calc_startprob(d0_list, self.gmm_opt)
         return None
     
     def _set_transmat(self):

@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from hmmlearn.utils import normalize
 
 def gauss_mix(x, gmm):
     return np.exp(gmm.score_samples(x.reshape(-1,1)))
@@ -7,11 +8,6 @@ def gauss_mix(x, gmm):
 def gauss(x, wt, mu, sg):
     y = wt * np.exp(-(x - mu)** 2 / (2 * sg * sg)) / np.sqrt(2 * np.pi) / sg
     return y
-
-def normalize_transmat(transmat):
-    transmat += 1.0
-    transmat /= (np.sum(transmat, axis=1).reshape(-1, 1))
-    return None
 
 def concat(list_of_list):
     out = []
@@ -56,13 +52,9 @@ def calc_covars(data_raw, states, n_components):
     
     return covars
 
-def calc_startprob(d0_list, wt, mu, covars):
-    logprob = np.zeros(len(wt))
-    mu = mu.ravel()
-    sg = np.sqrt(covars.ravel())
-    for d0 in d0_list:
-        logprob += gauss(d0, wt, mu, sg) + 1e-12
-    prob = np.exp(logprob)
+def calc_startprob(d0_list, gmm):
+    logprob = gmm._estimate_weighted_log_prob(np.asarray(d0_list).reshape(-1,1))
+    prob = np.exp(np.sum(logprob, axis=0))
     return prob / np.sum(prob)
 
 def calc_transmat(states_list, n_components):
@@ -72,5 +64,5 @@ def calc_transmat(states_list, n_components):
         for i in range(len(states) - 1):
             transmat[states[i], states[i+1]] += 1.0
     
-    normalize_transmat(transmat)
+    normalize(transmat, axis=1)
     return transmat

@@ -64,8 +64,7 @@ class BaseStep:
     def multi_step_finding(self):
         """
         Run step-finding algorithm and store all the information.
-        """        
-        pass
+        """
     
     def _finalize(self):
         """

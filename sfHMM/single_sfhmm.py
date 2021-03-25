@@ -19,7 +19,7 @@ class sfHMM1(sfHMMBase):
         if 0 < p < 0.5 is not satisfied, the original Kalafut-Visscher's algorithm is executed.
     krange : int or list
         Minimum and maximum number of states to search in GMM clustering. If it is integer, then
-        it will be interpretted as [krange, krange].
+        it will be interpretted as (krange, krange).
     model: str, optional
         Distribution of noise. Gauss and Poisson distribution are available for now.
     
@@ -150,10 +150,10 @@ class sfHMM1(sfHMMBase):
     def plot(self, trange=None):
         """        
         Plot figures of:
-            [1] raw data and step finding result (data_raw & step_fit)      ||  layout
-            [2] raw data and denoised data (data_raw & data_fil)            ||  [ 1 ]
-            [3] histograms of [2]                                           ||  [ 2 ][3]
-            [4] raw data and HMM fitted data (data_raw & viterbi)           ||  [ 4 ]
+            [1] data_raw & step_fit      ||  layout
+            [2] data_raw & data_fil      ||  [ 1 ]
+            [3] histograms of [2]        ||  [ 2 ][3]
+            [4] data_raw & viterbi       ||  [ 4 ]
         
         Parameters
         ----------
@@ -250,8 +250,9 @@ class sfHMM1(sfHMMBase):
         if self.gmm_opt is None:
             raise RuntimeError("Cannot initialize 'startprob_'. You must run gmmfit() before hmmfit() or" \
                                "set 'startprob_' manually.")
-        self.startprob_ = calc_startprob([self.data_raw[0]], self.gmm_opt.weights_,
-                                         self.gmm_opt.means_, self.covars_)
+        # self.startprob_ = calc_startprob([self.data_raw[0]], self.gmm_opt.weights_,
+        #                                  self.gmm_opt.means_, self.covars_)
+        self.startprob_ = calc_startprob([self.data_raw[0]], self.gmm_opt)
         return None
     
     def _set_transmat(self):

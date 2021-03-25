@@ -58,7 +58,8 @@ class GMMs:
     def fit(self, n_init=1, random_state=0):
         d = np.asarray(self.data).reshape(-1, 1)
             
-        self.results = {k: GMM1(k, n_init=n_init, random_state=random_state, 
+        self.results = {k: GMM1(k, n_init=n_init,
+                                random_state=random_state, 
                                 covariance_type=self.covariance_type) 
                         for k in self.klist}
         
@@ -69,7 +70,7 @@ class GMMs:
                 gmm1.valid = False
                 
         return None
-    
+        
     def get_optimal(self, criterion="bic", only_valid=True):
         if criterion == "bic":
             cri_list = self.get_bic()
@@ -110,7 +111,6 @@ class GMMs:
         check if any standard deviations are too small.
         """
         return (sg < self.min_sg).any()
-
 
 
 class DPGMM(mixture.BayesianGaussianMixture):
@@ -156,7 +156,7 @@ class DPGMM(mixture.BayesianGaussianMixture):
             
         if self.weight_concentration_prior_type == "dirichlet_process":
             self.weight_concentration_ = (self.weight_concentration_[0][unique_labels][order],
-                                        self.weight_concentration_[1][unique_labels][order])
+                                          self.weight_concentration_[1][unique_labels][order])
         else:
             self.weight_concentration_ = self.weight_concentration_[unique_labels][order]
         self.mean_precision_ = self.mean_precision_[unique_labels][order]
