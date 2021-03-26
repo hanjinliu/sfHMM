@@ -88,6 +88,7 @@ class BaseStep:
         
         return None
 
+
 class RecursiveStep(BaseStep):
     def _append_steps(self, mom, x0:int=0):
         if len(mom) < 3:
@@ -113,6 +114,7 @@ class RecursiveStep(BaseStep):
         self._finalize()
         return self
         
+        
 class GaussStep(BaseStep):
     """
     Step finding algorithm for trajectories that follow Gauss distribution.
@@ -135,7 +137,7 @@ class GaussStep(BaseStep):
         """
         super().__init__(np.asarray(data, dtype="float64"), p)
         
-    def multi_step_finding_fast(self):
+    def multi_step_finding(self):
         g = GaussMoment().init(self.data)
         self.fit = np.full(self.len, g.total[0]/self.len)
         chi2 = g.chi2   # initialize total chi^2
@@ -159,28 +161,6 @@ class GaussStep(BaseStep):
         self._finalize()
         return self
     
-    def multi_step_finding(self):
-        g = GaussMoment().init(self.data)
-        self.fit = np.full(self.len, g.total[0]/self.len)
-        chi2 = g.chi2   # initialize total chi^2
-        heap = Heap()   # chi^2 change (<0), dx, x0, GaussMoment object of the step
-        heap.push(g.get_optimal_splitter() + (0, g))
-        logL = [0.0]
-        step_list = []
-        while len(heap.heap) > 0:
-            dchi2, dx, x0, g = heap.pop()
-            dlogL = self.penalty - self.len/2 * np.log(1 + dchi2/chi2)
-            logL.append(logL[-1] + dlogL)
-            x = x0 + dx
-            g1, g2 = g.split(dx)
-            len(g1) > 2 and heap.push(g1.get_optimal_splitter() + (x0, g1))
-            len(g2) > 2 and heap.push(g2.get_optimal_splitter() + (x, g2))
-            step_list.append(x)
-            chi2 += dchi2
-        
-        self.step_list = [0, len(self.data)] + step_list[:np.argmax(logL)]
-        self._finalize()
-        return None
 
 class SDFixedGaussStep(RecursiveStep):
     def __init__(self, data, p=-1, sigma=-1):
@@ -233,6 +213,7 @@ class TtestStep(RecursiveStep):
         else:
             pass
         return None
+
 
 class PoissonStep(RecursiveStep):
     """

@@ -65,7 +65,7 @@ class sfHMMBase(GaussianHMM):
             else:
                 raise ValueError(f"Invalid model identifier: {s}")    
             
-        elif isinstance(s, BaseStep):
+        elif issubclass(s, BaseStep):
             self._model = s.__name__
             self.StepClass = s
             
