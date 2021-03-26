@@ -1,6 +1,7 @@
 import numpy as np
-from scipy import stats
-from .moment import GaussMoment, SDFixedGaussMoment, TtestMoment, PoissonMoment, BayesianPoissonMoment
+from .moment import *
+from scipy.stats import t as student_t
+from scipy.stats import norm
 import heapq
 
 """
@@ -45,6 +46,10 @@ class Heap:
     
     def pop(self):
         return heapq.heappop(self.heap)
+
+def estimate_sigma(data):
+    p = norm.cdf(1) # = sigma for standard normal distribution.
+    return np.percentile(np.diff(data), p)/np.sqrt(2)
     
 
 class BaseStep:
@@ -87,9 +92,8 @@ class RecursiveStep(BaseStep):
     def _append_steps(self, mom, x0:int=0):
         if len(mom) < 3:
             return None
-        dlogL, dx = mom.get_optimal_splitter()
-        dlogL_tot = self.penalty + dlogL
-        if dlogL_tot > 0:
+        s, dx = mom.get_optimal_splitter()
+        if self._continue(s):
             self.step_list.append(x0+dx)
             mom1, mom2 = mom.split(dx)
             self._append_steps(mom1, x0=x0)
@@ -98,8 +102,9 @@ class RecursiveStep(BaseStep):
             pass
         return None
     
-    def _init_momemt(self):
-        pass
+    def _init_momemt(self) -> Moment: ...
+    
+    def _continue(self, s) -> bool: ... 
     
     def multi_step_finding(self):
         mom = self._init_moment()
@@ -111,6 +116,12 @@ class RecursiveStep(BaseStep):
 class GaussStep(BaseStep):
     """
     Step finding algorithm for trajectories that follow Gauss distribution.
+    
+    Reference
+    ---------
+    Kalafut, B., & Visscher, K. (2008). An objective, model-independent method for 
+    detection of non-uniform steps in noisy signals. Computer Physics Communications, 
+    179(10), 716–723. https://doi.org/10.1016/j.cpc.2008.06.008
     """    
     def __init__(self, data, p=-1):
         """
@@ -152,16 +163,20 @@ class SDFixedGaussStep(RecursiveStep):
     def __init__(self, data, p=-1, sigma=-1):
         super().__init__(np.asarray(data, dtype="float64"), p)
         if sigma < 0:
-            sigma = np.percentile(np.diff(self.data), 84.13)/np.sqrt(2)
-        self.penalty *= 2*sigma*sigma
+            sigma = estimate_sigma(data)
         self.sigma = sigma
     
     def _init_moment(self):
         return SDFixedGaussMoment().init(self.data)
+    
+    def _continue(self, sq) -> bool:
+        return self.penalty + sq/(2*self.sigma**2) > 0
 
 
 class TtestStep(RecursiveStep):
     """
+    Reference
+    ---------
     Shuang, B., Cooper, D., Taylor, J. N., Kisley, L., Chen, J., Wang, W., ... & Landes, 
     C. F. (2014). Fast step transition and state identification (STaSI) for discrete
     single-molecule data analysis. The journal of physical chemistry letters, 5(18), 3157-3161.
@@ -175,19 +190,19 @@ class TtestStep(RecursiveStep):
         self.alpha = alpha
         
         if sigma < 0:
-            sigma = np.percentile(np.diff(self.data), 84.13)/np.sqrt(2)
+            sigma = estimate_sigma(data)
         
         self.sigma = sigma
     
     def _init_moment(self):
         return TtestMoment().init(self.data)
-    
+        
     def _append_steps(self, mom, x0:int=0):
         if len(mom) < 3:
             return None
         tk, dx = mom.get_optimal_splitter()
-        t_cri = stats.t.ppf(1-self.alpha/2, len(mom))
-        if t_cri < tk:
+        t_cri = student_t.ppf(1-self.alpha/2, len(mom))
+        if t_cri < tk/self.sigma:
             self.step_list.append(x0+dx)
             mom1, mom2 = mom.split(dx)
             self._append_steps(mom1, x0=x0)
@@ -210,32 +225,31 @@ class PoissonStep(RecursiveStep):
     def _init_moment(self):
         return PoissonMoment().init(self.data)
 
+    def _continue(self, dlogL):
+        return self.penalty + dlogL > 0
+    
 
 class BayesianPoissonStep(RecursiveStep):
     """
+    Reference
+    ---------
     Ensign, D. L., & Pande, V. S. (2010). Bayesian detection of intensity changes in 
     single molecule and molecular dynamics trajectories. Journal of Physical Chemistry
     B, 114(1), 280–292. https://doi.org/10.1021/jp906786b
     """    
-    def __init__(self, data, skept=10):
-        self.data = np.asarray(data, dtype="float64")
+    def __init__(self, data, skept=4):
+        self.data = np.asarray(data)
         self.len = self.data.size
         self.n_step = 1
         self.step_list = [0, self.len]
         self.skept = skept
+        if not np.issubdtype(self.data.dtype, np.integer):
+            raise TypeError("In PoissonStep, non-integer data type is forbidden.")
+        elif np.any(self.data < 0):
+            raise ValueError("Input data contains negative values.")
     
     def _init_moment(self):
         return BayesianPoissonMoment().init(self.data)
     
-    def _append_steps(self, mom, x0:int=0):
-        if len(mom) < 3:
-            return None
-        logbf, dx = mom.get_optimal_splitter()
-        if np.log(self.skept) < logbf:
-            self.step_list.append(x0+dx)
-            mom1, mom2 = mom.split(dx)
-            self._append_steps(mom1, x0=x0)
-            self._append_steps(mom2, x0=x0+dx)
-        else:
-            pass
-        return None
+    def _continue(self, logbf):
+        return np.log(self.skept) < logbf

@@ -15,6 +15,9 @@ class Moment:
      : :      : :
      n ****** * n
 
+    When ndarray `data` is given by `self.init(data)`, self.fw[i,k] means
+    np.sum(data[:k]**(i+1)), while self.bw[i,k] means np.sum(data[-k:]**(i+1)).
+    self.total[i] means np.sum(data**(i+1)).
     """    
     fw: np.ndarray = None
     bw: np.ndarray = None
@@ -28,7 +31,7 @@ class Moment:
 
     def complement(self):
         """
-        Complement moments values.
+        Complement moment values.
         Calculate fw from bw, or vice versa.
         """        
         if self.fw is None:
@@ -92,16 +95,16 @@ class GaussMoment(Moment):
 @dataclass
 class SDFixedGaussMoment(Moment):
     @property
-    def chi2(self):
+    def sq(self):
         return (2 - 1/len(self))/len(self)*self.total[0]**2
     
     def get_optimal_splitter(self):
         n = np.arange(1, len(self))
-        chi2_fw = (2 - 1/n)/n*self.fw[0]**2
-        chi2_bw = (2 - 1/n[::-1])/n[::-1]*self.bw[0]**2
-        chi2 = chi2_fw + chi2_bw
-        x = np.argmax(chi2)
-        return chi2[x] - self.chi2, x + 1
+        sq_fw = (2 - 1/n)/n*self.fw[0]**2
+        sq_bw = (2 - 1/n[::-1])/n[::-1]*self.bw[0]**2
+        sq = sq_fw + sq_bw
+        x = np.argmax(sq)
+        return sq[x] - self.sq, x + 1
 
 @dataclass
 class TtestMoment(Moment):
@@ -109,7 +112,7 @@ class TtestMoment(Moment):
         n = np.arange(1, len(self))
         tk = np.abs(self.fw[0]/n - self.bw[0]/n[::-1]) / np.sqrt(1/n + 1/(n[::-1]))
         x = np.argmax(tk)
-        return tk[x], x + 1
+        return tk[x], x+1
     
 @dataclass
 class PoissonMoment(Moment):    
