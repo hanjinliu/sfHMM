@@ -250,8 +250,6 @@ class sfHMM1(sfHMMBase):
         if self.gmm_opt is None:
             raise RuntimeError("Cannot initialize 'startprob_'. You must run gmmfit() before hmmfit() or" \
                                "set 'startprob_' manually.")
-        # self.startprob_ = calc_startprob([self.data_raw[0]], self.gmm_opt.weights_,
-        #                                  self.gmm_opt.means_, self.covars_)
         self.startprob_ = calc_startprob([self.data_raw[0]], self.gmm_opt)
         return None
     

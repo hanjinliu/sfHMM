@@ -88,12 +88,9 @@ class sfHMMn(sfHMMBase):
         if self.n_data <= 0:
             raise RuntimeError("Cannot start analysis before appending data.")
         
-        StepMethod = {"Poisson": PoissonStep,
-                      "Gauss": GaussStep,
-                      }[self.model]
         for sf in self:
             sf.psf = self.psf
-            sf.step = StepMethod(sf.data_raw, sf.psf)
+            sf.step = self.StepClass(sf.data_raw, sf.psf)
             sf.step.multi_step_finding()
         return self
     
@@ -178,7 +175,6 @@ class sfHMMn(sfHMMBase):
     
     def _set_startprob(self):
         d0_list = [sf.data_raw[0] for sf in self]
-        # self.startprob_ = calc_startprob(d0_list, self.gmm_opt.weights_, self.gmm_opt.means_, self.covars_)
         self.startprob_ = calc_startprob(d0_list, self.gmm_opt)
         return None
     
