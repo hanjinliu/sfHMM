@@ -56,10 +56,10 @@ class sfHMMBase(GaussianHMM):
     @model.setter
     def model(self, s):
         if isinstance(s, str):
-            if s.lower() in ("g", "gauss"):
+            if s.lower() in ("g", "gauss", "gaussstep"):
                 self._model = "GaussStep"
                 self.StepClass = GaussStep
-            elif s.lower() in ("p", "poisson"):
+            elif s.lower() in ("p", "poisson", "poissonstep"):
                 self._model = "PoissonStep"
                 self.StepClass = PoissonStep
             else:

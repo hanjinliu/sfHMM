@@ -64,5 +64,5 @@ def calc_transmat(states_list, n_components):
         for i in range(len(states) - 1):
             transmat[states[i], states[i+1]] += 1.0
     
-    normalize(transmat, axis=1)
+    normalize(transmat+1e-12, axis=1)
     return transmat
