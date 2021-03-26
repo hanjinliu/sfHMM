@@ -51,7 +51,7 @@ def estimate_sigma(data):
     p = norm.cdf(1) # = sigma for standard normal distribution.
     return np.percentile(np.diff(data), p)/np.sqrt(2)
     
-
+    
 class BaseStep:
     def __init__(self, data, p):
         self.data = np.asarray(data)
@@ -190,6 +190,8 @@ class TtestStep(RecursiveStep):
         self.len = self.data.size
         self.n_step = 1
         self.step_list = [0, self.len]
+        if not 0 < alpha < 0.5:
+            raise ValueError(f"`alpha` must be in range of (0, 0.5), but got {alpha}")
         self.alpha = alpha
         
         if sigma < 0:
@@ -246,6 +248,8 @@ class BayesianPoissonStep(RecursiveStep):
         self.len = self.data.size
         self.n_step = 1
         self.step_list = [0, self.len]
+        if skept <= 0:
+            raise ValueError(f"`skept` must be larger than 0, but got {skept}")
         self.skept = skept
         if not np.issubdtype(self.data.dtype, np.integer):
             raise TypeError("In PoissonStep, non-integer data type is forbidden.")

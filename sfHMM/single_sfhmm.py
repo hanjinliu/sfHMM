@@ -51,7 +51,7 @@ class sfHMM1(sfHMMBase):
         Viterbi path of 'data_raw', while takes value in 'means_'.
     """
     
-    def __init__(self, data_raw, sg0:float=-1, psf:float=-1, krange=[1, 6],
+    def __init__(self, data_raw, sg0:float=-1, psf:float=-1, krange=(1, 6),
                  model:str="g", name:str=""):
 
         self.data_raw = np.asarray(data_raw).ravel()
@@ -71,7 +71,7 @@ class sfHMM1(sfHMMBase):
         """
         self.step = self.StepClass(self.data_raw, self.psf)
         self.step.multi_step_finding()
-        self.psf = self.step.p
+        self.psf = getattr(self.step, "p", -1)
         return self
     
     def denoising(self):
