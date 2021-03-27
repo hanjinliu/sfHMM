@@ -5,6 +5,8 @@ from ..base import sfHMMBase
 from . import _hmmc_motor
 from scipy import special
 
+# TODO: bug in pyx? This happens when completely unidirectional, perhaps because of 0-probability
+# of transmat_kernel
 
 class sfHMMmotorBase(sfHMMBase):
     """
@@ -25,7 +27,35 @@ class sfHMMmotorBase(sfHMMBase):
         
         normalize(transmat, axis=1)
         return transmat
+    
+    def gmmfit(self, method:str="Dirichlet", n_init:int=1, random_state:int=0, estimation:str="fast"):
+        """
+        estimation : str, optional
+            How to estimate krange from step finding result.
+            - "fast" ... narrower range but faster.
+            - "safe" ... wider range but safer.
+            - "none" ... do not estimate.
+            or estimated krange can be directly given.            
+        """        
+        self._estimate_krange(estimation)
+        return super().gmmfit(method, n_init, random_state)
 
+    def _estimate_krange(self, estimation):
+        if estimation in (None, False, "none"):
+            return None
+        
+        dy = self._accumulate_step_sizes()
+        nsmall, nlarge = sorted(map(int, [np.sum(dy>0), np.sum(dy<0)]))
+        if estimation == "fast":
+            self.krange = (nlarge - nsmall, nlarge - nsmall//2)
+        elif estimation == "safe":
+            self.krange = (nlarge - nsmall, nlarge)
+        else:
+            try:
+                self.krange = estimation
+            except:
+                raise ValueError(f"Cannot interpret estimation method: {estimation}")
+        return None
         
     def tdp(self, **kwargs):
         dy_step = self._accumulate_step_sizes()

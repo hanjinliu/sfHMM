@@ -52,7 +52,7 @@ class sfHMM1(sfHMMBase):
     """
     
     def __init__(self, data_raw, sg0:float=-1, psf:float=-1, krange=(1, 6),
-                 model:str="g", name:str=""):
+                 model:str="g", name:str="", **kwargs):
 
         self.data_raw = np.asarray(data_raw).ravel()
         self.step = None
@@ -62,7 +62,7 @@ class sfHMM1(sfHMMBase):
         self.viterbi = None
         self._sg_list = []
         self.ylim = [np.min(self.data_raw), np.max(self.data_raw)]
-        super().__init__(sg0, psf, krange, model, name)
+        super().__init__(sg0, psf, krange, model, name, **kwargs)
     
 
     def step_finding(self):
@@ -228,7 +228,7 @@ class sfHMM1(sfHMMBase):
         
     def _accumulate_step_sizes(self):
         if self.step is None:
-                raise RuntimeError("Steps are not detected yet.")
+            raise RuntimeError("Steps are not detected yet.")
         return self.step.step_size_list
     
     def _set_covars(self):

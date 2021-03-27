@@ -41,10 +41,10 @@ class sfHMMn(sfHMMBase):
     """
     
     def __init__(self, sg0:float=-1, psf:float=-1, krange=[1, 6], 
-                 model:str="g", name:str=""):
+                 model:str="g", name:str="", **kwargs):
         
         self.n_data = 0
-        super().__init__(sg0, psf, krange, model, name)
+        super().__init__(sg0, psf, krange, model, name, **kwargs)
         self.ylim = [np.inf, -np.inf]
         self._sf_list = []
     
@@ -60,7 +60,7 @@ class sfHMMn(sfHMMBase):
         Append a trajectory as sfHMM object.
         """
         sf = sfHMM1(data, sg0=self.sg0, psf=self.psf, krange=self.krange,
-                    model=self.model, name=self.name+f"[{self.n_data}]")
+                    model=self.StepClass, name=self.name+f"[{self.n_data}]")
         self.n_data += 1
         self._sf_list.append(sf)
         self.ylim[0] = min(sf.ylim[0], self.ylim[0])
@@ -258,7 +258,7 @@ class sfHMMn(sfHMMBase):
 
     def _accumulate_step_sizes(self):
         if self[0].step is None:
-                raise RuntimeError("Steps are not detected yet.")
+            raise RuntimeError("Steps are not detected yet.")
         return np.array(concat([sf.step.step_size_list for sf in self]))
     
     def _copy_params(self, sf):

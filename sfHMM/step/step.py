@@ -49,7 +49,7 @@ class Heap:
 
 def estimate_sigma(data):
     p = norm.cdf(1) # = sigma for standard normal distribution.
-    return np.percentile(np.diff(data), p)/np.sqrt(2)
+    return np.percentile(np.diff(data), p*100)/np.sqrt(2)
     
     
 class BaseStep:
@@ -191,7 +191,7 @@ class TtestStep(RecursiveStep):
         self.n_step = 1
         self.step_list = [0, self.len]
         if not 0 < alpha < 0.5:
-            raise ValueError(f"`alpha` must be in range of (0, 0.5), but got {alpha}")
+            alpha = 0.05
         self.alpha = alpha
         
         if sigma < 0:

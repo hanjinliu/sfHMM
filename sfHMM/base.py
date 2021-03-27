@@ -43,9 +43,11 @@ class sfHMMBase(GaussianHMM):
     @krange.setter
     def krange(self, value):
         if isinstance(value, int):
+            value = max(1, value)
             value = (value, value)
         else:
             kmin, kmax = value
+            kmin = max(1, kmin)
             value = (kmin, kmax)
         self._krange = value
     
