@@ -52,18 +52,18 @@ def hmm_sampling(dim=3, n_data=500, trs=0.05, sigma=0.5, rand=None, ans=False, s
     else:
         return data_1
 
-def motor_sampling(pdf=[0.001, 0.005, -1, 0.015, 0.002], sigma=0.5, n_data=500, rand=None, ans=False):
+def motor_sampling(pdf=[0.005, -1, 0.015], sigma=0.5, n_data=500, rand=None, ans=False):
     """
     pdf: probability distribution
     [... , 2_steps_backward, 1_step_backward, stay, 1_step_forward, 2_steps_forward, ...]
     one of pdf can be -1
     """
-    pdf=np.array(pdf)
-    if np.any(pdf==-1):
+    pdf = np.array(pdf)
+    if np.any(pdf == -1):
         rem = 1-np.sum(pdf[pdf>=0])
         pdf[pdf==-1] = rem
     
-    if not np.sum(pdf)==1:
+    if np.sum(pdf) != 1:
         raise ValueError("sum of pdf must be 1")
     
     np.random.seed(seed=rand)

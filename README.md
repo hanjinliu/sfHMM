@@ -37,7 +37,7 @@ pip install git+https://github.com/hanjinliu/sfHMM
          /        |        \
    sfHMM1  (sfHMMmotorBase)  sfHMMn
        \        /   \        /
-        \     /       \    /
+        \     /       \     /
      sfHMM1Motor    sfHMMnMotor
 ```
 
