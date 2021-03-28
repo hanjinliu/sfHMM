@@ -1,12 +1,10 @@
+from hmmlearn.hmm import GaussianHMM
 import numpy as np
 import matplotlib.pyplot as plt
 from hmmlearn.utils import log_mask_zero, normalize
 from ..base import sfHMMBase
 from . import _hmmc_motor
 from scipy import special
-
-# TODO: bug in pyx? This happens when completely unidirectional, perhaps because of 0-probability
-# of transmat_kernel
 
 class sfHMMmotorBase(sfHMMBase):
     """
@@ -27,6 +25,7 @@ class sfHMMmotorBase(sfHMMBase):
         
         normalize(transmat, axis=1)
         return transmat
+
     
     def gmmfit(self, method:str="Dirichlet", n_init:int=1, random_state:int=0, estimation:str="fast"):
         """
@@ -39,7 +38,7 @@ class sfHMMmotorBase(sfHMMBase):
         """        
         self._estimate_krange(estimation)
         return super().gmmfit(method, n_init, random_state)
-
+    
     def _estimate_krange(self, estimation):
         if estimation in (None, False, "none"):
             return None
@@ -121,6 +120,49 @@ class sfHMMmotorBase(sfHMMBase):
             for i in range(len(self.transmat_kernel)):
                 self.transmat_kernel[i] = np.sum(np.diag(transmat_, k=i-self.max_stride))
             normalize(self.transmat_kernel)
+        
+        # GaussianHMM._do_mstep must be copied.
+        means_prior = self.means_prior
+        means_weight = self.means_weight
+
+        denom = stats['post'][:, None]
+        if 'm' in self.params:
+            self.means_ = ((means_weight * means_prior + stats['obs'])
+                           / (means_weight + denom))
+
+        if 'c' in self.params:
+            covars_prior = self.covars_prior
+            covars_weight = self.covars_weight
+            meandiff = self.means_ - means_prior
+
+        if self.covariance_type in ('spherical', 'diag'):
+            c_n = (means_weight * meandiff**2
+                    + stats['obs**2']
+                    - 2 * self.means_ * stats['obs']
+                    + self.means_**2 * denom)
+            c_d = max(covars_weight - 1, 0) + denom
+            self._covars_ = (covars_prior + c_n) / np.maximum(c_d, 1e-5)
+            if self.covariance_type == 'spherical':
+                self._covars_ = np.tile(self._covars_.mean(1)[:, None],
+                                        (1, self._covars_.shape[1]))
+        elif self.covariance_type in ('tied', 'full'):
+            c_n = np.empty((self.n_components, self.n_features,
+                            self.n_features))
+            for c in range(self.n_components):
+                obsmean = np.outer(stats['obs'][c], self.means_[c])
+                c_n[c] = (means_weight * np.outer(meandiff[c],
+                                                    meandiff[c])
+                            + stats['obs*obs.T'][c]
+                            - obsmean - obsmean.T
+                            + np.outer(self.means_[c], self.means_[c])
+                            * stats['post'][c])
+            cvweight = max(covars_weight - self.n_features, 0)
+            if self.covariance_type == 'tied':
+                self._covars_ = ((covars_prior + c_n.sum(axis=0)) /
+                                    (cvweight + stats['post'].sum()))
+            elif self.covariance_type == 'full':
+                self._covars_ = ((covars_prior + c_n) /
+                                    (cvweight + stats['post'][:, None, None]))
     
     def _do_viterbi_pass(self, framelogprob):
         n_samples, n_components = framelogprob.shape
@@ -148,7 +190,7 @@ class sfHMMmotorBase(sfHMMBase):
                               framelogprob, bwdlattice, self.max_stride)
         return bwdlattice
     
-    def _accumulate_sufficient_statistics(self, stats, X, framelogprob,
+    def _accumulate_sufficient_statistics(self, stats, obs, framelogprob,
                                           posteriors, fwdlattice, bwdlattice):
         stats['nobs'] += 1
         if 's' in self.params:
@@ -167,6 +209,19 @@ class sfHMMmotorBase(sfHMMBase):
                                       log_xi_sum, self.max_stride)
             with np.errstate(under="ignore"):
                 stats['trans'] += np.exp(log_xi_sum)
+                
+        if 'm' in self.params or 'c' in self.params:
+            stats['post'] += posteriors.sum(axis=0)
+            stats['obs'] += np.dot(posteriors.T, obs)
+
+        if 'c' in self.params:
+            if self.covariance_type in ('spherical', 'diag'):
+                stats['obs**2'] += np.dot(posteriors.T, obs ** 2)
+            elif self.covariance_type in ('tied', 'full'):
+                # posteriors: (nt, nc); obs: (nt, nf); obs: (nt, nf)
+                # -> (nc, nf, nf)
+                stats['obs*obs.T'] += np.einsum(
+                    'ij,ik,il->jkl', posteriors, obs, obs)
     
     def _get_n_fit_scalars_per_param(self):
         nc = self.n_components

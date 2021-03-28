@@ -12,7 +12,6 @@ class sfHMM1Motor(sfHMMmotorBase, sfHMM1):
         self.max_stride = max_stride
         self.covariance_type = "tied"
     
-    
     def _set_covars(self):
         if self.states is None:
             raise RuntimeError("Cannot initialize 'covars_' because the state sequence 'states' has" 
