@@ -2,8 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from .func import *
 from .single_sfhmm import sfHMM1
-from .step import GaussStep, PoissonStep
 from .base import sfHMMBase
+import re
 
 class sfHMMn(sfHMMBase):
     """
@@ -55,30 +55,78 @@ class sfHMMn(sfHMMBase):
     def __iter__(self):
         return iter(self._sf_list)
     
-    def append(self, data):
+    def append(self, data, name=None):
         """
         Append a trajectory as sfHMM object.
         """
+        if name is None:
+            name = self.name+f"[{self.n_data}]"
+            
         sf = sfHMM1(data, sg0=self.sg0, psf=self.psf, krange=self.krange,
-                    model=self.StepClass, name=self.name+f"[{self.n_data}]")
+                    model=self.StepClass, name=name)
         self.n_data += 1
         self._sf_list.append(sf)
         self.ylim[0] = min(sf.ylim[0], self.ylim[0])
         self.ylim[1] = max(sf.ylim[1], self.ylim[1])
         return self
     
-    def appendn(self, datalist):
+    
+    def appendn(self, datasets):
         """
         Append all the data in the list
 
         Parameters
         ----------
-        datalist : an iterable object with array-like objects
-            list of data
+        datasets : dict, list or any iterable objects except for np.ndarray.
+            Datasets to be appended.
         """        
-        for data in datalist:
-            self.append(data)
+        if isinstance(datasets, dict):
+            for name, data in datasets.items():
+                self.append(data, name=name)
+        elif isinstance(datasets, np.ndarray):
+            raise TypeError("Datasets of ndarray is ambiguious. Please use self.append(a) for 1-D "
+                            "ndarray, or explicitly specify along which axis to iterate by such as "
+                            "list(a) or np.split(a, axis=1).")
+        else:
+            for data in datasets:
+                self.append(data)
+                
         return self
+    
+    
+    def from_pandas(self, df, like:str=None, regex:str=None, melt:bool=False):
+        """
+        Load datasets from pandas.DataFrame.
+
+        Parameters
+        ----------
+        df : DataFrame
+            Input data.
+        like : str, optional
+            If given, dataset that contains this string is appended.
+        regex : regular expression, optional
+            If given, dataset that matches this regular expression is appended.
+        melt : bool, default is False
+            If input DataFrame is melted.
+        """        
+        if melt:
+            if df.shape[1] != 2:
+                ValueError("For melted DataFrame, it must composed of two columns, with names "
+                           "in the first and values in the second.")
+            name_col, value_col = df.columns[0]
+            for name in df[name_col].unique():
+                if like and not name.contains(like):
+                    continue
+                elif regex and not re.match(regex, name):
+                    continue
+                self.append(df[df[name_col] == name][value_col], name)
+        
+        else:
+            for name in df.filter(like=like, regex=regex):
+                self.append(df[name], name)
+        
+        return self
+ 
     
     def step_finding(self):
         """
@@ -162,6 +210,15 @@ class sfHMMn(sfHMMBase):
             sf.states = sf.predict(np.asarray(sf.data_raw).reshape(-1, 1))
             sf.viterbi = sf.means_[sf.states, 0]
         del self.data_raw_all, self.states_list
+        return self
+    
+    def run_all_separately(self):
+        """
+        Run the function `run_all` for every sfHMM1 object.
+        """        
+        for sf in self:
+            sf.run_all(plot=False)
+        
         return self
 
     def _set_covars(self):

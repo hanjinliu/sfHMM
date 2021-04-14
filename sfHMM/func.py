@@ -19,7 +19,7 @@ def plot2(data1, data2=None, ylim=None, legend=True, color1=None, **kwargs):
     """
     dict_ = {"color": ___, "label": ___}
     """
-    if (ylim is None):
+    if ylim is None:
         ylim = [np.min(data1), np.max(data1)]
     
     plt.xlim(0, len(data1))

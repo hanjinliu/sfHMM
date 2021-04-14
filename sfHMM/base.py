@@ -34,7 +34,7 @@ class sfHMMBase(GaussianHMM):
         params.update(hmmlearn_params)
         super().__init__(self, **params)
         self.n_features = 1
-        self.name = name if name else self._name()
+        self.name = str(name) if name else self._name()
         
     @property
     def krange(self):

@@ -54,7 +54,16 @@ class sfHMM1(sfHMMBase):
     def __init__(self, data_raw, sg0:float=-1, psf:float=-1, krange=(1, 6),
                  model:str="g", name:str="", **kwargs):
 
-        self.data_raw = np.asarray(data_raw).ravel()
+        d = np.asarray(data_raw)
+        if d.ndim == 1:
+            pass
+        elif d.ndim == 2 and (d.shape[0] == 1 or d.shape[1] == 1):
+            d = d.ravel()
+        else:
+            raise ValueError("Input data must be one-dimensonal or any arrays that can "
+                             "be converted to on-dimensional ones.")
+            
+        self.data_raw = d
         self.step = None
         self.data_fil = None
         self.gmm_opt = None
@@ -79,7 +88,7 @@ class sfHMM1(sfHMMBase):
         Denoising by cutting of the standard deviation of noise to sg0.
         """
         self._init_sg0()
-        self.data_fil = np.empty(self.data_raw.size, dtype="float64")
+        self.data_fil = np.empty_like(self.data_raw, dtype="float64")
         
         for i in range(self.step.n_step):
             x0 = self.step.step_list[i]

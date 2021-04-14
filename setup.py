@@ -5,7 +5,7 @@ import os
 # search for version
 with open("sfHMM/__init__.py", encoding="utf-8") as f:
     for line in f:
-        if (line.startswith("__version__")):
+        if line.startswith("__version__"):
             VERSION = line.strip().split()[-1][1:-1]
             break
 
