@@ -55,10 +55,22 @@ class sfHMMn(sfHMMBase):
     def __iter__(self):
         return iter(self._sf_list)
     
-    def append(self, data, name=None):
+    @property
+    def names(self):
+        return [sf.n for sf in self]
+    
+    def append(self, data, name:str=None):
         """
         Append a trajectory as sfHMM object.
-        """
+
+        Parameters
+        ----------
+        data : array
+            Data to analyze.
+        name : str, optional
+            Name of the data, by default None
+            [description]
+        """        
         if name is None:
             name = self.name+f"[{self.n_data}]"
             
@@ -94,7 +106,7 @@ class sfHMMn(sfHMMBase):
         return self
     
     
-    def from_pandas(self, df, like:str=None, regex:str=None, melt:bool=False):
+    def from_pandas(self, df, like:str=None, regex:str=None, melt:bool=None):
         """
         Load datasets from pandas.DataFrame.
 
@@ -106,16 +118,24 @@ class sfHMMn(sfHMMBase):
             If given, dataset that contains this string is appended.
         regex : regular expression, optional
             If given, dataset that matches this regular expression is appended.
-        melt : bool, default is False
-            If input DataFrame is melted.
+        melt : bool, optional
+            If input DataFrame is melted, which is automatically determined when melt is None.
         """        
+        if melt is None:
+            # Determine if df is melted or not
+            col0 = df.iloc[:,0]
+            if df.shape[1] == 2 and len(col0.unique()) < len(col0)//20:
+                return self.from_pandas(df, like, regex, melt=True)
+            else:
+                return self.from_pandas(df, like, regex, melt=False)
+        
         if melt:
             if df.shape[1] != 2:
                 ValueError("For melted DataFrame, it must composed of two columns, with names "
                            "in the first and values in the second.")
-            name_col, value_col = df.columns[0]
+            name_col, value_col = df.columns
             for name in df[name_col].unique():
-                if like and not name.contains(like):
+                if like and not like in name:
                     continue
                 elif regex and not re.match(regex, name):
                     continue
@@ -124,6 +144,9 @@ class sfHMMn(sfHMMBase):
         else:
             for name in df.filter(like=like, regex=regex):
                 self.append(df[name], name)
+        
+        if self.n_data == 0:
+            raise RuntimeError("No data appended. Confirm that input DataFrame is in a correct format.")
         
         return self
  
