@@ -1,8 +1,12 @@
 __version__ = "0.3.8"
 
-from .single_sfhmm import sfHMM1
-from .multi_sfhmm import sfHMMn
-from .sampling import hmm_sampling, motor_sampling
+from .single_sfhmm import *
+from .multi_sfhmm import *
+from .sampling import *
+try:
+    from .io import *
+except ImportError:
+    pass
 
 __doc__ = \
 r"""

@@ -3,6 +3,8 @@ import numpy as np
 from .base import sfHMMBase
 from .func import *
 
+__all__ = ["sfHMM1"]
+
 class sfHMM1(sfHMMBase):    
     """
     Step-finding based HMM.

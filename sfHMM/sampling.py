@@ -1,6 +1,8 @@
 from hmmlearn import hmm
 import numpy as np
 
+__all__ = ["hmm_sampling", "motor_sampling"]
+
 def hmm_sampling(dim=3, n_data=500, trs=0.05, sigma=0.5, rand=None, ans=False, scale=1, poi=False):
     """
     Sampline function.py

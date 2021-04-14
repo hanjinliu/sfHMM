@@ -5,6 +5,8 @@ from .single_sfhmm import sfHMM1
 from .base import sfHMMBase
 import re
 
+__all__ = ["sfHMMn"]
+
 class sfHMMn(sfHMMBase):
     """
     Multi-trajectory sfHMM.
