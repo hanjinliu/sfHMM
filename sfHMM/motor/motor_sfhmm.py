@@ -6,7 +6,7 @@ from ..func import *
 
 
 class sfHMM1Motor(sfHMMmotorBase, sfHMM1):
-    def __init__(self, data_raw, sg0:float=-1, psf:float=-1, krange=(1, 6),
+    def __init__(self, data_raw=None, sg0:float=-1, psf:float=-1, krange=(1, 6),
                  model:str="g", name:str="", max_stride:int=2):
         super().__init__(data_raw, sg0, psf, krange, model, name)
         self.max_stride = max_stride

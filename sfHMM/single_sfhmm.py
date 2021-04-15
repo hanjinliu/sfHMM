@@ -1,3 +1,4 @@
+from __future__ import annotations
 import matplotlib.pyplot as plt
 import numpy as np
 from .base import sfHMMBase
@@ -53,30 +54,39 @@ class sfHMM1(sfHMMBase):
         Viterbi path of 'data_raw', while takes value in 'means_'.
     """
     
-    def __init__(self, data_raw, sg0:float=-1, psf:float=-1, krange=(1, 6),
+    def __init__(self, data_raw=None, sg0:float=-1, psf:float=-1, krange=(1, 6),
                  model:str="g", name:str="", **kwargs):
 
-        d = np.asarray(data_raw)
-        if d.ndim == 1:
-            pass
-        elif d.ndim == 2 and (d.shape[0] == 1 or d.shape[1] == 1):
-            d = d.ravel()
-        else:
-            raise ValueError("Input data must be one-dimensonal or any arrays that can "
-                             "be converted to on-dimensional ones.")
-            
-        self.data_raw = d
+        self.data_raw = data_raw
         self.step = None
         self.data_fil = None
         self.gmm_opt = None
         self.states = None
         self.viterbi = None
         self._sg_list = []
-        self.ylim = [np.min(self.data_raw), np.max(self.data_raw)]
         super().__init__(sg0, psf, krange, model, name, **kwargs)
     
+    @property
+    def data_raw(self):
+        return self._data_raw
+    
+    @data_raw.setter
+    def data_raw(self, value):
+        if value is None:
+            self._data_raw = None
+        else:
+            d = np.asarray(value)
+            if d.ndim == 1:
+                pass
+            elif d.ndim == 2 and (d.shape[0] == 1 or d.shape[1] == 1):
+                d = d.ravel()
+            else:
+                raise ValueError("Input data must be one-dimensonal or any arrays "
+                                 "that can be converted to on-dimensional ones.")
+            self._data_raw = d
+            self.ylim = [np.min(self.data_raw), np.max(self.data_raw)]
 
-    def step_finding(self):
+    def step_finding(self) -> sfHMM1:
         """
         Step finding by extended version of Kalafut-Visscher's algorithm.
         """
@@ -85,7 +95,7 @@ class sfHMM1(sfHMMBase):
         self.psf = getattr(self.step, "p", -1)
         return self
     
-    def denoising(self):
+    def denoising(self) -> sfHMM1:
         """
         Denoising by cutting of the standard deviation of noise to sg0.
         """
@@ -106,7 +116,7 @@ class sfHMM1(sfHMMBase):
         return self
     
     
-    def gmmfit(self, method:str="bic", n_init:int=1, random_state:int=0):
+    def gmmfit(self, method:str="bic", n_init:int=1, random_state:int=0) -> sfHMM1:
         """
         Fit the denoised data to Gaussian mixture model, and the optimal number of states
         will be determined. After that, state sequence 'states' will be initialized.
@@ -143,7 +153,7 @@ class sfHMM1(sfHMMBase):
         return self
     
     
-    def hmmfit(self):
+    def hmmfit(self) -> sfHMM1:
         """
         HMM paramter optimization by EM algorithm, and state inference by Viterbi 
         algorithm.
@@ -230,7 +240,7 @@ class sfHMM1(sfHMMBase):
         
         return None
     
-    def accumulate_transitions(self):
+    def accumulate_transitions(self) -> tuple[int, int]:
         if not hasattr(self, "states"):
             return np.array([], dtype="float64")
         return [(self.states[i], self.states[i+1]) 

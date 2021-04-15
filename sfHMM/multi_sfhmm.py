@@ -1,9 +1,11 @@
+from __future__ import annotations
 import numpy as np
 import matplotlib.pyplot as plt
 from .func import *
 from .single_sfhmm import sfHMM1
 from .base import sfHMMBase
 import re
+import copy
 
 __all__ = ["sfHMMn"]
 
@@ -57,11 +59,24 @@ class sfHMMn(sfHMMBase):
     def __iter__(self):
         return iter(self._sf_list)
     
-    @property
-    def names(self):
-        return [sf.n for sf in self]
+    def __add__(self, other:sfHMMn) -> sfHMMn:
+        if self is other:
+            new = self.__class__(sg0=self.sg0, psf=self.psf, krage=self.krange,
+                                 model=self.model, name=self.name+"+"+other.name)
+            new.n_data = self.n_data + other.n_data
+            new.ylim = [min(self.ylim[0], other.ylim[0]),
+                        max(self.ylim[1], other.ylim[1])]
+            new._sf_list = copy.deepcopy(self._sf_list) + copy.deepcopy(other._sf_list)
+            return new
+        else:
+            raise TypeError("Unsupported operand type(s) for +: "
+                           f"{self.__class__.__name__} and {type(other)}.")
     
-    def append(self, data, name:str=None):
+    @property
+    def names(self) -> list[str]:
+        return [sf.name for sf in self]
+    
+    def append(self, data, name:str=None) -> sfHMMn:
         """
         Append a trajectory as sfHMM object.
 
@@ -85,7 +100,7 @@ class sfHMMn(sfHMMBase):
         return self
     
     
-    def appendn(self, datasets):
+    def appendn(self, datasets) -> sfHMMn:
         """
         Append all the data in the list
 
@@ -108,7 +123,7 @@ class sfHMMn(sfHMMBase):
         return self
     
     
-    def from_pandas(self, df, like:str=None, regex:str=None, melt:bool=None):
+    def from_pandas(self, df, like:str=None, regex:str=None, melt:bool=None) -> sfHMMn:
         """
         Load datasets from pandas.DataFrame.
 
@@ -153,7 +168,7 @@ class sfHMMn(sfHMMBase):
         return self
  
     
-    def step_finding(self):
+    def step_finding(self) -> sfHMMn:
         """
         Step finding by extended version of Kalafut-Visscher's algorithm.
         Run independently for each sfHMM object.
@@ -167,7 +182,7 @@ class sfHMMn(sfHMMBase):
             sf.step.multi_step_finding()
         return self
     
-    def denoising(self):
+    def denoising(self) -> sfHMMn:
         """
         Denoising by cutting of the standard deviation of noise to sg0.
         Run independently for each sfHMM object.
@@ -184,7 +199,7 @@ class sfHMMn(sfHMMBase):
         return self
     
     
-    def gmmfit(self, method:str="bic", n_init:int=1, random_state:int=0):
+    def gmmfit(self, method:str="bic", n_init:int=1, random_state:int=0) -> sfHMMn:
         """
         Fit the denoised data to Gaussian mixture model.
         
@@ -213,7 +228,7 @@ class sfHMMn(sfHMMBase):
             sf.n_components = self.n_components
         return self
     
-    def hmmfit(self):
+    def hmmfit(self) -> sfHMMn:
         """
         HMM paramter optimization by Forward-Backward algorithm, and state inference by Viterbi 
         algorithm.
@@ -237,12 +252,17 @@ class sfHMMn(sfHMMBase):
         del self.data_raw_all, self.states_list
         return self
     
-    def run_all_separately(self):
+    def run_all_separately(self, plot_every:int=0) -> sfHMMn:
         """
         Run the function `run_all` for every sfHMM1 object.
+        Paramters
+        ---------
+        plot_every : int
+            Every `plot_every` result will be plotted during iteration.
         """        
-        for sf in self:
-            sf.run_all(plot=False)
+        for i, sf in enumerate(self):
+            pl = plot_every > 0 and i % plot_every == 0
+            sf.run_all(plot=pl)
         
         return self
 
@@ -334,11 +354,11 @@ class sfHMMn(sfHMMBase):
         return None
     
     
-    def accumulate_transitions(self):
+    def accumulate_transitions(self) -> list[float]:
         return concat([sf.accumulate_transitions() for sf in self])
 
 
-    def _accumulate_step_sizes(self):
+    def _accumulate_step_sizes(self) -> np.ndarray:
         if self[0].step is None:
             raise RuntimeError("Steps are not detected yet.")
         return np.array(concat([sf.step.step_size_list for sf in self]))
@@ -355,17 +375,17 @@ class sfHMMn(sfHMMBase):
         return None
         
     @property
-    def data_raw(self):
+    def data_raw(self) -> np.ndarray:
         return np.array(concat([sf.data_raw for sf in self]))
     
     @property    
-    def data_fil(self):
+    def data_fil(self) -> np.ndarray:
         return np.array(concat([sf.data_fil for sf in self]))
         
     @property
-    def _sg_list(self):
+    def _sg_list(self) -> np.ndarray:
         return np.array(concat([sf._sg_list for sf in self]))
     
     @property
-    def n_list(self):
+    def n_list(self) -> list[int]:
         return [sf.data_raw.size for sf in self]
