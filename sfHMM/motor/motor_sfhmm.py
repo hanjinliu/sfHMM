@@ -83,6 +83,7 @@ class sfHMMnMotor(sfHMMmotorBase, sfHMMn):
     def align(self):
         if self[0].step is None:
             raise RuntimeError("Cannot align datasets before step finding.")
+        
         ori = [sf.step.fit[0] for sf in self]
         ori_m = np.mean(ori)
         for sf, o in zip(self, ori):

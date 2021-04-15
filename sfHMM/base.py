@@ -75,21 +75,6 @@ class sfHMMBase(GaussianHMM):
             raise TypeError("`model` must be string or BaseStep instance, "
                             f"but got {type(s)}")
             
-    
-    # def get_params(self, deep=True):
-    #     out = dict()
-    #     for key in self._get_param_names():
-    #         try:
-    #             value = getattr(self, key)
-    #         except AttributeError:
-    #             value = None
-    #         if deep and hasattr(value, 'get_params'):
-    #             deep_items = value.get_params().items()
-    #             out.update((key + "__" + k, val) for k, val in deep_items)
-    #         out[key] = value
-    #     out.pop("data", None)
-    #     return out
-    
     def get_params(self, deep=True):
         out = super().get_params(deep=deep)
         out.pop("data_raw", None)

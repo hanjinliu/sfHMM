@@ -76,7 +76,9 @@ class sfHMM1(sfHMMBase):
             self._data_raw = None
         else:
             d = np.asarray(value)
-            if d.ndim == 1:
+            if not np.issubtype(d.dtype, np.number):
+                raise TypeError("Input contains non-numeric object(s).")
+            elif d.ndim == 1:
                 pass
             elif d.ndim == 2 and (d.shape[0] == 1 or d.shape[1] == 1):
                 d = d.ravel()
