@@ -1,7 +1,24 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from hmmlearn.utils import normalize
+from functools import wraps
 
+class sfHMMAnalysisError(Exception):
+    pass
+
+def append_log(func):
+    @wraps(func)
+    def wrapper(self, *args, **kwargs):
+        if len(self._log)>0 and self._log[-1][0] == func.__name__:
+            self._log[-1][1] += 1
+            self._log[-1][2] = "Failed"
+        else:
+            self._log.append([func.__name__, 1, "Failed"])
+        out = func(self, *args, **kwargs)
+        self._log[-1][2] = "Passed"
+        return out
+    return wrapper
+    
 def gauss_mix(x, gmm):
     return np.exp(gmm.score_samples(x.reshape(-1,1)))
 

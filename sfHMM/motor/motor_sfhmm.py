@@ -2,7 +2,7 @@ import numpy as np
 from ..single_sfhmm import sfHMM1
 from ..multi_sfhmm import sfHMMn
 from .base import sfHMMmotorBase
-from ..func import *
+from ..utils import *
 
 
 class sfHMM1Motor(sfHMMmotorBase, sfHMM1):
@@ -14,16 +14,16 @@ class sfHMM1Motor(sfHMMmotorBase, sfHMM1):
     
     def _set_covars(self):
         if self.states is None:
-            raise RuntimeError("Cannot initialize 'covars_' because the state sequence 'states' has" 
-                               "yet been determined.")
+            raise sfHMMAnalysisError("Cannot initialize 'covars_' because the state sequence " 
+                                     "'states' has yet been determined.")
         self.covars_ = [[np.var(self.data_raw - self.step.fit)]]
         self.min_covar = np.min(self.covars_) * 0.015
         return None
     
     def _set_transmat(self):
         if self.states is None:
-            raise RuntimeError("Cannot initialize 'transmat_' because the state sequence 'states' has" 
-                               "yet been determined.")
+            raise sfHMMAnalysisError("Cannot initialize 'transmat_' because the state sequence " 
+                                     "'states' hasyet been determined.")
         transmat_kernel = np.zeros(self.max_stride*2 + 1)
         dy = np.diff(self.states)
         dy = dy[np.abs(dy)<=self.max_stride]
@@ -42,6 +42,7 @@ class sfHMMnMotor(sfHMMmotorBase, sfHMMn):
         self.max_stride = max_stride
         self.covariance_type = "tied"
     
+    @append_log
     def append(self, data):
         sf = sfHMM1Motor(data, sg0=self.sg0, psf=self.psf, krange=self.krange,
                          model=self.model, name=self.name+f"[{self.n_data}]",
@@ -80,9 +81,10 @@ class sfHMMnMotor(sfHMMmotorBase, sfHMMn):
         sf.transmat_kernel = self.transmat_kernel
         return None
 
+    @append_log
     def align(self):
         if self[0].step is None:
-            raise RuntimeError("Cannot align datasets before step finding.")
+            raise sfHMMAnalysisError("Cannot align datasets before step finding.")
         
         ori = [sf.step.fit[0] for sf in self]
         ori_m = np.mean(ori)

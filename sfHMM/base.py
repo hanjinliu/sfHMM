@@ -1,16 +1,16 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from hmmlearn.hmm import GaussianHMM
-from .func import *
+from .utils import *
 from .gmm import GMMs, DPGMM
 from .step import GaussStep, PoissonStep, BaseStep
 
 class sfHMMBase(GaussianHMM):
     count = 0
-    colors = {"raw data": "violet", 
-              "step finding": "darkgreen",
-              "denoised": "darkblue", 
-              "Viterbi path": "black",
+    colors = {"raw data": "#FF89F4", 
+              "step finding": "#335426",
+              "denoised": "#180CB4", 
+              "Viterbi path": "#3B252B",
               }
     styles = {"font.size": 16, 
               "lines.linewidth": 1,
@@ -35,7 +35,18 @@ class sfHMMBase(GaussianHMM):
         super().__init__(self, **params)
         self.n_features = 1
         self.name = str(name) if name else self._name()
-        
+        self._log = []
+    
+    @property
+    def log(self):
+        out = ""
+        for func, n, description in self._log:
+            if n == 1:
+                out += f"{func}: {description}\n"
+            else:
+                out += f"{func} ({n}): {description}\n"
+        return out
+    
     @property
     def krange(self):
         return self._krange

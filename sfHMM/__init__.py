@@ -1,4 +1,4 @@
-__version__ = "0.3.8"
+__version__ = "0.3.9"
 
 from .single_sfhmm import *
 from .multi_sfhmm import *
@@ -7,6 +7,8 @@ try:
     from .io import *
 except ImportError:
     pass
+
+# TODO: plot format
 
 __doc__ = \
 r"""

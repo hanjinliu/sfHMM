@@ -1,9 +1,11 @@
 from __future__ import annotations
+import numpy as np
 import pandas as pd
 from ..base import sfHMMBase
+from ..single_sfhmm import sfHMM1
 from ..multi_sfhmm import sfHMMn
 
-__all__ = ["read_csv", "read_excel"]
+__all__ = ["read_csv", "read_excel", "save_as_csv"]
 
 def check_ref(ref, class_obj):
     if ref is None:
@@ -40,8 +42,8 @@ def read_csv(path, out:sfHMMn=None, sep:str=",", encoding:str=None, header="infe
     out.from_pandas(df)
     return out
 
-def read_excel(path, ref:sfHMMBase=None, ignore_exceptions=True, sep=",", encoding=None, header=0,
-               sqeeze:bool=False, **kwargs) -> list[sfHMMn]:
+def read_excel(path:str, ref:sfHMMBase=None, ignore_exceptions:bool=True, sep:str=",", 
+               encoding:str=None, header:int=0, sqeeze:bool=False, **kwargs) -> list[sfHMMn]:
     """
     Read a Excel file using pandas.read_excel, and import its data to sfHMMn object.
 
@@ -91,7 +93,16 @@ def read_excel(path, ref:sfHMMBase=None, ignore_exceptions=True, sep=",", encodi
         
 
 def save_as_csv(path, obj):
-    ...
+    if isinstance(obj, sfHMM1):
+        df = pd.DataFrame(data=obj.data_raw, dtype=np.float64, 
+                          columns=["data_raw"],
+                          index=np.arange(obj.data_raw.size, dtype=np.int32))
+        
+        
+        df.to_csv(path)
+        
+    
+    
 
     
     

@@ -1,7 +1,7 @@
 from __future__ import annotations
 import numpy as np
 import matplotlib.pyplot as plt
-from .func import *
+from .utils import *
 from .single_sfhmm import sfHMM1
 from .base import sfHMMBase
 import re
@@ -76,6 +76,7 @@ class sfHMMn(sfHMMBase):
     def names(self) -> list[str]:
         return [sf.name for sf in self]
     
+    @append_log
     def append(self, data, name:str=None) -> sfHMMn:
         """
         Append a trajectory as sfHMM object.
@@ -85,8 +86,7 @@ class sfHMMn(sfHMMBase):
         data : array
             Data to analyze.
         name : str, optional
-            Name of the data, by default None
-            [description]
+            Name of the data.
         """        
         if name is None:
             name = self.name+f"[{self.n_data}]"
@@ -148,8 +148,8 @@ class sfHMMn(sfHMMBase):
         
         if melt:
             if df.shape[1] != 2:
-                ValueError("For melted DataFrame, it must composed of two columns, with names "
-                           "in the first and values in the second.")
+                raise ValueError("For melted DataFrame, it must composed of two columns, with names "
+                                 "in the first and values in the second.")
             name_col, value_col = df.columns
             for name in df[name_col].unique():
                 if like and not like in name:
@@ -163,32 +163,32 @@ class sfHMMn(sfHMMBase):
                 self.append(df[name], name)
         
         if self.n_data == 0:
-            raise RuntimeError("No data appended. Confirm that input DataFrame is in a correct format.")
+            raise ValueError("No data appended. Confirm that input DataFrame is in a correct format.")
         
         return self
  
-    
+    @append_log
     def step_finding(self) -> sfHMMn:
         """
         Step finding by extended version of Kalafut-Visscher's algorithm.
         Run independently for each sfHMM object.
         """
         if self.n_data <= 0:
-            raise RuntimeError("Cannot start analysis before appending data.")
+            raise sfHMMAnalysisError("Cannot start analysis before appending data.")
         
         for sf in self:
             sf.psf = self.psf
-            sf.step = self.StepClass(sf.data_raw, sf.psf)
-            sf.step.multi_step_finding()
+            sf.step_finding()
         return self
     
+    @append_log
     def denoising(self) -> sfHMMn:
         """
         Denoising by cutting of the standard deviation of noise to sg0.
         Run independently for each sfHMM object.
         """
         if self.n_data <= 0:
-            raise RuntimeError("Cannot start analysis before appending data.")
+            raise sfHMMAnalysisError("Cannot start analysis before appending data.")
         
         self._init_sg0()
         
@@ -198,7 +198,7 @@ class sfHMMn(sfHMMBase):
 
         return self
     
-    
+    @append_log
     def gmmfit(self, method:str="bic", n_init:int=1, random_state:int=0) -> sfHMMn:
         """
         Fit the denoised data to Gaussian mixture model.
@@ -219,7 +219,7 @@ class sfHMMn(sfHMMBase):
             If 'method' got an inappropriate string.
         """
         if self.n_data <= 0:
-            raise RuntimeError("Cannot start analysis before appending data.")
+            raise sfHMMAnalysisError("Cannot start analysis before appending data.")
         
         self._gmmfit(method, n_init, random_state)
         
@@ -228,13 +228,14 @@ class sfHMMn(sfHMMBase):
             sf.n_components = self.n_components
         return self
     
+    @append_log
     def hmmfit(self) -> sfHMMn:
         """
         HMM paramter optimization by Forward-Backward algorithm, and state inference by Viterbi 
         algorithm.
         """
         if self.n_data <= 0:
-            raise RuntimeError("Cannot start analysis before appending data.")
+            raise sfHMMAnalysisError("Cannot start analysis before appending data.")
         
         self.data_raw_all = self.data_raw
         self.states_list = [sf.states for sf in self]
@@ -262,7 +263,10 @@ class sfHMMn(sfHMMBase):
         """        
         for i, sf in enumerate(self):
             pl = plot_every > 0 and i % plot_every == 0
-            sf.run_all(plot=pl)
+            try:
+                sf.run_all(plot=pl)
+            except Exception as e:
+                print(f"{e.__class__.name} during {i}-th trace: {e}")
         
         return self
 
@@ -360,7 +364,7 @@ class sfHMMn(sfHMMBase):
 
     def _accumulate_step_sizes(self) -> np.ndarray:
         if self[0].step is None:
-            raise RuntimeError("Steps are not detected yet.")
+            raise sfHMMAnalysisError("Steps are not detected yet.")
         return np.array(concat([sf.step.step_size_list for sf in self]))
     
     def _copy_params(self, sf):

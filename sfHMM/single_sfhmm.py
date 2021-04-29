@@ -2,7 +2,7 @@ from __future__ import annotations
 import matplotlib.pyplot as plt
 import numpy as np
 from .base import sfHMMBase
-from .func import *
+from .utils import *
 
 __all__ = ["sfHMM1"]
 
@@ -88,6 +88,7 @@ class sfHMM1(sfHMMBase):
             self._data_raw = d
             self.ylim = [np.min(self.data_raw), np.max(self.data_raw)]
 
+    @append_log
     def step_finding(self) -> sfHMM1:
         """
         Step finding by extended version of Kalafut-Visscher's algorithm.
@@ -97,6 +98,7 @@ class sfHMM1(sfHMMBase):
         self.psf = getattr(self.step, "p", -1)
         return self
     
+    @append_log
     def denoising(self) -> sfHMM1:
         """
         Denoising by cutting of the standard deviation of noise to sg0.
@@ -117,7 +119,7 @@ class sfHMM1(sfHMMBase):
 
         return self
     
-    
+    @append_log
     def gmmfit(self, method:str="bic", n_init:int=1, random_state:int=0) -> sfHMM1:
         """
         Fit the denoised data to Gaussian mixture model, and the optimal number of states
@@ -154,7 +156,7 @@ class sfHMM1(sfHMMBase):
             
         return self
     
-    
+    @append_log
     def hmmfit(self) -> sfHMM1:
         """
         HMM paramter optimization by EM algorithm, and state inference by Viterbi 
@@ -251,35 +253,36 @@ class sfHMM1(sfHMMBase):
         
     def _accumulate_step_sizes(self):
         if self.step is None:
-            raise RuntimeError("Steps are not detected yet.")
+            raise sfHMMAnalysisError("Steps are not detected yet.")
         return self.step.step_size_list
     
     def _set_covars(self):
         if self.states is None:
-            raise RuntimeError("Cannot initialize 'covars_' because the state sequence 'states' has" 
-                               "yet been determined.")
+            raise sfHMMAnalysisError("Cannot initialize 'covars_' because the state sequence " 
+                                     "'states' hasyet been determined.")
         self.covars_ = calc_covars(self.data_raw, self.states, self.n_components)
         self.min_covar = np.min(self.covars_) * 0.015
         return None
     
     def _set_means(self):
         if self.gmm_opt is None:
-            raise RuntimeError("Cannot initialize 'means_'. You must run gmmfit() before hmmfit() or" \
-                               "set 'means_' manually.")
+            raise sfHMMAnalysisError("Cannot initialize 'means_'. You must run gmmfit() before "
+                                     "hmmfit() or set 'means_' manually.")
         self.means_ = self.gmm_opt.means_.copy()
         return None
     
     def _set_startprob(self):
         if self.gmm_opt is None:
-            raise RuntimeError("Cannot initialize 'startprob_'. You must run gmmfit() before hmmfit() or" \
-                               "set 'startprob_' manually.")
+            raise sfHMMAnalysisError("Cannot initialize 'startprob_'. You must run gmmfit() "
+                                     "before hmmfit() or set 'startprob_' manually.")
+        # TODO: could be nan
         self.startprob_ = calc_startprob([self.data_raw[0]], self.gmm_opt)
         return None
     
     def _set_transmat(self):
         if self.states is None:
-            raise RuntimeError("Cannot initialize 'transmat_' because the state sequence 'states' has" 
-                               "yet been determined.")
+            raise sfHMMAnalysisError("Cannot initialize 'transmat_' because the state sequence " 
+                                     "'states' has yet been determined.")
         self.transmat_ = calc_transmat([self.states], self.n_components)
         return None
     
