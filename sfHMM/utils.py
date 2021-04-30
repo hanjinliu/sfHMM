@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.special import softmax
 import matplotlib.pyplot as plt
 from hmmlearn.utils import normalize
 from functools import wraps
@@ -29,7 +30,7 @@ def gauss(x, wt, mu, sg):
 def concat(list_of_list):
     out = []
     for list_ in list_of_list:
-        out += list(list_)
+        out += list(list_)    
     return out
 
 def plot2(data1, data2=None, ylim=None, legend=True, color1=None, **kwargs):
@@ -70,10 +71,12 @@ def calc_covars(data_raw, states, n_components):
     return covars
 
 def calc_startprob(d0_list, gmm):
-    # TODO: could be nan
+    # Here, using `scipy.special.softmax` is very important because logprob always
+    # composed of very large and very small values. This situation causes underflow
+    # or overflow.
     logprob = gmm._estimate_weighted_log_prob(np.asarray(d0_list).reshape(-1,1))
-    prob = np.exp(np.sum(logprob, axis=0))
-    return prob / np.sum(prob)
+    sumlogprob = np.sum(logprob, axis=0)
+    return softmax(sumlogprob)
 
 def calc_transmat(states_list, n_components):
     transmat = np.zeros((n_components, n_components), dtype="float64")
