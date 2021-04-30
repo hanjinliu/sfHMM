@@ -1,6 +1,7 @@
 import numpy as np
 from sklearn import mixture
 import matplotlib.pyplot as plt
+from .utils import gauss_mix
 
 class GMM1(mixture.GaussianMixture):
     """
@@ -74,17 +75,33 @@ class GMMs:
             line3 += f" {int(bic+0.5):>7} |"
         return "\n".join([out, line1, line2, line3])
     
-    def plot(self):
+    def show_aic_bic(self):
         beautiful_red = "#EE08A1"
         beautiful_blue = "#0818E6"
         y_aic = self.get_aic()
         y_bic = self.get_bic()
         x = self.klist
-        plt.figure(figsize=(6.0, 4.2))
+        plt.figure(figsize=(4.5, 3.2))
         plt.plot(x, y_aic, color=beautiful_red, marker="D", label="AIC")
         plt.plot(x, y_bic, color=beautiful_blue, marker="D", label="BIC")
         plt.legend()
+        plt.xlabel("number of states")
         return None
+    
+    def plot_all(self):
+        x = np.linspace(self.data.min(), self.data.max(), 256)
+        n_bin = min(int(np.sqrt(self.data.size*2)), 256)
+        for n, gmm in self.results.items():
+            plt.figure(figsize=(4.0, 1.6))
+            y = gauss_mix(x, gmm)
+            plt.hist(self.data, bins=n_bin, color="lightgray",
+                     density=True, label="raw data")
+            plt.plot(x, y, color="red", label="fit")
+            plt.title(f"number of states = {n}")
+            plt.legend(bbox_to_anchor=(1.05, 1), loc="upper left", borderaxespad=0)
+            plt.show()
+        return None
+            
     
     def fit(self, n_init=1, random_state=0):
         """

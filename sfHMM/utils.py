@@ -48,7 +48,7 @@ def plot2(data1, data2=None, ylim=None, legend=True, color1=None, **kwargs):
         plt.plot(data2, **kwargs)
 
     if legend:
-        plt.legend(bbox_to_anchor = (1.05, 1), loc = "upper left", borderaxespad = 0,)
+        plt.legend(bbox_to_anchor=(1.05, 1), loc="upper left", borderaxespad=0)
     
     return None
 
@@ -70,6 +70,7 @@ def calc_covars(data_raw, states, n_components):
     return covars
 
 def calc_startprob(d0_list, gmm):
+    # TODO: could be nan
     logprob = gmm._estimate_weighted_log_prob(np.asarray(d0_list).reshape(-1,1))
     prob = np.exp(np.sum(logprob, axis=0))
     return prob / np.sum(prob)

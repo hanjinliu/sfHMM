@@ -4,11 +4,11 @@ from .single_sfhmm import *
 from .multi_sfhmm import *
 from .sampling import *
 try:
+    # input/output need pandas
     from .io import *
 except ImportError:
     pass
 
-# TODO: plot format
 
 __doc__ = \
 r"""

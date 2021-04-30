@@ -4,33 +4,20 @@ import matplotlib.pyplot as plt
 from .utils import *
 from .single_sfhmm import sfHMM1
 from .base import sfHMMBase
+from typing import Iterable
 import re
 import copy
 
 __all__ = ["sfHMMn"]
-
+# TODO: rewrite docstring
 class sfHMMn(sfHMMBase):
     """
     Multi-trajectory sfHMM.
     This class shares all the attributes in hmmlearn.hmm.GaussianHMM.
 
-    Parameters
-    ----------
-    sg0 : float, optional
-        Parameter used in filtering method. Expected to be 20% of signal change.
-        If <= 0, sg0 will be determined automatically.
-    p : float, optional
-        Transition probability used in step finding algorithm.
-        if 0 < p < 0.5 is not satisfied, the original Kalafut-Visscher's algorithm is executed.
-    krange : int or list
-        Minimum and maximum number of states to search in GMM clustering. If it is integer, 
-        then it will be interpretted as [1, krange].
-    model: str, optional
-        Distribution of noise. Gauss and Poisson distribution are available for now.
-    
     Analysis Results
     ----------------
-    gmm_opt : GMMn or DPGMM object
+    gmm_opt : `GMMs` or `DPGMM` object
         The result of GMM clustering, which has following attributes:
         - wt ... Weights.
         - mu ... Means.
@@ -44,22 +31,42 @@ class sfHMMn(sfHMMBase):
         The i-th sfHMM object. See .\single_sfhmm.py.
     """
     
-    def __init__(self, sg0:float=-1, psf:float=-1, krange=[1, 6], 
+    def __init__(self, sg0:float=-1, psf:float=-1, krange=(1, 6), 
                  model:str="g", name:str="", **kwargs):
-        
+        """
+        Parameters
+        ----------
+        sg0 : float, optional
+            Parameter used in filtering method. Expected to be 20% of signal change.
+            If <= 0, sg0 will be determined automatically.
+        psf : float, optional
+            Transition probability used in step finding algorithm.
+            if 0 < p < 0.5 is not satisfied, the original Kalafut-Visscher's algorithm is executed.
+        krange : int or (int, int)
+            Minimum and maximum number of states to search in GMM clustering. If it is integer, then
+            it will be interpretted as (krange, krange).
+        model: str, by default "g" (= Gaussian)
+            Distribution of noise. Gauss and Poisson distribution are available for now.
+        name : str, optional
+            Name of the object.
+        """        
         self.n_data = 0
         super().__init__(sg0, psf, krange, model, name, **kwargs)
         self.ylim = [np.inf, -np.inf]
         self._sf_list = []
     
     
-    def __getitem__(self, key):
+    def __getitem__(self, key) -> sfHMM1:
         return self._sf_list[key]
     
     def __iter__(self):
         return iter(self._sf_list)
     
     def __add__(self, other:sfHMMn) -> sfHMMn:
+        """
+        `+` is supported for two sfHMMn objects. a+b makes a new sfHMMn object with concatenated
+        list of sfHMM1 objects.
+        """        
         if self is other:
             new = self.__class__(sg0=self.sg0, psf=self.psf, krage=self.krange,
                                  model=self.model, name=self.name+"+"+other.name)
@@ -100,7 +107,7 @@ class sfHMMn(sfHMMBase):
         return self
     
     
-    def appendn(self, datasets) -> sfHMMn:
+    def appendn(self, datasets:Iterable) -> sfHMMn:
         """
         Append all the data in the list
 
@@ -123,7 +130,7 @@ class sfHMMn(sfHMMBase):
         return self
     
     
-    def from_pandas(self, df, like:str=None, regex:str=None, melt:bool=None) -> sfHMMn:
+    def from_pandas(self, df, like:str=None, regex:str=None, melt:bool|str="infer") -> sfHMMn:
         """
         Load datasets from pandas.DataFrame.
 
@@ -135,10 +142,10 @@ class sfHMMn(sfHMMBase):
             If given, dataset that contains this string is appended.
         regex : regular expression, optional
             If given, dataset that matches this regular expression is appended.
-        melt : bool, optional
-            If input DataFrame is melted, which is automatically determined when melt is None.
+        melt : bool or "infer", optional
+            If input DataFrame is melted, which is automatically determined when melt is "infer".
         """        
-        if melt is None:
+        if melt == "infer":
             # Determine if df is melted or not
             col0 = df.iloc[:,0]
             if df.shape[1] == 2 and len(col0.unique()) < len(col0)//20:

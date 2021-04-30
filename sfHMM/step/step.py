@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 from .moment import *
 from scipy.stats import t as student_t
 from scipy.stats import norm
@@ -86,6 +87,13 @@ class BaseStep:
         self.len_list = np.diff(self.step_list)
         self.step_size_list = np.diff(self.mu_list)
         
+        return None
+    
+    def plot(self):
+        plt.plot(self.data, color="lightgray", label="raw data")
+        plt.plot(self.fit, color="red", label="fit")
+        plt.legend(bbox_to_anchor=(1.05, 1), loc="upper left", borderaxespad=0)
+        plt.show()
         return None
 
 

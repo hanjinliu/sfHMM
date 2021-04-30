@@ -5,32 +5,16 @@ from .base import sfHMMBase
 from .utils import *
 
 __all__ = ["sfHMM1"]
-
+# TODO: rewrite docstring
 class sfHMM1(sfHMMBase):    
     """
     Step-finding based HMM.
-
-    Parameters
-    ----------
-    data : array like.
-        Data for analysis.
-    sg0 : float, optional
-        Parameter used in filtering method. Expected to be 20% of signal change.
-        If <= 0, sg0 will be determined automatically.
-    psf : float, optional
-        Transition probability used in step finding algorithm.
-        if 0 < p < 0.5 is not satisfied, the original Kalafut-Visscher's algorithm is executed.
-    krange : int or list
-        Minimum and maximum number of states to search in GMM clustering. If it is integer, then
-        it will be interpretted as (krange, krange).
-    model: str, optional
-        Distribution of noise. Gauss and Poisson distribution are available for now.
     
     Analysis Results
     ----------------
     data_raw : np.ndarray
         Raw data.
-    step : GaussStep or PoissonStep object
+    step : `GaussStep` or `PoissonStep` object
         The result of step finding, which has following attributes:
         - fit ... Fitting result.
         - n_step ... The number of steps (region between two signal change points).
@@ -41,9 +25,9 @@ class sfHMM1(sfHMMBase):
     data_fil : np.ndarray
         Data after denoised.
     gmm_opt : `GMM1` object
-        The result of GMM clustering, which inherits sklearn.mixture.GaussianMixture
+        The result of GMM clustering, which inherits `sklearn.mixture.GaussianMixture`.
         If AIC/BIC minimization of standard GMM clustering was conducted, the clustering
-        results will be stored in `gmm`. See .gmm.GMMs
+        results will be stored in `gmm`. See `sfHMM.gmm.GMMs`.
     n_components : int
         The optimal number of states. Same as 'gmm_opt.n_components'.
     states : np.ndarray
@@ -51,12 +35,30 @@ class sfHMM1(sfHMMBase):
         of step finding and GMM clustering. After HMM fitting, this is Viterbi path with
         values {0, 1, 2, ...}.
     viterbi : np.ndarray
-        Viterbi path of 'data_raw', while takes value in 'means_'.
+        Viterbi path of 'data_raw', while takes values in 'means_'.
     """
     
     def __init__(self, data_raw=None, sg0:float=-1, psf:float=-1, krange=(1, 6),
                  model:str="g", name:str="", **kwargs):
-
+        """
+        Parameters
+        ----------
+        data : array like, optional
+            Data for analysis.
+        sg0 : float, optional
+            Parameter used in filtering method. Expected to be 20% of signal change.
+            If <= 0, sg0 will be determined automatically.
+        psf : float, optional
+            Transition probability used in step finding algorithm.
+            if 0 < p < 0.5 is not satisfied, the original Kalafut-Visscher's algorithm is executed.
+        krange : int or (int, int)
+            Minimum and maximum number of states to search in GMM clustering. If it is integer, then
+            it will be interpretted as (krange, krange).
+        model: str, by default "g" (= Gaussian)
+            Distribution of noise. Gauss and Poisson distribution are available for now.
+        name : str, optional
+            Name of the object.
+        """        
         self.data_raw = data_raw
         self.step = None
         self.data_fil = None
@@ -209,11 +211,11 @@ class sfHMM1(sfHMMBase):
         
         with plt.style.context(self.__class__.styles):
             plt.figure(figsize=(6*n_col, 4.2*n_row))
-            plt.suptitle(self.name, x=0.38, y=0.93, fontweight="bold")
-            
+                        
             for i, task in enumerate(tasks):
                 i += 1
                 plt.subplot(n_row, n_col, (i-1)*n_col + 1)
+                i == 1 and plt.title(self.name, fontweight="bold")
                 kw = dict(ylim=ylim, color1=c_raw, color=self.__class__.colors[task], label=task)
                 if task == "step finding":
                     plot2(self.data_raw[sl], self.step.fit[sl], **kw)
@@ -244,7 +246,7 @@ class sfHMM1(sfHMMBase):
         
         return None
     
-    def accumulate_transitions(self) -> tuple[int, int]:
+    def accumulate_transitions(self) -> list[tuple[int, int]]:
         if not hasattr(self, "states"):
             return np.array([], dtype="float64")
         return [(self.states[i], self.states[i+1]) 
@@ -275,7 +277,6 @@ class sfHMM1(sfHMMBase):
         if self.gmm_opt is None:
             raise sfHMMAnalysisError("Cannot initialize 'startprob_'. You must run gmmfit() "
                                      "before hmmfit() or set 'startprob_' manually.")
-        # TODO: could be nan
         self.startprob_ = calc_startprob([self.data_raw[0]], self.gmm_opt)
         return None
     

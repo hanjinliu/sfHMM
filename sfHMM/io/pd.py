@@ -91,17 +91,30 @@ def read_excel(path:str, ref:sfHMMBase=None, ignore_exceptions:bool=True, sep:st
         msflist = msflist[0]
     return msflist
         
-
-def save_as_csv(path, obj):
+# TODO: test
+def save_as_csv(path, obj, format="melt"):
+    df = _to_dataframes(obj)
+    ...
+        
+def _to_dataframes(obj:sfHMMBase) -> list[pd.DataFrame]:
     if isinstance(obj, sfHMM1):
         df = pd.DataFrame(data=obj.data_raw, dtype=np.float64, 
                           columns=["data_raw"],
                           index=np.arange(obj.data_raw.size, dtype=np.int32))
-        
-        
-        df.to_csv(path)
-        
-    
+        if hasattr(obj, "step"):
+            df["step finding"] = obj.step.fit
+        if obj.data_fil:
+            df["denoised"] = obj.data_fil
+        if obj.viterbi:
+            df["Viterbi path"] = obj.viterbi
+        df = [df]
+    elif isinstance(obj, sfHMMn):
+        df = []
+        for sf in sfHMMn:
+            df.append(_to_dataframes(sf))
+    else:
+        raise TypeError(f"Only sfHMM objects can be converted to pd.DataFrame, but got {type(obj)}")
+    return df
     
 
     
