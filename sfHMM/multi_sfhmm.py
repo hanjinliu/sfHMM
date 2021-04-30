@@ -129,6 +129,29 @@ class sfHMMn(sfHMMBase):
                 
         return self
     
+    @append_log
+    def delete(self, indices:int|list[int]|tuple[int]) -> None:
+        """
+        Delete sfHMM1 object(s)
+
+        Parameters
+        ----------
+        indices : int or iterable of int
+            Indices to delete.
+        """        
+        if isinstance(indices, int):
+            indices = [indices]
+        indices = sorted(indices)
+        
+        for i in reversed(indices):
+            self._sf_list.pop(i)
+        
+        data_raw_all = self.data_raw
+        self.ylim = [data_raw_all.min(), data_raw_all.max()]
+        self.n_data -= len(indices)
+        
+        return None
+    
     
     def from_pandas(self, df, like:str=None, regex:str=None, melt:bool|str="infer") -> sfHMMn:
         """
@@ -166,8 +189,11 @@ class sfHMMn(sfHMMBase):
                 self.append(df[df[name_col] == name][value_col], name)
         
         else:
-            for name in df.filter(like=like, regex=regex):
-                self.append(df[name], name)
+            if like is not None or regex is not None:
+                df = df.filter(like=like, regex=regex)
+            for name in df:
+                data = df[name].dropna()
+                self.append(data, name)
         
         if self.n_data == 0:
             raise ValueError("No data appended. Confirm that input DataFrame is in a correct format.")

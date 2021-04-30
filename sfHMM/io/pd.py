@@ -45,7 +45,8 @@ def read_csv(path, out:sfHMMn=None, sep:str=",", encoding:str=None, header="infe
 def read_excel(path:str, ref:sfHMMBase=None, ignore_exceptions:bool=True, sep:str=",", 
                encoding:str=None, header:int=0, sqeeze:bool=False, **kwargs) -> list[sfHMMn]:
     """
-    Read a Excel file using pandas.read_excel, and import its data to sfHMMn object.
+    Read a Excel file using pandas.read_excel, and import its data to sfHMMn object. Every sheet
+    must have only single trajectory.
 
     Parameters
     ----------
@@ -73,6 +74,7 @@ def read_excel(path:str, ref:sfHMMBase=None, ignore_exceptions:bool=True, sep:st
     df_dict = pd.read_excel(path, sheet_name=None, sep=sep, encoding=encoding, 
                             header=header, **kwargs)
     
+    
     msflist = []
     for sheet_name, df in df_dict.items():
         msf = sfHMMn(**ref.get_params(), name=sheet_name)
@@ -92,29 +94,33 @@ def read_excel(path:str, ref:sfHMMBase=None, ignore_exceptions:bool=True, sep:st
     return msflist
         
 # TODO: test
-def save_as_csv(path, obj, format="melt"):
-    df = _to_dataframes(obj)
-    ...
+def save_as_csv(obj, path:str):
+    df_list = _to_dataframes(obj)
+    out = pd.concat(df_list, axis=1)
+    out.to_csv(path)
+    return None
         
-def _to_dataframes(obj:sfHMMBase) -> list[pd.DataFrame]:
+def _to_dataframes(obj:sfHMMBase, suffix:str="") -> list[pd.DataFrame]:
     if isinstance(obj, sfHMM1):
         df = pd.DataFrame(data=obj.data_raw, dtype=np.float64, 
                           columns=["data_raw"],
                           index=np.arange(obj.data_raw.size, dtype=np.int32))
         if hasattr(obj, "step"):
-            df["step finding"] = obj.step.fit
-        if obj.data_fil:
-            df["denoised"] = obj.data_fil
-        if obj.viterbi:
-            df["Viterbi path"] = obj.viterbi
-        df = [df]
+            df[f"step finding-{suffix}"] = obj.step.fit
+        if obj.data_fil is not None:
+            df[f"denoised-{suffix}"] = obj.data_fil
+        if obj.viterbi is not None:
+            df[f"Viterbi path-{suffix}"] = obj.viterbi
+        return [df]
+    
     elif isinstance(obj, sfHMMn):
-        df = []
-        for sf in sfHMMn:
-            df.append(_to_dataframes(sf))
+        df_list = []
+        for i, sf in enumerate(obj):
+            df_list.append(_to_dataframes(sf, suffix=i)[0])
+        return df_list
     else:
         raise TypeError(f"Only sfHMM objects can be converted to pd.DataFrame, but got {type(obj)}")
-    return df
+    
     
 
     

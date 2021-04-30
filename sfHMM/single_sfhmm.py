@@ -84,6 +84,8 @@ class sfHMM1(sfHMMBase):
                 pass
             elif d.ndim == 2 and (d.shape[0] == 1 or d.shape[1] == 1):
                 d = d.ravel()
+            elif d.size < self.krange[1]:
+                raise ValueError(f"Input data size is too small: {d.size}")
             else:
                 raise ValueError("Input data must be one-dimensonal or any arrays "
                                  "that can be converted to on-dimensional ones.")
