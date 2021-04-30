@@ -30,7 +30,8 @@ class sfHMM1Motor(sfHMMmotorBase, sfHMM1):
             The largest step of motor. If max_stride = 2, then from 2-step backward to 2-step
             forward steps are considered. Larger value results in longer calculation time.
         """   
-        super().__init__(data_raw, sg0, psf, krange, model, name)
+        super().__init__(sg0=sg0, psf=psf, krange=krange, model=model, name=name)
+        self.data_raw = data_raw
         self.max_stride = max_stride
         self.covariance_type = "tied"
     
@@ -58,7 +59,6 @@ class sfHMM1Motor(sfHMMmotorBase, sfHMM1):
     
     
 class sfHMMnMotor(sfHMMmotorBase, sfHMMn):
-    
     def __init__(self, sg0:float=-1, psf:float=-1, krange=(1, 6), 
                  model:str="g", name:str="", max_stride:int=2):
         """
@@ -81,7 +81,7 @@ class sfHMMnMotor(sfHMMmotorBase, sfHMMn):
             The largest step of motor. If max_stride = 2, then from 2-step backward to 2-step
             forward steps are considered. Larger value results in longer calculation time.
         """   
-        super().__init__(sg0, psf, krange, model, name)
+        super().__init__(sg0=sg0, psf=psf, krange=krange, model=model, name=name)
         self.max_stride = max_stride
         self.covariance_type = "tied"
     
@@ -129,10 +129,10 @@ class sfHMMnMotor(sfHMMmotorBase, sfHMMn):
         if self[0].step is None:
             raise sfHMMAnalysisError("Cannot align datasets before step finding.")
         
-        ori = [sf.step.fit[0] for sf in self]
+        ori = [sf.step.fit[0] for sf in self] # where the first step is located
         ori_m = np.mean(ori)
         for sf, o in zip(self, ori):
-            dy = (o - ori_m)
+            dy = o - ori_m
             sf.data_raw -= dy
             sf.ylim -= dy
             sf.step.fit -= dy

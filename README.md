@@ -16,12 +16,14 @@ pip install git+https://github.com/hanjinliu/sfHMM
   - `sfHMMn` ... sfHMM for multiple trajectories.
   - `hmm_sampling` ... sample data generation of FRET-like data.
   - `motor_sampling` ... sample data generation of motor-like data.
+ 
 - `sfHMM.step` module contains several step finding algorithms in similar API. Our efficient implementation enables analysis of **100,000** data points within **~1 sec**!
   - `GaussStep` ... step finding for Gauss distribution [1].
   - `PoissonStep` ... step finding for Poisson distribution.
   - `SDFixedGaussStep` ... step finding for Gauss distribution with fixed standard deviation.
   - `TtestStep` ... step finding using T-test [2].
   - `BayesianPoissonStep` ... step finding in Bayesian method [3].
+ 
 - `sfHMM.motor` module contains sfHMM classes aiming at analyzing motor-stepping.
   - `sfHMM1Motor` ... sfHMM for single motor-stepping trajectory.
   - `sfHMMnMotor` ... sfHMM for multiple motor-stepping trajectories.
@@ -44,6 +46,7 @@ pip install git+https://github.com/hanjinliu/sfHMM
 # Common Parameters
 
 All the parameters are optional.
+
 - `sg0` ... The parameter used in denoising process.
 - `psf` ... The parameter used in step finding.
 - `krange` ... Range of the number of hidden states.

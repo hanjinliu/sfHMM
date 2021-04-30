@@ -1,4 +1,4 @@
-__version__ = "0.3.9"
+__version__ = "0.3.10"
 
 from .single_sfhmm import sfHMM1
 from .multi_sfhmm import sfHMMn

@@ -14,7 +14,8 @@ class sfHMMmotorBase(sfHMMBase):
     """
     def __init__(self, sg0:float=-1, psf:float=-1, krange=(1, 6),
                  model:str="g", name:str="", max_stride:int=2):
-        super().__init__(sg0, psf, krange, model, name, covariance_type="tied")
+        super().__init__(sg0=sg0, psf=psf, krange=krange, model=model, name=name,
+                         covariance_type="tied")
         self.max_stride = max_stride
         
     @property

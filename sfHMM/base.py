@@ -10,6 +10,8 @@ class sfHMMBase(GaussianHMM):
     colors = {"raw data": "#FF89F4", 
               "step finding": "#335426",
               "denoised": "#180CB4", 
+              "GMM": "#ED1111",
+              "GMM marker": "#FF81D8",
               "Viterbi path": "#3B252B",
               }
     styles = {"font.size": 16, 
@@ -143,8 +145,9 @@ class sfHMMBase(GaussianHMM):
         peak_x = self.gmm_opt.means_.ravel()
         peak_y = gauss_mix(peak_x, self.gmm_opt) * amp
         peak_y += np.max(peak_y) * 0.1
-        plt.plot(fit_y, fit_x, color="red", linestyle="-.")
-        plt.plot(peak_y, peak_x, "<", color = "red", markerfacecolor='pink', markersize=10)
+        plt.plot(fit_y, fit_x, color=self.colors["GMM"], linestyle="-.")
+        plt.plot(peak_y, peak_x, "<", color = self.colors["GMM"], 
+                 markerfacecolor=self.colors["GMM marker"], markersize=10)
         plt.hist(self.data_raw[sl], bins=n_bin, color=self.colors["raw data"],
                  orientation="horizontal", alpha=0.7, density=True)
         plt.hist(self.data_fil[sl], bins=n_bin, color=self.colors["denoised"],
