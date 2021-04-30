@@ -92,9 +92,18 @@ def read_excel(path:str, ref:sfHMMBase=None, ignore_exceptions:bool=True, sep:st
     elif sqeeze and len(msflist) == 1:
         msflist = msflist[0]
     return msflist
-        
-# TODO: test
-def save_as_csv(obj, path:str):
+
+def save_as_csv(obj:sfHMMBase, path:str) -> None:
+    """
+    Save obj.step.fit, obj.data_fil and obj.viterbi as csv.
+
+    Parameters
+    ----------
+    obj : sfHMMBase
+        sfHMM object to save.
+    path : str
+        Saving path.
+    """    
     df_list = _to_dataframes(obj)
     out = pd.concat(df_list, axis=1)
     out.to_csv(path)
