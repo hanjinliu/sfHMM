@@ -11,14 +11,16 @@ import heapq
 original algorithm did not make full use of the results obtained in previous iterations. 
 In short, before calculating such as square deviation, the 'generator' of it is stored and
 passed to next iteration. The n-th-order moment E[X_i^n] is very useful for in this purpose, 
-that's whiy Moment class is defined in moment.py. A moment object corresponds to one constant
-region (between two signal change points) and has n-th order moment with any step position
-as attributes. Here in GaussStep/PoissonStep class, GaussMoment/PoissonMoment is split into
-two fragments and they are passed to newly generated two steps.
+that's why `Moment` class is defined in moment.py. A `Moment` object corresponds to one constant
+region (between two signal change points) and has n-th order moment with any step position as
+attributes. Here in step finding classes, a corresponding `Moment` object is split into two 
+fragments and they are passed to newly generated two steps.
     In this optimized implementation, both GaussStep and PoissonStep can analyze 100,000-point
 data within 1 sec!
 
-Note that `x0` and `dx` always denotes positions shown below:
+Notes
+-----
+`x0` and `dx` always denote positions shown below:
        
        x0+dx                     
  0  x0   v  oooooooooo           
@@ -27,11 +29,14 @@ Note that `x0` and `dx` always denotes positions shown below:
      .......    <- old step      
      oooo       <- new step (1)  
 
-Reference
----------
-[1] Kalafut, B., & Visscher, K. (2008). An objective, model-independent method for detection
-of non-uniform steps in noisy signals. Computer Physics Communications, 179(10), 716–723.
-https://doi.org/10.1016/j.cpc.2008.06.008
+Inheritance Map
+---------------
+                         BaseStep
+                      /            \
+           RecursiveStep            GaussStep
+            /       \
+SDFixedGaussStep, PoissonStep, 
+TtestStep, BayesianPoissonStep
 
 """
 
@@ -125,7 +130,7 @@ class RecursiveStep(BaseStep):
         
 class GaussStep(BaseStep):
     """
-    Step finding algorithm for trajectories that follow Gauss distribution.
+    Gauss-distribution step finding.
     
     Reference
     ---------
@@ -143,7 +148,7 @@ class GaussStep(BaseStep):
             Probability of transition (signal change). If not in a proper range 0<p<0.5,
             then This algorithm will be identical to the original Kalafut-Visscher's.
         """
-        super().__init__(np.asarray(data, dtype="float64"), p)
+        super().__init__(np.asarray(data, dtype=np.float64), p)
         
     def multi_step_finding(self):
         g = GaussMoment().init(self.data)
@@ -171,8 +176,15 @@ class GaussStep(BaseStep):
     
 
 class SDFixedGaussStep(RecursiveStep):
+    """
+    Gauss-distribution step finding with fixed standard deviation of noise.
+    If standard deviation of noise is unknown then it will be estimated by
+    wavelet method. Compared to GaussStep, this algorithm detects more steps
+    in some cases and less in others.
+
+    """    
     def __init__(self, data, p=-1, sigma=-1):
-        super().__init__(np.asarray(data, dtype="float64"), p)
+        super().__init__(np.asarray(data, dtype=np.float64), p)
         if sigma < 0:
             sigma = estimate_sigma(data)
         self.sigma = sigma
@@ -186,6 +198,8 @@ class SDFixedGaussStep(RecursiveStep):
 
 class TtestStep(RecursiveStep):
     """
+    T-test based step finding.
+    
     Reference
     ---------
     Shuang, B., Cooper, D., Taylor, J. N., Kisley, L., Chen, J., Wang, W., ... & Landes, 
@@ -194,7 +208,7 @@ class TtestStep(RecursiveStep):
     https://doi.org/10.1021/jz501435p
     """    
     def __init__(self, data, alpha=0.05, sigma=-1):
-        self.data = np.asarray(data, dtype="float64")
+        self.data = np.asarray(data, dtype=np.float64)
         self.len = self.data.size
         self.n_step = 1
         self.step_list = [0, self.len]
@@ -227,7 +241,7 @@ class TtestStep(RecursiveStep):
 
 class PoissonStep(RecursiveStep):
     """
-    Step finding algorithm for trajectories that follow Poisson distribution.
+    Poisson distribution step finding. Input must be integer.
     """    
     def __init__(self, data, p=-1):
         super().__init__(data, p)
@@ -245,6 +259,8 @@ class PoissonStep(RecursiveStep):
 
 class BayesianPoissonStep(RecursiveStep):
     """
+    Poisson distribution step finding in a Bayesian method.
+    
     Reference
     ---------
     Ensign, D. L., & Pande, V. S. (2010). Bayesian detection of intensity changes in 

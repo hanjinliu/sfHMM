@@ -17,7 +17,7 @@ class sfHMMn(sfHMMBase):
 
     Analysis Results
     ----------------
-    gmm_opt : `GMMs` or `DPGMM` object
+    gmm_opt : `GMMs` or `DPGMM` object. For more detail, see `sfHMM.gmm`.
         The result of GMM clustering, which has following attributes:
         - wt ... Weights.
         - mu ... Means.
@@ -31,7 +31,7 @@ class sfHMMn(sfHMMBase):
         The i-th sfHMM object. See .\single_sfhmm.py.
     """
     
-    def __init__(self, sg0:float=-1, psf:float=-1, krange=(1, 6), 
+    def __init__(self, *, sg0:float=-1, psf:float=-1, krange=(1, 6), 
                  model:str="g", name:str="", **kwargs):
         """
         Parameters
@@ -426,3 +426,4 @@ class sfHMMn(sfHMMBase):
     @property
     def n_list(self) -> list[int]:
         return [sf.data_raw.size for sf in self]
+    

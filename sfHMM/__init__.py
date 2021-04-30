@@ -1,8 +1,9 @@
 __version__ = "0.3.9"
 
-from .single_sfhmm import *
-from .multi_sfhmm import *
-from .sampling import *
+from .single_sfhmm import sfHMM1
+from .multi_sfhmm import sfHMMn
+from . import motor
+from .sampling import hmm_sampling, motor_sampling
 try:
     # input/output need pandas
     from .io import *

@@ -24,7 +24,7 @@ class sfHMM1(sfHMMBase):
         - step_size_list ... list of signal change (mu_list[i+1] - mu_list[i]).
     data_fil : np.ndarray
         Data after denoised.
-    gmm_opt : `GMM1` object
+    gmm_opt : `GMMs` or `DPGMM` object. For more detail, see `sfHMM.gmm`.
         The result of GMM clustering, which inherits `sklearn.mixture.GaussianMixture`.
         If AIC/BIC minimization of standard GMM clustering was conducted, the clustering
         results will be stored in `gmm`. See `sfHMM.gmm.GMMs`.
@@ -38,12 +38,12 @@ class sfHMM1(sfHMMBase):
         Viterbi path of 'data_raw', while takes values in 'means_'.
     """
     
-    def __init__(self, data_raw=None, sg0:float=-1, psf:float=-1, krange=(1, 6),
+    def __init__(self, data_raw=None, *, sg0:float=-1, psf:float=-1, krange=(1, 6),
                  model:str="g", name:str="", **kwargs):
         """
         Parameters
         ----------
-        data : array like, optional
+        data_raw : array like, optional
             Data for analysis.
         sg0 : float, optional
             Parameter used in filtering method. Expected to be 20% of signal change.
@@ -249,6 +249,15 @@ class sfHMM1(sfHMMBase):
         return None
     
     def accumulate_transitions(self) -> list[tuple[int, int]]:
+        """
+        Accumulate all the transitions occurred in `self.states`, and return them in
+        [(y0, y1), (y1, y2), (y2, y3), ...] format.
+
+        Returns
+        -------
+        list[tuple[int, int]]
+            List of transitions.
+        """        
         if not hasattr(self, "states"):
             return np.array([], dtype="float64")
         return [(self.states[i], self.states[i+1]) 
