@@ -5,7 +5,7 @@ from .base import sfHMMBase
 from .utils import *
 
 __all__ = ["sfHMM1"]
-# TODO: rewrite docstring
+
 class sfHMM1(sfHMMBase):    
     """
     Step-finding based HMM.

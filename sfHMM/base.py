@@ -90,7 +90,8 @@ class sfHMMBase(GaussianHMM):
             
     def get_params(self, deep=True):
         out = super().get_params(deep=deep)
-        out.pop("data_raw", None)
+        out.pop("data_raw", None) # This is not parameter
+        out.pop("name", None)     # This does not affect analysis
         return out
 
     def step_finding(self): ...

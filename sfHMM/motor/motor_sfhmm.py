@@ -86,10 +86,12 @@ class sfHMMnMotor(sfHMMmotorBase, sfHMMn):
         self.covariance_type = "tied"
     
     @append_log
-    def append(self, data):
+    def append(self, data, name:str=None):
+        if name is None:
+            name = self.name+f"[{self.n_data}]"
+            
         sf = sfHMM1Motor(data, sg0=self.sg0, psf=self.psf, krange=self.krange,
-                         model=self.model, name=self.name+f"[{self.n_data}]",
-                         max_stride=self.max_stride)
+                         model=self.model, name=name, max_stride=self.max_stride)
         self.n_data += 1
         self._sf_list.append(sf)
         self.ylim[0] = min(sf.ylim[0], self.ylim[0])

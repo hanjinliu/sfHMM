@@ -9,7 +9,7 @@ import re
 import copy
 
 __all__ = ["sfHMMn"]
-# TODO: rewrite docstring
+
 class sfHMMn(sfHMMBase):
     """
     Multi-trajectory sfHMM.
@@ -54,6 +54,7 @@ class sfHMMn(sfHMMBase):
         super().__init__(sg0, psf, krange, model, name, **kwargs)
         self.ylim = [np.inf, -np.inf]
         self._sf_list = []
+        self.gmm_opt = None
     
     
     def __getitem__(self, key) -> sfHMM1:
@@ -132,7 +133,7 @@ class sfHMMn(sfHMMBase):
     @append_log
     def delete(self, indices:int|list[int]|tuple[int]) -> None:
         """
-        Delete sfHMM1 object(s)
+        Delete sfHMM1 object(s) from the list.
 
         Parameters
         ----------
@@ -152,6 +153,22 @@ class sfHMMn(sfHMMBase):
         
         return None
     
+    @append_log
+    def pop(self, ind:int) -> sfHMM1:
+        """
+        Delete one sfHMM1 object and return it.
+
+        Parameters
+        ----------
+        ind : int
+            Indice to pop.
+
+        """        
+        out = self._sf_list.pop(ind)
+        data_raw_all = self.data_raw
+        self.ylim = [data_raw_all.min(), data_raw_all.max()]
+        self.n_data -= 1
+        return out
     
     def from_pandas(self, df, like:str=None, regex:str=None, melt:bool|str="infer") -> sfHMMn:
         """
@@ -323,7 +340,8 @@ class sfHMMn(sfHMMBase):
 
 
     def plot(self):
-        self.plot_hist()
+        if self.gmm_opt is not None:
+            self.plot_hist()
         self.plot_traces()
         return None
     
