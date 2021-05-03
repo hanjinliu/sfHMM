@@ -12,7 +12,7 @@ class sfHMMmotorBase(sfHMMBase):
     stepping trajectories. The attribute `transmat_` is generated from `transmat_kernel`
     every time it is called. Also, during M-step transmat_kernel is updated.
     """
-    def __init__(self, sg0:float=-1, psf:float=-1, krange=(1, 6),
+    def __init__(self, sg0:float=-1, psf:float=-1, krange=None,
                  model:str="g", name:str="", max_stride:int=2):
         super().__init__(sg0=sg0, psf=psf, krange=krange, model=model, name=name,
                          covariance_type="tied")
@@ -34,16 +34,13 @@ class sfHMMmotorBase(sfHMMBase):
             How to estimate krange from step finding result.
             - "fast" ... narrower range but faster.
             - "safe" ... wider range but safer.
-            - "none" ... do not estimate.
             or estimated krange can be directly given.            
         """        
-        self._estimate_krange(estimation)
+        if self.krange is None:
+            self._estimate_krange(estimation)
         return super().gmmfit(method, n_init, random_state)
     
     def _estimate_krange(self, estimation):
-        if estimation in (None, False, "none"):
-            return None
-        
         dy = self._accumulate_step_sizes()
         nsmall, nlarge = sorted(map(int, [np.sum(dy>0), np.sum(dy<0)]))
         if estimation == "fast":
@@ -51,10 +48,7 @@ class sfHMMmotorBase(sfHMMBase):
         elif estimation == "safe":
             self.krange = (nlarge - nsmall, nlarge)
         else:
-            try:
-                self.krange = estimation
-            except:
-                raise ValueError(f"Cannot interpret estimation method: {estimation}")
+            raise ValueError(f"Cannot interpret estimation method: {estimation}")
         return None
         
     def tdp(self, **kwargs):

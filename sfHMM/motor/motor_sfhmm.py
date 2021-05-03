@@ -6,7 +6,7 @@ from ..utils import *
 
 
 class sfHMM1Motor(sfHMMmotorBase, sfHMM1):
-    def __init__(self, data_raw=None, *, sg0:float=-1, psf:float=-1, krange=(1, 6),
+    def __init__(self, data_raw=None, *, sg0:float=-1, psf:float=-1, krange=None,
                  model:str="g", name:str="", max_stride:int=2):
         """
         Parameters
@@ -59,7 +59,7 @@ class sfHMM1Motor(sfHMMmotorBase, sfHMM1):
     
     
 class sfHMMnMotor(sfHMMmotorBase, sfHMMn):
-    def __init__(self, sg0:float=-1, psf:float=-1, krange=(1, 6), 
+    def __init__(self, sg0:float=-1, psf:float=-1, krange=None, 
                  model:str="g", name:str="", max_stride:int=2):
         """
         Parameters

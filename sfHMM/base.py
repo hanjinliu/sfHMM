@@ -55,7 +55,9 @@ class sfHMMBase(GaussianHMM):
     
     @krange.setter
     def krange(self, value):
-        if isinstance(value, int):
+        if value is None:
+            pass
+        elif isinstance(value, int):
             value = max(1, value)
             value = (value, value)
         else:
@@ -93,6 +95,7 @@ class sfHMMBase(GaussianHMM):
         out.pop("data_raw", None) # This is not parameter
         out.pop("name", None)     # This does not affect analysis
         return out
+        
 
     def step_finding(self): ...
     def denoising(self): ...
@@ -175,6 +178,9 @@ class sfHMMBase(GaussianHMM):
             sg0_ = min(self.sg0, np.percentile(self._sg_list, 25))
         else:
             sg0_ = self.sg0
+        
+        if self.krange is None:
+            self.krange = (1, 6) # Enough for most situations.
             
         if method.lower() in ("aic", "bic"):
             gmm_ = GMMs(self.data_fil, self.krange, min_interval=sg0_*1.5,  min_sg=sg0_*0.8, 

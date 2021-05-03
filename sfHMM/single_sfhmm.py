@@ -38,7 +38,7 @@ class sfHMM1(sfHMMBase):
         Viterbi path of 'data_raw', while takes values in 'means_'.
     """
     
-    def __init__(self, data_raw=None, *, sg0:float=-1, psf:float=-1, krange=(1, 6),
+    def __init__(self, data_raw=None, *, sg0:float=-1, psf:float=-1, krange=None,
                  model:str="g", name:str="", **kwargs):
         """
         Parameters
@@ -84,7 +84,7 @@ class sfHMM1(sfHMMBase):
                 pass
             elif d.ndim == 2 and (d.shape[0] == 1 or d.shape[1] == 1):
                 d = d.ravel()
-            elif d.size < self.krange[1]:
+            elif self.krange is not None and d.size < self.krange[1]:
                 raise ValueError(f"Input data size is too small: {d.size}")
             else:
                 raise ValueError("Input data must be one-dimensonal or any arrays "
