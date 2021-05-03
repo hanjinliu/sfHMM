@@ -1,7 +1,14 @@
 # sfHMM
-Step finding based HMM. Classes for HMM analysis in this module inherit `GaussianHMM` class in [hmmlearn](https://github.com/hmmlearn/hmmlearn).
+
+**sfHMM** (Step-Finding based Hidden Markov Model analysis) provides efficient HMM analysis for varieties of biophysical data. Owing to its accurate parameter estimation workflows, sfHMM can be applied to systems with:
+
+- unknown numbers of states
+- high noise
+- sparse transition
 
 ![ex1](animation.gif)
+
+You can also use sfHMM just for step finding or AIC/BIC based Gaussian mixture model selection. Please refer to "example.ipynb" for basic usages.
 
 # Installation
 
@@ -9,39 +16,52 @@ Step finding based HMM. Classes for HMM analysis in this module inherit `Gaussia
 pip install git+https://github.com/hanjinliu/sfHMM
 ```
 
+```
+git clone https://github.com/hanjinliu/sfHMM
+```
+
+# Dependencies
+
+I've tested the codes with following versions but may work in older ones.
+
+- python &ge; 3.7.0
+- [hmmlearn](https://github.com/hmmlearn/hmmlearn) &ge; 0.2.3
+- [scikit-learn](https://github.com/scikit-learn/scikit-learn) &ge; 0.24.1
+- [pandas](https://github.com/pandas-dev/pandas) &ge; 1.1.5
+- [matplotlib](https://github.com/matplotlib/matplotlib) &ge; 3.3.4
+
 # Contents
 
-- `sfHMM` module contains basic classes and functions for sfHMM data analysis.
-  - `sfHMM1` ... sfHMM for single trajectory.
-  - `sfHMMn` ... sfHMM for multiple trajectories.
-  - `hmm_sampling` ... sample data generation of FRET-like data.
-  - `motor_sampling` ... sample data generation of motor-like data.
- 
-- `sfHMM.step` module contains several step finding algorithms in similar API. Our efficient implementation enables analysis of **100,000** data points within **~1 sec**!
-  - `GaussStep` ... step finding for Gauss distribution [1].
-  - `PoissonStep` ... step finding for Poisson distribution.
-  - `SDFixedGaussStep` ... step finding for Gauss distribution with fixed standard deviation.
-  - `TtestStep` ... step finding using T-test [2].
-  - `BayesianPoissonStep` ... step finding in Bayesian method [3].
- 
-- `sfHMM.motor` module contains sfHMM classes aiming at analyzing motor-stepping.
-  - `sfHMM1Motor` ... sfHMM for single motor-stepping trajectory.
-  - `sfHMMnMotor` ... sfHMM for multiple motor-stepping trajectories.
+### `sfHMM`
+This module contains basic classes and functions for **sfHMM data analysis**.
+- `sfHMM1` ... sfHMM for single trajectory.
+- `sfHMMn` ... sfHMM for multiple trajectories.
+- `hmm_sampling` ... sample data generation of FRET-like data.
+- `motor_sampling` ... sample data generation of motor-like data.
 
-# Inheritance Map
+### `sfHMM.motor`
+This module contains sfHMM classes aiming at analyzing **motor-stepping** or other sparse transition models.
+- `sfHMM1Motor` ... sfHMM for single motor-stepping trajectory.
+- `sfHMMnMotor` ... sfHMM for multiple motor-stepping trajectories.
 
-```
-      (hmmlearn.hmm.GaussianHMM)
-                  |
-                  |
-             (sfHMMBase)
-           /      |      \
-         /        |        \
-   sfHMM1  (sfHMMmotorBase)  sfHMMn
-       \        /   \        /
-        \     /       \     /
-     sfHMM1Motor    sfHMMnMotor
-```
+### `sfHMM.step` 
+This module contains several step finding algorithms in the same API. Our efficient implementation enables analysis of **100,000** data points within **~1 sec**!
+- `GaussStep` ... step finding for Gauss distribution [1].
+- `PoissonStep` ... step finding for Poisson distribution.
+- `SDFixedGaussStep` ... step finding for Gauss distribution with fixed standard deviation.
+- `TtestStep` ... step finding using T-test [2].
+- `BayesianPoissonStep` ... step finding in Bayesian method [3].
+
+### `sfHMM.gmm`
+This module contains classes that inherit `sklearn.mixture.GaussianMixture` while making **Gaussian mixture model clustering** much easier.
+- `GMMs` ... Fitting Gaussian mixtures and model selection.
+  
+### `sfHMM.io`
+This module contains **input/output** functions that are suitable for sfHMM data analysis.
+- `read` ... Load such as csv, txt, dat files.
+- `read_excel` ... Load Excel files.
+- `save` ... Save sfHMM analysis results.
+
 
 # Common Parameters
 

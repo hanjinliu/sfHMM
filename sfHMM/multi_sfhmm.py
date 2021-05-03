@@ -382,7 +382,6 @@ class sfHMMn(sfHMMBase):
         
         with plt.style.context(self.__class__.styles):
             plt.figure(figsize=(n_col * 2.7, n_row * 4))
-            plt.suptitle(self.name, fontweight="bold")
             
             for i, ind in enumerate(indices):
                 sf = self[ind]

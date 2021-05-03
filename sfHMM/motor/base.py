@@ -1,11 +1,10 @@
-from hmmlearn.hmm import GaussianHMM
 import numpy as np
 import matplotlib.pyplot as plt
 from hmmlearn.utils import log_mask_zero, normalize
 from ..base import sfHMMBase
 from . import _hmmc_motor
 from scipy import special
-# TODO: krange = None
+
 class sfHMMmotorBase(sfHMMBase):
     """
     This base class enables sparse transition probability matrix aiming at analyzing motor

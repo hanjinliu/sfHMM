@@ -43,8 +43,9 @@ kwargs = dict(name="sfHMM",
                     "hmmlearn>=0.2.3",
                     "scikit-learn",
                     "matplotlib",
+                    "pandas>=1",
                     ],
-              python_requires=">=3.6"
+              python_requires=">=3.7"
               )
 
 setup(**kwargs)

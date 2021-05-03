@@ -66,4 +66,18 @@ sfHMMn because you don't need to run filtering function for every trajectory).
 >>> sf.hmmfit()
 >>> sf.plot()
 
+Inheritance Map
+---------------
+
+      (hmmlearn.hmm.GaussianHMM)
+                  |
+                  |
+             (sfHMMBase)
+           /      |      \
+         /        |        \
+   sfHMM1  (sfHMMmotorBase)  sfHMMn
+       \        /   \        /
+        \     /       \     /
+     sfHMM1Motor    sfHMMnMotor
+
 """

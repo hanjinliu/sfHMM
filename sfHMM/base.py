@@ -26,7 +26,7 @@ class sfHMMBase(GaussianHMM):
               "boxplot.meanprops.linewidth": 1,          
               }
     
-    def __init__(self, sg0:float=-1, psf:float=-1, krange=(1, 6),
+    def __init__(self, sg0:float=-1, psf:float=-1, krange=None,
                  model:str="g", name:str="", **hmmlearn_params):
         self.sg0 = sg0
         self.psf = psf
