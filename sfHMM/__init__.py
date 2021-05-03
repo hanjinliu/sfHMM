@@ -1,14 +1,10 @@
-__version__ = "0.3.10"
+__version__ = "0.3.11"
 
 from .single_sfhmm import sfHMM1
 from .multi_sfhmm import sfHMMn
 from . import motor
 from .sampling import hmm_sampling, motor_sampling
-try:
-    # input/output need pandas
-    from .io import *
-except ImportError:
-    pass
+from . import io
 
 
 __doc__ = \

@@ -110,12 +110,12 @@ class sfHMMn(sfHMMBase):
     
     def appendn(self, datasets:Iterable) -> sfHMMn:
         """
-        Append all the data in the list
+        Append all the data in `datasets`.
 
         Parameters
         ----------
         datasets : dict, list or any iterable objects except for np.ndarray.
-            Datasets to be appended.
+            Datasets to be appended. If it is dict, then keys are interpreted as names.
         """        
         if isinstance(datasets, dict):
             for name, data in datasets.items():
@@ -209,8 +209,8 @@ class sfHMMn(sfHMMBase):
             if like is not None or regex is not None:
                 df = df.filter(like=like, regex=regex)
             for name in df:
-                data = df[name].dropna()
-                self.append(data, name)
+                data = df[name].dropna() # delete NaN
+                self.append(data, name)  # append data
         
         if self.n_data == 0:
             raise ValueError("No data appended. Confirm that input DataFrame is in a correct format.")

@@ -1,18 +1,22 @@
 from __future__ import annotations
+import os
 import numpy as np
 import pandas as pd
 from .utils import *
 from ..base import sfHMMBase
 from ..single_sfhmm import sfHMM1
 from ..multi_sfhmm import sfHMMn
+from warnings import warn
 
-__all__ = ["read_csv", "read_excel", "to_csv"]
+__all__ = ["read", "read_excel", "save"]
 
+EXCEL_TESTED = (".xlsx",".xlsm",".xltx",".xltm", ".xls")
 
-def read_csv(path, out:sfHMMn=None, sep:str=",", encoding:str=None, header="infer",
+def read(path, out:sfHMMn=None, sep:str=None, encoding:str=None, header="infer",
              **kwargs) -> sfHMMn:
     """
-    Read a csv file using pandas.read_csv, and import its data to sfHMMn object.
+    Read a file using `pandas.read_csv`, and import its data to sfHMMn object. Althought
+    it is named as read_csv, this function can read many type of files.
 
     Parameters
     ----------
@@ -31,14 +35,19 @@ def read_csv(path, out:sfHMMn=None, sep:str=",", encoding:str=None, header="infe
     -------
     sfHMMn object
         Object with datasets.
-    """    
+    """   
+    if path.endswith((".xlsx", ".xlsm", ".xlsb", ".xltx", ".xltm", ".xls", ".xlt", 
+                      ".xml", ".xlam", ".xla", ".xlw", ".xlr")):
+        raise ValueError("For Excel files, use `read_excel()` function instead.") 
+    
     out = check_ref(out, sfHMMn)
+    sep = infer_sep(path, encoding) if sep is None else sep # infer sep if it was not given
     df = pd.read_csv(path, sep=sep, encoding=encoding, header=header, **kwargs)
     out.from_pandas(df)
     return out
 
 def read_excel(path:str, ref:sfHMMBase=None, ignore_exceptions:bool=True, header:int=0, 
-               sqeeze:bool=False, **kwargs) -> dict[str: sfHMMn] | sfHMMn:
+               squeeze:bool=False, **kwargs) -> dict[str: sfHMMn] | sfHMMn:
     """
     Read a Excel file using pandas.read_excel, and import its data to sfHMMn object. Every sheet
     must have only single trajectory.
@@ -54,8 +63,13 @@ def read_excel(path:str, ref:sfHMMBase=None, ignore_exceptions:bool=True, header
     ignore_exceptions : bool
         If True, exceptions will be ignored and only sheets with valid format will be included
         in the output list.
-    header
-        Important arguments in pd.read_excel().
+    header : int, default is 0
+        Header index.
+    squeeze: bool default is False
+        If Excel file only contains one sheet, then return sfHMMn object instead of redundant
+        dictionary like {"Sheet1": <sfHMMn>}. Default is set to False for compatibility.
+        Although this argument collides with that in pd.read_excel(), it is not a problem
+        because squeeze in pd.read_excel must be False in our usage.
     **kwargs
         Other keyword arguments that will passed to pd.read_excel().
 
@@ -64,7 +78,10 @@ def read_excel(path:str, ref:sfHMMBase=None, ignore_exceptions:bool=True, header
     sfHMMn objects
         Dictionary of objects with datasets
     """    
-    
+    _, ext = os.path.splitext(path)
+    if ext in (".csv", ".txt", ".dat"):
+        raise ValueError("For csv, txt or dat files, use `read()` function instead.")
+        
     ref = check_ref(ref, sfHMMBase)
     
     # xlrd cannot open xlsx in some versions. Here try openpyxl if possible.
@@ -90,12 +107,16 @@ def read_excel(path:str, ref:sfHMMBase=None, ignore_exceptions:bool=True, header
             
     if len(msfdict) == 0:
         raise RuntimeError("No sfHMMn object was successfully made.")
-    elif sqeeze and len(msfdict) == 1:
+    elif squeeze and len(msfdict) == 1:
         msfdict = msfdict[sheet_name]
+        
+    if ext not in EXCEL_TESTED:
+        warn(f"Extension '{ext}' has yet been tested. "
+             f"{', '.join(EXCEL_TESTED)} are recommended.", UserWarning)
         
     return msfdict
 
-def to_csv(obj:sfHMMBase, path:str) -> None:
+def save(obj:sfHMMBase, path:str) -> None:
     """
     Save obj.step.fit, obj.data_fil and obj.viterbi as csv.
 
@@ -114,7 +135,7 @@ def to_csv(obj:sfHMMBase, path:str) -> None:
 def _to_dataframes(obj:sfHMMBase, suffix:str="") -> list[pd.DataFrame]:
     if isinstance(obj, sfHMM1):
         df = pd.DataFrame(data=obj.data_raw, dtype=np.float64, 
-                          columns=["data_raw"],
+                          columns=[f"data_raw-{suffix}"],
                           index=np.arange(obj.data_raw.size, dtype=np.int32))
         if hasattr(obj, "step"):
             df[f"step finding-{suffix}"] = obj.step.fit
