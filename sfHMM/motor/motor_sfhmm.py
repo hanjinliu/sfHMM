@@ -84,9 +84,11 @@ class sfHMMnMotor(sfHMMmotorBase, sfHMMn):
             The largest step of motor. If max_stride = 2, then from 2-step backward to 2-step
             forward steps are considered. Larger value results in longer calculation time.
         """   
-        super().__init__(data_raw, sg0=sg0, psf=psf, krange=krange, model=model, name=name)
+        super().__init__(sg0=sg0, psf=psf, krange=krange, model=model, name=name)
         self.max_stride = max_stride
         self.covariance_type = "tied"
+        if data_raw is not None:
+            self.appendn(data_raw)
     
     @append_log
     def append(self, data, name:str=None) -> sfHMMnMotor:
@@ -135,19 +137,18 @@ class sfHMMnMotor(sfHMMmotorBase, sfHMMn):
         Align all the traces so that they have same starting points.
         
         Example
-        -------          __
-           __           |
-          |    and   ___| 
+        -------                  __
+              ___           ____|
+           __|    and   ___| 
         __|
         
         become
         
-           __            __
-          |    and      |
-        __|          ___| 
+              ___                __
+           __|    and       ____|
+        __|             ___| 
         
-        
-        Future Goal
+        Future Goals
         -----------
         This function should take all the steps in account.
         """        
