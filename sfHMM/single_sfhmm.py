@@ -142,10 +142,6 @@ class sfHMM1(sfHMMBase):
         random_state : int , optional
             Random seed for K-means initialization., by default 0.
 
-        Raises
-        ------
-        ValueError
-            If 'method' got an inappropriate string.
         """
         # If denoising was passed.
         if self.data_fil is None:

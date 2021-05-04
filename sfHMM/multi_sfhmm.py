@@ -176,12 +176,34 @@ class sfHMMn(sfHMMBase):
         self.n_data -= 1
         return out
     
-    def from_dict(self, d):
+    def from_dict(self, d:dict, like:str=None, regex:str=None):
+        """
+        Load datasets from dict.
+
+        Parameters
+        ----------
+        d : dict
+            Input data.
+        like : str, optional
+            If given, key that contains this string is appended.
+        regex : regular expression, optional
+            If given, key that matches this regular expression is appended.
+        """    
         for name, data in d.items():
+            # only keys matched like or regex requirement are appended.
+            if like and not like in name:
+                continue
+            if regex and not re.match(regex, name):
+                continue
+            
             self.append(data, name=str(name))
+        
+        if self.n_data == 0:
+            raise ValueError("No data appended. Confirm that input dict is in a correct format.")
+        
         return self
         
-    def from_pandas(self, df, like:str=None, regex:str=None, melt:bool|str="infer") -> sfHMMn:
+    def from_pandas(self, df:pd.DataFrame, like:str=None, regex:str=None, melt:bool|str="infer") -> sfHMMn:
         """
         Load datasets from pandas.DataFrame.
 
@@ -273,11 +295,6 @@ class sfHMMn(sfHMMBase):
             How many times initialization will be performed in K-means, by default 1.
         random_state : int , optional
             Random seed for K-means initialization., by default 0.
-        
-        Raises
-        ------
-        ValueError
-            If 'method' got an inappropriate string.
         """
         if self.n_data <= 0:
             raise sfHMMAnalysisError("Cannot start analysis before appending data.")
