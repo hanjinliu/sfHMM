@@ -8,7 +8,7 @@ __all__ = ["sfHMM1"]
 
 class sfHMM1(sfHMMBase):    
     """
-    Step-finding based HMM.
+    Step-finding based HMM for single trajectory.
     
     Analysis Results
     ----------------
@@ -107,6 +107,9 @@ class sfHMM1(sfHMMBase):
         """
         Denoising by cutting of the standard deviation of noise to sg0.
         """
+        if self.step is None:
+            raise sfHMMAnalysisError("Cannot run denoising before step finding.")
+        
         self._init_sg0()
         self.data_fil = np.empty_like(self.data_raw, dtype="float64")
         

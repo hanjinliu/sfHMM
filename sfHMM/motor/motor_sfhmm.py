@@ -1,9 +1,10 @@
+from __future__ import annotations
 import numpy as np
 from ..single_sfhmm import sfHMM1
 from ..multi_sfhmm import sfHMMn
 from .base import sfHMMmotorBase
 from ..utils import *
-
+from warnings import warn
 
 class sfHMM1Motor(sfHMMmotorBase, sfHMM1):
     def __init__(self, data_raw=None, *, sg0:float=-1, psf:float=-1, krange=None,
@@ -59,11 +60,13 @@ class sfHMM1Motor(sfHMMmotorBase, sfHMM1):
     
     
 class sfHMMnMotor(sfHMMmotorBase, sfHMMn):
-    def __init__(self, sg0:float=-1, psf:float=-1, krange=None, 
+    def __init__(self, data_raw=None, *, sg0:float=-1, psf:float=-1, krange=None, 
                  model:str="g", name:str="", max_stride:int=2):
         """
         Parameters
         ----------
+        data_raw : iterable, optional
+            Datasets to be added.
         sg0 : float, optional
             Parameter used in filtering method. Expected to be 20% of signal change.
             If <= 0, sg0 will be determined automatically.
@@ -81,14 +84,14 @@ class sfHMMnMotor(sfHMMmotorBase, sfHMMn):
             The largest step of motor. If max_stride = 2, then from 2-step backward to 2-step
             forward steps are considered. Larger value results in longer calculation time.
         """   
-        super().__init__(sg0=sg0, psf=psf, krange=krange, model=model, name=name)
+        super().__init__(data_raw, sg0=sg0, psf=psf, krange=krange, model=model, name=name)
         self.max_stride = max_stride
         self.covariance_type = "tied"
     
     @append_log
-    def append(self, data, name:str=None):
+    def append(self, data, name:str=None) -> sfHMMnMotor:
         if name is None:
-            name = self.name+f"[{self.n_data}]"
+            name = self.name + f"[{self.n_data}]"
             
         sf = sfHMM1Motor(data, sg0=self.sg0, psf=self.psf, krange=self.krange,
                          model=self.model, name=name, max_stride=self.max_stride)
@@ -127,7 +130,30 @@ class sfHMMnMotor(sfHMMmotorBase, sfHMMn):
         return None
 
     @append_log
-    def align(self):
+    def align(self) -> sfHMMnMotor:
+        """
+        Align all the traces so that they have same starting points.
+        
+        Example
+        -------          __
+           __           |
+          |    and   ___| 
+        __|
+        
+        become
+        
+           __            __
+          |    and      |
+        __|          ___| 
+        
+        
+        Future Goal
+        -----------
+        This function should take all the steps in account.
+        """        
+        warn("Method `align` is under development and its behavior may "
+             "be changed in the future.", FutureWarning)
+        
         if self[0].step is None:
             raise sfHMMAnalysisError("Cannot align datasets before step finding.")
         
@@ -141,3 +167,5 @@ class sfHMMnMotor(sfHMMmotorBase, sfHMMn):
             sf.step.mu_list -= dy
             if sf.data_fil is not None:
                 sf.data_fil -= dy
+        
+        return self

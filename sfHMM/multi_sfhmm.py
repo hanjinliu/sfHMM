@@ -1,5 +1,6 @@
 from __future__ import annotations
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 from .utils import *
 from .single_sfhmm import sfHMM1
@@ -13,7 +14,7 @@ __all__ = ["sfHMMn"]
 class sfHMMn(sfHMMBase):
     """
     Multi-trajectory sfHMM.
-    This class shares all the attributes in hmmlearn.hmm.GaussianHMM.
+    This class shares many attributes in sfHMM1.
 
     Analysis Results
     ----------------
@@ -31,11 +32,13 @@ class sfHMMn(sfHMMBase):
         The i-th sfHMM object. See .\single_sfhmm.py.
     """
     
-    def __init__(self, *, sg0:float=-1, psf:float=-1, krange=None, 
+    def __init__(self, data_raw=None, *, sg0:float=-1, psf:float=-1, krange=None, 
                  model:str="g", name:str="", **kwargs):
         """
         Parameters
         ----------
+        data_raw : iterable, optional
+            Datasets to be added.
         sg0 : float, optional
             Parameter used in filtering method. Expected to be 20% of signal change.
             If <= 0, sg0 will be determined automatically.
@@ -55,6 +58,8 @@ class sfHMMn(sfHMMBase):
         self.ylim = [np.inf, -np.inf]
         self._sf_list = []
         self.gmm_opt = None
+        if data_raw is not None:
+            self.appendn(data_raw)
     
     
     def __getitem__(self, key) -> sfHMM1:
@@ -114,16 +119,17 @@ class sfHMMn(sfHMMBase):
 
         Parameters
         ----------
-        datasets : dict, list or any iterable objects except for np.ndarray.
+        datasets : dict, list or any iterable objects except for np.ndarray or pd.DataFrame.
             Datasets to be appended. If it is dict, then keys are interpreted as names.
         """        
         if isinstance(datasets, dict):
-            for name, data in datasets.items():
-                self.append(data, name=name)
+            self.from_dict(datasets)
         elif isinstance(datasets, np.ndarray):
             raise TypeError("Datasets of ndarray is ambiguious. Please use self.append(a) for 1-D "
                             "ndarray, or explicitly specify along which axis to iterate by such as "
                             "list(a) or np.split(a, axis=1).")
+        elif isinstance(datasets, pd.DataFrame):
+            self.from_pandas(datasets)
         else:
             for data in datasets:
                 self.append(data)
@@ -170,6 +176,11 @@ class sfHMMn(sfHMMBase):
         self.n_data -= 1
         return out
     
+    def from_dict(self, d):
+        for name, data in d.items():
+            self.append(data, name=str(name))
+        return self
+        
     def from_pandas(self, df, like:str=None, regex:str=None, melt:bool|str="infer") -> sfHMMn:
         """
         Load datasets from pandas.DataFrame.
@@ -358,14 +369,21 @@ class sfHMMn(sfHMMBase):
         
     def plot_traces(self, data:str="Viterbi path", n_col:int=4, filter_func=None):
         """
-        Plot all the trajectories.
+        Plot all the trajectories. The figure will look like:
+         __ __ __ __
+        | 0| 1| 2| 3|
+        |__|__|__|__|
+        | 4| 5| 6| 7|
+        |__|__|__|__|
+        | 8| 9|10|11|
+        :     :     :
 
         Parameters
         ----------
-        data : str, optional
-            Which data to plot over the raw data trajectories, by default "Viterbi path"
-        n_col : int, optional
-            Number of columns of figure, by default 4
+        data : str, default is "Viterbi path"
+            Which data to plot over the raw data trajectories.
+        n_col : int, default is 4.
+            Number of columns of figure.
         filter_func : callable or None, optional
             If not None, only sfHMM objects that satisfy filter_func(sf)==True are plotted.
 
@@ -427,6 +445,10 @@ class sfHMMn(sfHMMBase):
         sf.startprob_ = self.startprob_
         sf.transmat_ = self.transmat_
         return None
+    
+    @append_log
+    def align(self, *args, **kwargs) -> sfHMMn:
+        raise NotImplementedError
         
     @property
     def data_raw(self) -> np.ndarray:

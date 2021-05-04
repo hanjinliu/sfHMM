@@ -137,7 +137,7 @@ def _to_dataframes(obj:sfHMMBase, suffix:str="") -> list[pd.DataFrame]:
         df = pd.DataFrame(data=obj.data_raw, dtype=np.float64, 
                           columns=[f"data_raw-{suffix}"],
                           index=np.arange(obj.data_raw.size, dtype=np.int32))
-        if hasattr(obj, "step"):
+        if obj.step is not None:
             df[f"step finding-{suffix}"] = obj.step.fit
         if obj.data_fil is not None:
             df[f"denoised-{suffix}"] = obj.data_fil
