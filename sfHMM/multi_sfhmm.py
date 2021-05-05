@@ -8,6 +8,7 @@ from .base import sfHMMBase
 from typing import Iterable
 import re
 import copy
+from warnings import warn
 
 __all__ = ["sfHMMn"]
 
@@ -464,8 +465,95 @@ class sfHMMn(sfHMMBase):
         return None
     
     @append_log
-    def align(self, *args, **kwargs) -> sfHMMn:
-        raise NotImplementedError
+    def align_ax(self, bounds:tuple[float, float]=(0.8, 1.2), bins:int=32) -> sfHMMn:
+        """
+        Align step finding results with $ y = ax $ conversion. The optimal $a$ is determined by
+        minimizing normalized mutual information of two step finding results: `self[0].step.fit`
+        as the reference and `a * self[i].step.fit` as the variable.
+                        __
+          __           |  |
+        _|  |__  -->  _|  |__
+
+        Parameters
+        ----------
+        bounds : tuple of floats, default is (0.8, 1.2)
+            Bounds of parameter $a$, i.e. optimal parameter is searched in the range of 
+            `bounds[0] < a < bounds[1]`.
+        bins : int, default is 32
+            Bin number for calculating shannon entropy and mutual information.
+
+        Returns
+        -------
+        sfHMMn
+            sfHMMn object with aligned data.
+        """        
+        
+        warn("Method `align_ax` is under development and its behavior may be changed in the future.", 
+             FutureWarning)
+        
+        if self.n_data < 2:
+            raise sfHMMAnalysisError("Cannot align datasets because n_data < 2.")
+        if self[0].step is None:
+            raise sfHMMAnalysisError("Cannot align datasets before step finding.")
+        
+        for sf in self[1:]:
+            result = optimize_ax(self[0].step.fit, sf.step.fit, bins=bins, 
+                                 range=self.ylim, bounds=[bounds])
+            a = result.x
+            sf.data_raw[:] = a*sf.data_raw
+            sf.ylim = [a*sf.ylim[0], a*sf.ylim[1]]
+            sf.step.fit[:] = a*sf.step.fit
+            sf.step.mu_list[:] = a*sf.step.mu_list
+            sf.step.step_size_list[:] = a*sf.step.step_size_list
+            if sf.data_fil is not None:
+                sf.data_fil[:] = a*sf.data_fil
+            
+        return self
+    
+    @append_log
+    def align_b(self, bounds:tuple[float,float]=(-1, 1), bins:int=32) -> sfHMMn:
+        """
+        Align step finding results with $ y = x + b $ conversion. The optimal $b$ is determined by
+        minimizing normalized mutual information of two step finding results: `self[0].step.fit`
+        as the reference and `self[i].step.fit + b` as the variable.
+                        __
+          __          _|  |__
+        _|  |__  -->
+
+        Parameters
+        ----------
+        bounds : tuple of floats, default is (-1, 1)
+            Bounds of parameter $b$, i.e. optimal parameter is searched in the range of 
+            `bounds[0] < b < bounds[1]`.
+        bins : int, default is 32
+            Bin number for calculating shannon entropy and mutual information.
+
+        Returns
+        -------
+        sfHMMn
+            sfHMMn object with aligned data.
+        """     
+        
+        warn("Method `align_b` is under development and its behavior may be changed in the future.", 
+             FutureWarning)
+        
+        if self.n_data < 2:
+            raise sfHMMAnalysisError("Cannot align datasets because n_data < 2.")
+        if self[0].step is None:
+            raise sfHMMAnalysisError("Cannot align datasets before step finding.")
+        
+        for sf in self[1:]:
+            result = optimize_b(self[0].step.fit, sf.step.fit, bins=bins, 
+                                 range=self.ylim, bounds=[bounds])
+            b = result.x
+            sf.data_raw[:] = sf.data_raw + b
+            sf.ylim = [sf.ylim[0] + b, sf.ylim[1] + b]
+            sf.step.fit[:] = sf.step.fit + b
+            sf.step.mu_list[:] = sf.step.mu_list + b
+            if sf.data_fil is not None:
+                sf.data_fil[:] = sf.data_fil + b
+            
+        return self
         
     @property
     def data_raw(self) -> np.ndarray:

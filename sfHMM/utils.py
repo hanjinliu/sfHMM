@@ -1,5 +1,7 @@
 import numpy as np
 from scipy.special import softmax
+from scipy.stats import entropy
+from scipy.optimize import minimize
 import matplotlib.pyplot as plt
 from hmmlearn.utils import normalize
 from functools import wraps
@@ -87,3 +89,31 @@ def calc_transmat(states_list, n_components):
     transmat += 1e-12
     normalize(transmat, axis=1)
     return transmat
+
+def normalized_mutual_information(a1, a2, bins, range):
+    # (H(X) + H(Y)) / H(X,Y)
+    a1, _ = np.histogram(a1, bins=bins, range=range, density=True)
+    a2, _ = np.histogram(a2, bins=bins, range=range, density=True)
+    if np.isnan(a2).any():
+        return 0
+    hist, _ = np.histogramdd([a1, a2], bins=bins)
+    hist /= np.sum(hist)
+    h1 = entropy(np.sum(hist, axis=0))
+    h2 = entropy(np.sum(hist, axis=1))
+    h12 = entropy(np.ravel(hist))
+    
+    return (h1 + h2) / h12
+
+def optimize_ax(d1, d2, bins=None, range=None, bounds=None):
+    def calc_nmi(a, d1, d2):
+        return -normalized_mutual_information(d1, a*d2, bins, range)
+    
+    result = minimize(calc_nmi, 1, args=(d1, d2), method="Powell", bounds=bounds)
+    return result
+
+def optimize_b(d1, d2, bins=None, range=None, bounds=None):
+    def calc_nmi(b, d1, d2):
+        return -normalized_mutual_information(d1, d2+b, bins, range)
+    
+    result = minimize(calc_nmi, 0, args=(d1, d2), method="Powell", bounds=bounds)
+    return result
