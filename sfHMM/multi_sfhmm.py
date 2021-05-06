@@ -8,7 +8,6 @@ from .base import sfHMMBase
 from typing import Iterable
 import re
 import copy
-from warnings import warn
 
 __all__ = ["sfHMMn"]
 
@@ -159,6 +158,35 @@ class sfHMMn(sfHMMBase):
         self.n_data -= len(indices)
         
         return None
+    
+    def deleteif(self, filter_func, *args) -> list[int]:
+        """
+        Delete sfHMM1 object(s) from the list if certain conditions are
+        satisfied.
+
+        Parameters
+        ----------
+        filter_func : callable
+            `filter_func(sf, *args)==True` then delete `sf`.
+        *args : 
+            Additional arguments that will be passed to `filter_func`.
+
+        Returns
+        -------
+        list of int
+            Deleted indices.
+        """        
+        if not callable(filter_func):
+            raise TypeError("`filter_func` must be callable")
+        
+        indices = []
+        for i, sf in enumerate(self):
+            if filter_func(sf, *args):
+                indices.append(i)
+        
+        if len(indices) > 0:
+            self.delete(indices)
+        return indices
     
     @append_log
     def pop(self, ind:int) -> sfHMM1:
@@ -464,15 +492,16 @@ class sfHMMn(sfHMMBase):
         sf.transmat_ = self.transmat_
         return None
     
+    @under_development
     @append_log
-    def align_ax(self, bounds:tuple[float, float]=(0.8, 1.2), bins:int=32) -> sfHMMn:
+    def align_ax(self, bounds:tuple[float, float]=(0.8, 1.2), bins:int=32) -> list:
         """
         Align step finding results with $ y = ax $ conversion. The optimal $a$ is determined by
         minimizing normalized mutual information of two step finding results: `self[0].step.fit`
         as the reference and `a * self[i].step.fit` as the variable.
-                        __
-          __           |  |
-        _|  |__  -->  _|  |__
+          __                  __    __
+         |      __           |     |  |
+        _|    _|  |__  -->  _|    _|  |__
 
         Parameters
         ----------
@@ -484,21 +513,20 @@ class sfHMMn(sfHMMBase):
 
         Returns
         -------
-        sfHMMn
-            sfHMMn object with aligned data.
+        list of scipy.optimize.OptimizeResult
+            Fitting results of all the cycles except for the first one.
         """        
-        
-        warn("Method `align_ax` is under development and its behavior may be changed in the future.", 
-             FutureWarning)
         
         if self.n_data < 2:
             raise sfHMMAnalysisError("Cannot align datasets because n_data < 2.")
         if self[0].step is None:
             raise sfHMMAnalysisError("Cannot align datasets before step finding.")
         
+        optimization_results = []
         for sf in self[1:]:
             result = optimize_ax(self[0].step.fit, sf.step.fit, bins=bins, 
                                  range=self.ylim, bounds=[bounds])
+            optimization_results.append(result)
             a = result.x
             sf.data_raw[:] = a*sf.data_raw
             sf.ylim = [a*sf.ylim[0], a*sf.ylim[1]]
@@ -508,17 +536,18 @@ class sfHMMn(sfHMMBase):
             if sf.data_fil is not None:
                 sf.data_fil[:] = a*sf.data_fil
             
-        return self
+        return optimization_results
     
+    @under_development
     @append_log
-    def align_b(self, bounds:tuple[float,float]=(-1, 1), bins:int=32) -> sfHMMn:
+    def align_b(self, bounds:tuple[float,float]=(-1, 1), bins:int=32) -> list:
         """
         Align step finding results with $ y = x + b $ conversion. The optimal $b$ is determined by
         minimizing normalized mutual information of two step finding results: `self[0].step.fit`
         as the reference and `self[i].step.fit + b` as the variable.
-                        __
-          __          _|  |__
-        _|  |__  -->
+        _                  _       __
+         |__    __          |__  _|  |__
+              _|  |__  -->
 
         Parameters
         ----------
@@ -530,21 +559,20 @@ class sfHMMn(sfHMMBase):
 
         Returns
         -------
-        sfHMMn
-            sfHMMn object with aligned data.
+        list of scipy.optimize.OptimizeResult
+            Fitting results of all the cycles except for the first one.
         """     
-        
-        warn("Method `align_b` is under development and its behavior may be changed in the future.", 
-             FutureWarning)
         
         if self.n_data < 2:
             raise sfHMMAnalysisError("Cannot align datasets because n_data < 2.")
         if self[0].step is None:
             raise sfHMMAnalysisError("Cannot align datasets before step finding.")
         
+        optimization_results = []
         for sf in self[1:]:
             result = optimize_b(self[0].step.fit, sf.step.fit, bins=bins, 
                                  range=self.ylim, bounds=[bounds])
+            optimization_results.append(result)
             b = result.x
             sf.data_raw[:] = sf.data_raw + b
             sf.ylim = [sf.ylim[0] + b, sf.ylim[1] + b]
@@ -553,7 +581,7 @@ class sfHMMn(sfHMMBase):
             if sf.data_fil is not None:
                 sf.data_fil[:] = sf.data_fil + b
             
-        return self
+        return optimization_results
         
     @property
     def data_raw(self) -> np.ndarray:

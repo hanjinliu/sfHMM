@@ -4,7 +4,6 @@ from ..single_sfhmm import sfHMM1
 from ..multi_sfhmm import sfHMMn
 from .base import sfHMMmotorBase
 from ..utils import *
-from warnings import warn
 
 class sfHMM1Motor(sfHMMmotorBase, sfHMM1):
     def __init__(self, data_raw=None, *, sg0:float=-1, psf:float=-1, krange=None,

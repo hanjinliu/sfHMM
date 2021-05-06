@@ -5,6 +5,7 @@ from scipy.optimize import minimize
 import matplotlib.pyplot as plt
 from hmmlearn.utils import normalize
 from functools import wraps
+from warnings import warn
 
 class sfHMMAnalysisError(Exception):
     pass
@@ -20,6 +21,15 @@ def append_log(func):
         out = func(self, *args, **kwargs)
         self._log[-1][2] = "Passed"
         return out
+    return wrapper
+
+def under_development(func):
+    @wraps(func)
+    def wrapper(self, *args, **kwargs):
+        warn(f"Method `{func.__name__}` is under development and its "
+             "behavior may be changed in the future.", 
+             FutureWarning)
+        return func(self, *args, **kwargs)
     return wrapper
     
 def gauss_mix(x, gmm):
@@ -117,3 +127,4 @@ def optimize_b(d1, d2, bins=None, range=None, bounds=None):
     
     result = minimize(calc_nmi, 0, args=(d1, d2), method="Powell", bounds=bounds)
     return result
+
