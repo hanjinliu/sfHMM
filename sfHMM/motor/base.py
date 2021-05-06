@@ -115,7 +115,7 @@ class sfHMMmotorBase(sfHMMBase):
                 self.transmat_kernel[i] = np.sum(np.diag(transmat_, k=i-self.max_stride))
             normalize(self.transmat_kernel)
         
-        # GaussianHMM._do_mstep must be copied.
+        # GaussianHMM._do_mstep must be copied here.
         means_prior = self.means_prior
         means_weight = self.means_weight
 

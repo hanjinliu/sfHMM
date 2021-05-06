@@ -69,6 +69,10 @@ class sfHMM1(sfHMMBase):
         super().__init__(sg0, psf, krange, model, name, **kwargs)
     
     @property
+    def size(self):
+        return self.data_raw.size
+    
+    @property
     def data_raw(self):
         return self._data_raw
     
@@ -190,7 +194,7 @@ class sfHMM1(sfHMMBase):
         """
         
         if trange is None:
-            sl = slice(0, self.data_raw.size)
+            sl = slice(0, self.size)
             ylim = self.ylim
         elif isinstance(trange, (list, tuple, np.ndarray)):
             sl = slice(*trange)
@@ -234,7 +238,7 @@ class sfHMM1(sfHMMBase):
                 ax = plt.subplot(6,4,7)
                 ax.plot(self.data_raw, color="gray", alpha=0.3)
                 ax.plot(np.arange(sl.start, sl.stop), self.data_raw[sl], color=self.__class__.colors["raw data"])
-                ax.set_xlim(0, self.data_raw.size)
+                ax.set_xlim(0, self.size)
                 ax.set_ylim(self.ylim)
                 ax.plot([sl.start, sl.stop, sl.stop, sl.start, sl.start],
                          [ylim[0], ylim[0], ylim[1], ylim[1], ylim[0]], color="black")

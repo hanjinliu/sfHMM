@@ -58,8 +58,7 @@ class sfHMMn(sfHMMBase):
         self.ylim = [np.inf, -np.inf]
         self._sf_list = []
         self.gmm_opt = None
-        if data_raw is not None:
-            self.appendn(data_raw)
+        data_raw is None or self.appendn(data_raw)
     
     
     def __getitem__(self, key) -> sfHMM1:
@@ -181,11 +180,10 @@ class sfHMMn(sfHMMBase):
         
         indices = []
         for i, sf in enumerate(self):
-            if filter_func(sf, *args):
-                indices.append(i)
+            filter_func(sf, *args) and indices.append(i)
         
-        if len(indices) > 0:
-            self.delete(indices)
+        len(indices) > 0 and self.delete(indices)
+        
         return indices
     
     @append_log
@@ -197,7 +195,6 @@ class sfHMMn(sfHMMBase):
         ----------
         ind : int
             Indice to pop.
-
         """        
         out = self._sf_list.pop(ind)
         data_raw_all = self.data_raw
@@ -349,9 +346,8 @@ class sfHMMn(sfHMMBase):
         
         self._set_hmm_params()
         
-        _data_reshaped = np.asarray(self.data_raw_all).reshape(-1, 1)
-        _lengths = [sf.data_raw.size for sf in self]
-        self.fit(_data_reshaped, lengths=_lengths)
+        self.fit(self.data_raw_all.reshape(-1, 1),
+                 lengths=self.size)
         
         for sf in self:
             self._copy_params(sf)
@@ -413,7 +409,7 @@ class sfHMMn(sfHMMBase):
             plt.show()
         return None
         
-    def plot_traces(self, data:str="Viterbi path", n_col:int=4, filter_func=None):
+    def plot_traces(self, data:str="Viterbi path", filter_func=None, sharex=False):
         """
         Plot all the trajectories. The figure will look like:
          __ __ __ __
@@ -428,11 +424,10 @@ class sfHMMn(sfHMMBase):
         ----------
         data : str, default is "Viterbi path"
             Which data to plot over the raw data trajectories.
-        n_col : int, default is 4.
-            Number of columns of figure.
         filter_func : callable or None, optional
             If not None, only sfHMM objects that satisfy filter_func(sf)==True are plotted.
-
+        sharex : bool, default is False
+            If True, all the subplots will share x-limits.
         """
         c_other = self.colors.get(data, None)
         
@@ -441,15 +436,20 @@ class sfHMMn(sfHMMBase):
             indices = np.arange(self.n_data)
         else:
             indices = [i for (i, sf) in enumerate(self) if filter_func(sf)]
-
+        
+        n_col = 4
         n_row = (len(indices) - 1) // n_col + 1
         
+        if sharex:
+            xlim = [0, max(sf.size for sf in self)]
+        
         with plt.style.context(self.__class__.styles):
-            plt.figure(figsize=(n_col * 2.7, n_row * 4))
-            
+            plt.figure(figsize=(n_col * 2.9, n_row * 2.4))
+
             for i, ind in enumerate(indices):
                 sf = self[ind]
-                plt.subplot(n_row, n_col, i + 1)
+                ax = plt.subplot(n_row, n_col, i+1)
+                    
                 if data == "Viterbi path":
                     d = sf.viterbi
                 elif data == "denoised":
@@ -464,8 +464,11 @@ class sfHMMn(sfHMMBase):
 
                 plot2(sf.data_raw, d, ylim=self.ylim, legend=False,
                     color1 = self.colors["raw data"], color=c_other)
-                plt.text(sf.data_raw.size*0.98, self.ylim[1]*0.98, str(ind), 
-                        ha="right", va="top", color="gray")
+                
+                sharex and plt.xlim(xlim)
+                
+                plt.text(ax.get_xlim()[1]*0.98, ax.get_ylim()[1]*0.98, str(ind), 
+                         ha="right", va="top", color="gray")
             
             plt.tight_layout()
             plt.show()
@@ -596,6 +599,6 @@ class sfHMMn(sfHMMBase):
         return np.array(concat([sf._sg_list for sf in self]))
     
     @property
-    def n_list(self) -> list[int]:
-        return [sf.data_raw.size for sf in self]
+    def size(self) -> list[int]:
+        return [sf.size for sf in self]
     
