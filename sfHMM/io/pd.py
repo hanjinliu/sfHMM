@@ -12,11 +12,11 @@ __all__ = ["read", "read_excel", "save"]
 
 EXCEL_TESTED = (".xlsx",".xlsm",".xltx",".xltm", ".xls")
 
-def read(path, out:sfHMMn=None, sep:str=None, encoding:str=None, header="infer",
-             **kwargs) -> sfHMMn:
+def read(path, out:sfHMMn=None, sep:str=None, encoding:str=None, header=0,
+         **kwargs) -> sfHMMn:
     """
-    Read a file using `pandas.read_csv`, and import its data to sfHMMn object. Althought
-    it is named as read_csv, this function can read many type of files.
+    Read a file using appropriate function, and import its data to sfHMMn object. Although
+    it's name is read_csv, this function can read many type of files.
 
     Parameters
     ----------
@@ -27,22 +27,23 @@ def read(path, out:sfHMMn=None, sep:str=None, encoding:str=None, header="infer",
         with default setting will be made. This argument is useful when you prefer your
         own setting of sfHMM input parameter(s).
     sep, encoding, header
-        Important arguments in pd.read_csv().
+        Important arguments. Default is header=0 rather than "infer" because header="infer"
+        usually works in a wrong way.
     **kwargs
-        Other keyword arguments that will passed to pd.read_csv().
+        Other keyword arguments that will passed to pd.read_csv() or pd.read_excel().
 
     Returns
     -------
     sfHMMn object
         Object with datasets.
     """   
-    if path.endswith((".xlsx", ".xlsm", ".xlsb", ".xltx", ".xltm", ".xls", ".xlt", 
-                      ".xml", ".xlam", ".xla", ".xlw", ".xlr")):
-        raise ValueError("For Excel files, use `read_excel()` function instead.") 
     
     out = check_ref(out, sfHMMn)
-    sep = infer_sep(path, encoding) if sep is None else sep # infer sep if it was not given
-    df = pd.read_csv(path, sep=sep, encoding=encoding, header=header, **kwargs)
+    if is_excel_file(path):
+        df = _safe_read_excel(path, sheet_name=0, header=header, **kwargs)
+    else:
+        sep = infer_sep(path, encoding) if sep is None else sep # infer sep if it was not given
+        df = pd.read_csv(path, sep=sep, encoding=encoding, header=header, **kwargs)
     out.from_pandas(df)
     return out
 
@@ -84,14 +85,7 @@ def read_excel(path:str, ref:sfHMMBase=None, ignore_exceptions:bool=True, header
         
     ref = check_ref(ref, sfHMMBase)
     
-    # xlrd cannot open xlsx in some versions. Here try openpyxl if possible.
-    try:
-        df_dict = pd.read_excel(path, sheet_name=None, header=header, **kwargs)
-    except Exception:
-        if kwargs.get("engine", None) == "openpyxl":
-            raise
-        kwargs["engine"] = "openpyxl"
-        df_dict = pd.read_excel(path, sheet_name=None, header=header, **kwargs)
+    df_dict = _safe_read_excel(path, sheet_name=None, header=header, **kwargs)
     
     msfdict = {}
     for sheet_name, df in df_dict.items():
@@ -131,6 +125,22 @@ def save(obj:sfHMMBase, path:str) -> None:
     out = pd.concat(df_list, axis=1)
     out.to_csv(path)
     return None
+
+def is_excel_file(path):
+    return path.endswith((".xlsx", ".xlsm", ".xlsb", ".xltx", ".xltm", ".xls", ".xlt", 
+                          ".xml", ".xlam", ".xla", ".xlw", ".xlr"))
+
+def _safe_read_excel(path, **kwargs):
+    # xlrd cannot open xlsx in some versions. Here try openpyxl if possible.
+    try:
+        out = pd.read_excel(path, **kwargs)
+    except Exception:
+        if kwargs.get("engine", None) == "openpyxl":
+            raise
+        kwargs["engine"] = "openpyxl"
+        out = pd.read_excel(path, **kwargs)
+    return out
+    
         
 def _to_dataframes(obj:sfHMMBase, suffix:str="") -> list[pd.DataFrame]:
     if isinstance(obj, sfHMM1):

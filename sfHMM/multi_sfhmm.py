@@ -346,8 +346,7 @@ class sfHMMn(sfHMMBase):
         
         self._set_hmm_params()
         
-        self.fit(self.data_raw_all.reshape(-1, 1),
-                 lengths=self.size)
+        self.fit(self.data_raw_all.reshape(-1, 1), lengths=self.size)
         
         for sf in self:
             self._copy_params(sf)
