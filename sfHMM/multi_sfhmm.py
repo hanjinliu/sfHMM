@@ -474,7 +474,7 @@ class sfHMMn(sfHMMBase):
         return None
     
     
-    def accumulate_transitions(self) -> list[float]:
+    def accumulate_transitions(self) -> list[tuple[int, int]]:
         return concat([sf.accumulate_transitions() for sf in self])
 
 

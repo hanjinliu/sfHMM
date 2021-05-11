@@ -91,7 +91,7 @@ def calc_startprob(d0_list, gmm):
     return softmax(sumlogprob)
 
 def calc_transmat(states_list, n_components):
-    transmat = np.zeros((n_components, n_components), dtype="float64")
+    transmat = np.zeros((n_components, n_components), dtype=np.float64)
     
     for states in states_list:
         for i in range(len(states) - 1):

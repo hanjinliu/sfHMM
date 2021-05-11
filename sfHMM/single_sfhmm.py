@@ -92,7 +92,7 @@ class sfHMM1(sfHMMBase):
                 raise ValueError(f"Input data size is too small: {d.size}")
             else:
                 raise ValueError("Input data must be one-dimensonal or any arrays "
-                                 "that can be converted to on-dimensional ones.")
+                                 "that can be converted to one-dimensional ones.")
             self._data_raw = d
             self.ylim = [np.min(self.data_raw), np.max(self.data_raw)]
 
@@ -115,7 +115,7 @@ class sfHMM1(sfHMMBase):
             raise sfHMMAnalysisError("Cannot run denoising before step finding.")
         
         self._init_sg0()
-        self.data_fil = np.empty_like(self.data_raw, dtype="float64")
+        self.data_fil = np.empty_like(self.data_raw, dtype=np.float64)
         
         for i in range(self.step.n_step):
             x0 = self.step.step_list[i]
@@ -262,7 +262,7 @@ class sfHMM1(sfHMMBase):
             List of transitions.
         """        
         if not hasattr(self, "states"):
-            return np.array([], dtype="float64")
+            return np.array([], dtype=np.float64)
         return [(self.states[i], self.states[i+1]) 
                 for i in range(self.states.size - 1)
                 if self.states[i] != self.states[i+1]]
