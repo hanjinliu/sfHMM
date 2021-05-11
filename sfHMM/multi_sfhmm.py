@@ -496,27 +496,33 @@ class sfHMMn(sfHMMBase):
     
     @under_development
     @append_log
-    def align_ax(self, bounds:tuple[float, float]=(0.8, 1.2), bins:int=32) -> list:
+    def align(self, bounds:tuple[float, float], bins:int=32, formula="y=ax") -> list:
         """
-        Align step finding results with $ y = ax $ conversion. The optimal $a$ is determined by
-        minimizing normalized mutual information of two step finding results: `self[0].step.fit`
-        as the reference and `a * self[i].step.fit` as the variable.
+        Align step finding results with `formula` transformation. The optimal parameter is 
+        determined by minimizing normalized mutual information of two step finding results:
+        `self[0].step.fit` as the reference and `a * self[i].step.fit + b` as the variable.
+        
+        (1) y = ax
           __                  __    __
          |      __           |     |  |
         _|    _|  |__  -->  _|    _|  |__
+        
+        (2) y = x + b
+        _                  _       __
+         |__    __          |__  _|  |__
+              _|  |__  -->
+
 
         Parameters
         ----------
-        bounds : tuple of floats, default is (0.8, 1.2)
-            Bounds of parameter $a$, i.e. optimal parameter is searched in the range of 
-            `bounds[0] < a < bounds[1]`.
+        bounds : tuple of floats
+            Bounds of parameter $a$ or $b$, i.e. optimal parameter is searched in the range from
+            `bounds[0]` to `bounds[1]`.
         bins : int, default is 32
             Bin number for calculating shannon entropy and mutual information.
+        formula: str, default is "y=ax"
+            Formulation of transformation.
 
-        Returns
-        -------
-        list of scipy.optimize.OptimizeResult
-            Fitting results of all the cycles except for the first one.
         """        
         
         if self.n_data < 2:
@@ -524,21 +530,26 @@ class sfHMMn(sfHMMBase):
         if self[0].step is None:
             raise sfHMMAnalysisError("Cannot align datasets before step finding.")
         
-        optimization_results = []
+        formula = re.sub(" ", "", formula)
+        optimization_func = {"ax": optimize_ax,
+                             "y=ax": optimize_ax,
+                             "b": optimize_b,
+                             "y=x+b": optimize_b}[formula]
+        
         for sf in self[1:]:
-            result = optimize_ax(self[0].step.fit, sf.step.fit, bins=bins, 
-                                 range=self.ylim, bounds=[bounds])
-            optimization_results.append(result)
-            a = result.x
-            sf.data_raw[:] = a*sf.data_raw
-            sf.ylim = [a*sf.ylim[0], a*sf.ylim[1]]
-            sf.step.fit[:] = a*sf.step.fit
-            sf.step.mu_list[:] = a*sf.step.mu_list
+            result = optimization_func(self[0].step.fit, sf.step.fit, bins=bins, 
+                                       range=self.ylim, bounds=[bounds])
+            
+            a, b = result
+            sf.data_raw[:] = a*sf.data_raw + b
+            sf.ylim = [a*sf.ylim[0] + b, a*sf.ylim[1] + b]
+            sf.step.fit[:] = a*sf.step.fit + b
+            sf.step.mu_list[:] = a*sf.step.mu_list + b
             sf.step.step_size_list[:] = a*sf.step.step_size_list
             if sf.data_fil is not None:
-                sf.data_fil[:] = a*sf.data_fil
+                sf.data_fil[:] = a*sf.data_fil + b
             
-        return optimization_results
+        return None
     
     @under_development
     @append_log

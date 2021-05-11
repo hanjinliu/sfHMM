@@ -103,23 +103,30 @@ class sfHMMBase(GaussianHMM):
     def hmmfit(self): ...
     def plot(self): ...
     
-    def run_all(self, plot:bool=True):
+    def run_all(self, plot:bool=True, continue_:bool=False):
         """
         Conduct all the processes with default settings.
 
         Parameters
         ----------
-        plot : bool, optional
+        plot : bool, default is True
             Specify if show the plot of each process, by default True.
+        continue_ : bool, default is False
+            If True, and sfHMM analysis is half-way, then only run the rest of analysis.
         """
-        self.step_finding()
-        self.denoising()
-        self.gmmfit()
-        self.hmmfit()
+        if continue_:
+            logs = [l[0] for l in self._log if l[2] == "Passed"]
+        else:
+            logs = []
+        
+        for func in ["step_finding", "denoising", "gmmfit", "hmmfit"]:
+            if func not in logs:
+                getattr(self, func)()
 
         plot and self.plot()
         
         return self
+    
     
     def accumulate_transitions(self):
         """

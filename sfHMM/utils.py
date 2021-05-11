@@ -115,12 +115,12 @@ def optimize_ax(d1, d2, bins=None, range=None, bounds=None):
         return -normalized_mutual_information(d1, a*d2, bins, range)
     
     result = minimize(calc_nmi, 1, args=(d1, d2), method="Powell", bounds=bounds)
-    return result
+    return result.x, 0
 
 def optimize_b(d1, d2, bins=None, range=None, bounds=None):
     def calc_nmi(b, d1, d2):
         return -normalized_mutual_information(d1, d2+b, bins, range)
     
     result = minimize(calc_nmi, 0, args=(d1, d2), method="Powell", bounds=bounds)
-    return result
+    return 1, result.x
 

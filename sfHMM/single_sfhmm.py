@@ -59,7 +59,6 @@ class sfHMM1(sfHMMBase):
         name : str, optional
             Name of the object.
         """        
-        self.data_raw = data_raw
         self.step = None
         self.data_fil = None
         self.gmm_opt = None
@@ -67,6 +66,7 @@ class sfHMM1(sfHMMBase):
         self.viterbi = None
         self._sg_list = []
         super().__init__(sg0, psf, krange, model, name, **kwargs)
+        self.data_raw = data_raw
     
     @property
     def size(self):
@@ -80,6 +80,8 @@ class sfHMM1(sfHMMBase):
     def data_raw(self, value):
         if value is None:
             self._data_raw = None
+        elif np.isscalar(value):
+            raise TypeError(f"Wrong type of input data: {type(value)}")
         else:
             d = np.asarray(value)
             if not np.issubdtype(d.dtype, np.number):
