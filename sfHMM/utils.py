@@ -33,11 +33,7 @@ def under_development(func):
     return wrapper
     
 def gauss_mix(x, gmm):
-    return np.exp(gmm.score_samples(x.reshape(-1,1)))
-
-def gauss(x, wt, mu, sg):
-    y = wt * np.exp(-(x - mu)** 2 / (2 * sg * sg)) / np.sqrt(2 * np.pi) / sg
-    return y
+    return np.exp(gmm.score_samples(x.reshape(-1, 1)))
 
 def concat(list_of_list):
     out = []
