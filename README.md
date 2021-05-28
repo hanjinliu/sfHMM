@@ -16,8 +16,12 @@ You can also use sfHMM just for step finding or AIC/BIC based Gaussian mixture m
 pip install git+https://github.com/hanjinliu/sfHMM
 ```
 
+If you want to clone from the source, you need to compile pyx file, or you cannot use `sfHMM.motor` module. You may need to download C++ build tools for this purpose.
+
 ```
 git clone https://github.com/hanjinliu/sfHMM
+cd sfHMM
+python setup.py build_ext --inplace
 ```
 
 # Dependencies
@@ -28,6 +32,7 @@ I've tested the codes with following versions but may work in older ones.
 - [hmmlearn](https://github.com/hmmlearn/hmmlearn) &ge; 0.2.3
 - [scikit-learn](https://github.com/scikit-learn/scikit-learn) &ge; 0.24.1
 - [pandas](https://github.com/pandas-dev/pandas) &ge; 1.1.5
+- [scipy](https://github.com/scipy/scipy) &ge; 1.6.1
 - [matplotlib](https://github.com/matplotlib/matplotlib) &ge; 3.3.4
 
 # Contents
@@ -45,7 +50,7 @@ This module contains sfHMM classes aiming at analyzing **motor-stepping** or oth
 - `sfHMMnMotor` ... sfHMM for multiple motor-stepping trajectories.
 
 ### `sfHMM.step` 
-This module contains several step finding algorithms in the same API. Our efficient implementation enables analysis of **100,000** data points within **~1 sec**!
+This module contains several step finding algorithms in the same API. My efficient implementation enables analysis of **100,000** data points within **~1 sec**!
 - `GaussStep` ... step finding for Gauss distribution [1].
 - `PoissonStep` ... step finding for Poisson distribution.
 - `SDFixedGaussStep` ... step finding for Gauss distribution with fixed standard deviation.
@@ -57,9 +62,9 @@ This module contains classes that inherit `sklearn.mixture.GaussianMixture` whil
 - `GMMs` ... Fitting Gaussian mixtures and model selection.
   
 ### `sfHMM.io`
-This module contains **input/output** functions that are suitable for sfHMM data analysis.
-- `read` ... Load such as csv, txt, dat files.
-- `read_excel` ... Load Excel files.
+This module contains **input/output** functions that are suitable for sfHMM data analysis or other one-dimensional signal processing.
+- `read` ... Load such as csv, txt, dat files, or the first sheet of Excel files.
+- `read_excel` ... Load all the sheets for Excel files.
 - `save` ... Save sfHMM analysis results.
 
 
