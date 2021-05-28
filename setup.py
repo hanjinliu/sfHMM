@@ -5,7 +5,7 @@ import os
 # search for version
 with open("sfHMM/__init__.py", encoding="utf-8") as f:
     for line in f:
-        if (line.startswith("__version__")):
+        if line.startswith("__version__"):
             VERSION = line.strip().split()[-1][1:-1]
             break
 
@@ -16,10 +16,10 @@ class build_ext(build_ext):
         import numpy
         import numpy.distutils
         sourcefiles = ["_hmmc_motor.pyx"]
-        sourcefiles = [os.path.join("sfHMM", f) for f in sourcefiles]
-        ext = Extension("sfHMM._hmmc_motor", 
+        sourcefiles = [os.path.join("sfHMM", "motor", f) for f in sourcefiles]
+        ext = Extension("sfHMM.motor._hmmc_motor", 
                         sources=sourcefiles, 
-                        include_dirs = ["sfHMM", numpy.get_include()],
+                        include_dirs = ["sfHMM.motor", numpy.get_include()],
                         )
         self.distribution.ext_modules[:] = cythonize(ext)
         
@@ -43,8 +43,9 @@ kwargs = dict(name="sfHMM",
                     "hmmlearn>=0.2.3",
                     "scikit-learn",
                     "matplotlib",
+                    "pandas>=1",
                     ],
-              python_requires=">=3.6"
+              python_requires=">=3.7"
               )
 
 setup(**kwargs)

@@ -1,18 +1,14 @@
-__version__ = "0.3.4"
+__version__ = "0.4.0"
 
 from .single_sfhmm import sfHMM1
 from .multi_sfhmm import sfHMMn
-from .motor_sfhmm import sfHMM1Motor, sfHMMnMotor
-
+from . import motor, io
 from .sampling import hmm_sampling, motor_sampling
 
-__all__ = ["sfHMM1", "sfHMMn", "sfHMM1Motor", "sfHMMnMotor", "hmm_sampling", "motor_sampling"]
 
 __doc__ = \
 r"""
-sfHMM algorithm.
-Trajectories are fitted to HMM in an objective manner,
-or with user-defined parameters psf and sg0.
+sfHMM (Step-Finding based Hidden Markov Model analysis)
 
 Usage
 -----
@@ -66,5 +62,19 @@ sfHMMn because you don't need to run filtering function for every trajectory).
 >>> sf.gmm_opt = sf.gmm[3] # three-state model is chosen
 >>> sf.hmmfit()
 >>> sf.plot()
+
+Inheritance Map
+---------------
+
+      (hmmlearn.hmm.GaussianHMM)
+                  |
+                  |
+             (sfHMMBase)
+           /      |      \
+         /        |        \
+   sfHMM1  (sfHMMmotorBase)  sfHMMn
+       \        /   \        /
+        \     /       \     /
+     sfHMM1Motor    sfHMMnMotor
 
 """
