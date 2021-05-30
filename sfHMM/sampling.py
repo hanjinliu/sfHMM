@@ -3,28 +3,29 @@ import numpy as np
 
 __all__ = ["hmm_sampling", "motor_sampling"]
 
-def hmm_sampling(dim=3, n_data=500, trs=0.05, sigma=0.5, rand=None, ans=False, scale=1, poi=False):
+def hmm_sampling(dim:int=3, n_data:int=500, trs:float=0.05, sigma:float=0.5, rand:int=None, 
+                 ans:bool=False, scale:float=1, poi:bool=False):
     """
     Sampline function.py
 
     Parameters
     ----------
-    dim : int, optional
-        The number of states, by default 3
-    n_data : int, optional
-        The length of data, by default 500
-    trs : float, optional
-        Probability of transition, by default 0.05
-    sigma : float, optional
-        Standard deviation of noise, by default 0.5
+    dim : int, default is 3
+        The number of states.
+    n_data : int, default is 500
+        The length of data.
+    trs : float, default is 0.05
+        Probability of transition.
+    sigma : float, default is 0.5
+        Standard deviation of noise.
     rand : int or None, optional
-        Random seed, by default None
-    ans : bool, optional
-        If the answer of state sequence is returned, by default False
-    scale : int, optional
-        Interval between mean values, by default 1
-    poi : bool, optional
-        If Poisson distributed, by default False
+        Random seed.
+    ans : bool, default is False
+        If the answer of state sequence is returned.
+    scale : int, default is 1
+        Interval between mean values.
+    poi : bool, default is False
+        If Poisson distributed.
 
     """    
     startprob= np.full(dim, 1.0/dim)
@@ -54,7 +55,7 @@ def hmm_sampling(dim=3, n_data=500, trs=0.05, sigma=0.5, rand=None, ans=False, s
     else:
         return data_1
 
-def motor_sampling(pdf=[0.005, -1, 0.015], sigma=0.5, n_data=500, rand=None, ans=False):
+def motor_sampling(pdf=[0.005, -1, 0.015], sigma:float=0.5, n_data:int=500, rand:int=None, ans:bool=False):
     """
     pdf: probability distribution
     [... , 2_steps_backward, 1_step_backward, stay, 1_step_forward, 2_steps_forward, ...]

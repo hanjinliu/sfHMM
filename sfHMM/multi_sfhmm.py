@@ -551,51 +551,6 @@ class sfHMMn(sfHMMBase):
             
         return None
     
-    @under_development
-    @append_log
-    def align_b(self, bounds:tuple[float,float]=(-1, 1), bins:int=32) -> list:
-        """
-        Align step finding results with $ y = x + b $ conversion. The optimal $b$ is determined by
-        minimizing normalized mutual information of two step finding results: `self[0].step.fit`
-        as the reference and `self[i].step.fit + b` as the variable.
-        _                  _       __
-         |__    __          |__  _|  |__
-              _|  |__  -->
-
-        Parameters
-        ----------
-        bounds : tuple of floats, default is (-1, 1)
-            Bounds of parameter $b$, i.e. optimal parameter is searched in the range of 
-            `bounds[0] < b < bounds[1]`.
-        bins : int, default is 32
-            Bin number for calculating shannon entropy and mutual information.
-
-        Returns
-        -------
-        list of scipy.optimize.OptimizeResult
-            Fitting results of all the cycles except for the first one.
-        """     
-        
-        if self.n_data < 2:
-            raise sfHMMAnalysisError("Cannot align datasets because n_data < 2.")
-        if self[0].step is None:
-            raise sfHMMAnalysisError("Cannot align datasets before step finding.")
-        
-        optimization_results = []
-        for sf in self[1:]:
-            result = optimize_b(self[0].step.fit, sf.step.fit, bins=bins, 
-                                 range=self.ylim, bounds=[bounds])
-            optimization_results.append(result)
-            b = result.x
-            sf.data_raw[:] = sf.data_raw + b
-            sf.ylim = [sf.ylim[0] + b, sf.ylim[1] + b]
-            sf.step.fit[:] = sf.step.fit + b
-            sf.step.mu_list[:] = sf.step.mu_list + b
-            if sf.data_fil is not None:
-                sf.data_fil[:] = sf.data_fil + b
-            
-        return optimization_results
-        
     @property
     def data_raw(self) -> np.ndarray:
         return np.array(concat([sf.data_raw for sf in self]))

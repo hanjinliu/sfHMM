@@ -14,7 +14,6 @@ class GMM1(mixture.GaussianMixture):
     
     def fit(self, data):
         super().fit(data)
-        self.valid = True
         
         # sort all
         order = np.argsort(self.means_.flat)
@@ -24,8 +23,9 @@ class GMM1(mixture.GaussianMixture):
             self.covariances_ = self.covariances_[order]
             self.precisions_cholesky_ = self.precisions_cholesky_[order]
             self.precisions_ = self.precisions_[order]
+                
         self.sigma_ = np.sqrt(self.covariances_.flat)
-        
+        self.valid = True
         return self
 
 class GMMs:
