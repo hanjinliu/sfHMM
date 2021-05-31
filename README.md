@@ -12,9 +12,24 @@ You can also use sfHMM just for step finding or AIC/BIC based Gaussian mixture m
 
 # Installation
 
+- pip installation
+
+Working in a new environment is highly recommended. For example, if you are using Anaconda and Jupyter:
+
+```
+conda create -n myenv python
+conda activate myenv
+conda install jupyter
+pip install cython
+```
+
+then it's ready to install sfHMM.
+
 ```
 pip install git+https://github.com/hanjinliu/sfHMM
 ```
+
+- cloning from the source
 
 If you want to clone from the source, you need to compile pyx file, or you cannot use `sfHMM.motor` module. You may need to download C++ build tools for this purpose.
 
