@@ -32,7 +32,7 @@ I've tested the codes with following versions but may work in older ones.
 - [hmmlearn](https://github.com/hmmlearn/hmmlearn) &ge; 0.2.3
 - [scikit-learn](https://github.com/scikit-learn/scikit-learn) &ge; 0.24.1
 - [pandas](https://github.com/pandas-dev/pandas) &ge; 1.1.5
-- [scipy](https://github.com/scipy/scipy) &ge; 1.6.1
+- [scipy](https://github.com/scipy/scipy) &ge; 1.6.1 (at least 1.2.0 because `scipy.special.softmax` must be available)
 - [matplotlib](https://github.com/matplotlib/matplotlib) &ge; 3.3.4
 
 # Contents
@@ -41,7 +41,7 @@ I've tested the codes with following versions but may work in older ones.
 This module contains basic classes and functions for **sfHMM data analysis**.
 - `sfHMM1` ... sfHMM for single trajectory.
 - `sfHMMn` ... sfHMM for multiple trajectories.
-- `hmm_sampling` ... sample data generation of FRET-like data.
+- `hmm_sampling` ... sample data generation of smFRET-like data.
 - `motor_sampling` ... sample data generation of motor-like data.
 
 ### `sfHMM.motor`
@@ -50,7 +50,7 @@ This module contains sfHMM classes aiming at analyzing **motor-stepping** or oth
 - `sfHMMnMotor` ... sfHMM for multiple motor-stepping trajectories.
 
 ### `sfHMM.step` 
-This module contains several step finding algorithms in the same API. My efficient implementation enables analysis of **100,000** data points within **~1 sec**!
+This module contains several **step finding algorithms** in the same API. My efficient implementation enables analysis of **100,000** data points within **~1 sec**!
 - `GaussStep` ... step finding for Gauss distribution [1].
 - `PoissonStep` ... step finding for Poisson distribution.
 - `SDFixedGaussStep` ... step finding for Gauss distribution with fixed standard deviation.
@@ -64,7 +64,7 @@ This module contains classes that inherit `sklearn.mixture.GaussianMixture` whil
 ### `sfHMM.io`
 This module contains **input/output** functions that are suitable for sfHMM data analysis or other one-dimensional signal processing.
 - `read` ... Load such as csv, txt, dat files, or the first sheet of Excel files.
-- `read_excel` ... Load all the sheets for Excel files.
+- `read_excel` ... Load all the sheets from Excel files.
 - `save` ... Save sfHMM analysis results.
 
 
@@ -74,13 +74,13 @@ All the parameters are optional.
 
 - `sg0` ... The parameter used in denoising process.
 - `psf` ... The parameter used in step finding.
-- `krange` ... Range of the number of hidden states.
+- `krange` ... Range of the number of hidden states to test.
 - `model` ... Distribution of signal. Gaussian and Poissonian are supported now.
 - `name` ... Name of the object.
 
 # Common Methods
 
-- `run_all()` ... run all the needed algorithm in the most plausible condition.
+- `run_all()` ... Run all the needed algorithm in the most plausible condition.
 - `step_finding()` ... Step finding by likelihood maximization.
 - `denoising()` ... The standard deviation of noise is cut off to `sg0`.
 - `gmmfit()` ... Gaussian mixture model clustering.
@@ -90,7 +90,10 @@ All the parameters are optional.
 
 # Citation
 If you found sfHMM useful, please consider citing our paper.
- ...
+
+    A fast and objective hidden Markov modeling for accurate analysis of biophysical data with numerous states
+    Hanjin Liu, Tomohiro Shima
+    bioRxiv 2021.05.30.446337; doi: https://doi.org/10.1101/2021.05.30.446337
 
 # References
 [1] Kalafut, B., & Visscher, K. (2008). An objective, model-independent method for detection of non-uniform steps in noisy signals. Computer Physics Communications, 179(10), 716-723.
