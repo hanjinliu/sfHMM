@@ -12,18 +12,18 @@ __all__ = ["read", "read_excel", "save"]
 
 EXCEL_TESTED = (".xlsx",".xlsm",".xltx",".xltm", ".xls")
 
-def read(path, out:sfHMMn=None, sep:str=None, encoding:str=None, header=0,
+def read(path:str, out:sfHMMn=None, sep:str=None, encoding:str=None, header:int=0,
          **kwargs) -> sfHMMn:
     """
-    Read a file using appropriate function, and import its data to sfHMMn object. Although
-    it's name is read_csv, this function can read many type of files.
+    Read a file using appropriate function, and import its data to sfHMMn object. This 
+    function can read many types of files.
 
     Parameters
     ----------
     path : str
-        Path to csv file.
+        Path to file.
     out : sfHMMn or its subclass object, optional
-        In which object the content of csv will be stored. If None, a new sfHMMn object
+        In which object the content of the file will be stored. If None, a new sfHMMn object
         with default setting will be made. This argument is useful when you prefer your
         own setting of sfHMM input parameter(s).
     sep, encoding, header
@@ -66,7 +66,7 @@ def read_excel(path:str, ref:sfHMMBase=None, ignore_exceptions:bool=True, header
         in the output list.
     header : int, default is 0
         Header index.
-    squeeze: bool default is False
+    squeeze: bool, default is False
         If Excel file only contains one sheet, then return sfHMMn object instead of redundant
         dictionary like {"Sheet1": <sfHMMn>}. Default is set to False for compatibility.
         Although this argument collides with that in pd.read_excel(), it is not a problem

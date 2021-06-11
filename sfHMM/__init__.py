@@ -1,17 +1,26 @@
-__version__ = "0.4.1"
+__version__ = "0.4.2"
 
 from .single_sfhmm import sfHMM1
 from .multi_sfhmm import sfHMMn
 
+class ModuleInsufficient:
+    def __init__(self, module_name:str, error:ImportError):
+        self.name = module_name
+        self.error = error
+        
+    def __getattr__(self, name: str):
+        raise ImportError(f"Cannot use {self.name} module due to following "
+                          f"ImportError: {self.error}")
+        
 try:
     from . import io
-except ImportError:
-    pass
+except ImportError as e:
+    io = ModuleInsufficient("io", e)
 
 try:
 	from . import motor
-except ImportError:
-    pass
+except ImportError as e:
+    motor = ModuleInsufficient("motor", e)
 
 from .sampling import hmm_sampling, motor_sampling
 

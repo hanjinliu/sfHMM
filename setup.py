@@ -1,5 +1,5 @@
 from setuptools import find_packages, setup, Extension
-from Cython.Distutils import build_ext
+from setuptools.command.build_ext import build_ext
 import os
 
 # search for version
