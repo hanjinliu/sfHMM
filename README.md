@@ -20,7 +20,6 @@ Working in a new environment is highly recommended. For example, if you are usin
 conda create -n myenv python
 conda activate myenv
 conda install jupyter
-pip install cython
 ```
 
 then it's ready to install sfHMM.

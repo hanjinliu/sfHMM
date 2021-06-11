@@ -12,10 +12,7 @@ class ModuleInsufficient:
         raise ImportError(f"Cannot use {self.name} module due to following "
                           f"ImportError: {self.error}")
         
-try:
-    from . import io
-except ImportError as e:
-    io = ModuleInsufficient("io", e)
+from . import io
 
 try:
 	from . import motor
