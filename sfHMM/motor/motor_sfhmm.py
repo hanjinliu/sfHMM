@@ -5,8 +5,6 @@ from ..multi_sfhmm import sfHMMn
 from .base import sfHMMmotorBase
 from ..utils import *
 
-# TODO: estimate_krange is not a proper way to do so in sfHMMnMotor
-
 class sfHMM1Motor(sfHMMmotorBase, sfHMM1):
     def __init__(self, data_raw=None, *, sg0:float=-1, psf:float=-1, krange=None,
                  model:str="g", name:str="", max_stride:int=2):
@@ -57,6 +55,17 @@ class sfHMM1Motor(sfHMMmotorBase, sfHMM1):
         transmat_kernel += 1e-12
         self.transmat_kernel = transmat_kernel/np.sum(transmat_kernel)
         
+        return None
+    
+    def _estimate_krange(self, estimation):
+        dy = self._accumulate_step_sizes()
+        nsmall, nlarge = sorted(map(int, [np.sum(dy>0), np.sum(dy<0)]))
+        if estimation == "fast":
+            self.krange = (nlarge - nsmall, nlarge - nsmall//2)
+        elif estimation == "safe":
+            self.krange = (nlarge - nsmall, nlarge)
+        else:
+            raise ValueError(f"Cannot interpret estimation method: {estimation}")
         return None
     
     
@@ -130,4 +139,20 @@ class sfHMMnMotor(sfHMMmotorBase, sfHMMn):
         sf.means_ = self.means_
         sf.startprob_ = self.startprob_
         sf.transmat_kernel = self.transmat_kernel
+        return None
+
+    def _estimate_krange(self, estimation):
+        nsmall = nlarge = 0
+        for sf in self:
+            dy = sf._accumulate_step_sizes()
+            nsmall_, nlarge_ = sorted(map(int, [np.sum(dy>0), np.sum(dy<0)]))
+            nsmall = max(nsmall, nsmall_)
+            nlarge = max(nlarge, nlarge_)
+            
+        if estimation == "fast":
+            self.krange = (nlarge - nsmall, nlarge - nsmall//2)
+        elif estimation == "safe":
+            self.krange = (nlarge - nsmall, nlarge)
+        else:
+            raise ValueError(f"Cannot interpret estimation method: {estimation}")
         return None

@@ -38,17 +38,6 @@ class sfHMMmotorBase(sfHMMBase):
         if self.krange is None:
             self._estimate_krange(estimation)
         return super().gmmfit(method, n_init, random_state)
-    
-    def _estimate_krange(self, estimation):
-        dy = self._accumulate_step_sizes()
-        nsmall, nlarge = sorted(map(int, [np.sum(dy>0), np.sum(dy<0)]))
-        if estimation == "fast":
-            self.krange = (nlarge - nsmall, nlarge - nsmall//2)
-        elif estimation == "safe":
-            self.krange = (nlarge - nsmall, nlarge)
-        else:
-            raise ValueError(f"Cannot interpret estimation method: {estimation}")
-        return None
         
     def tdp(self, **kwargs):
         dy_step = self._accumulate_step_sizes()
