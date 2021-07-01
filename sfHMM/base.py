@@ -63,6 +63,7 @@ class sfHMMBase(GaussianHMM):
         else:
             kmin, kmax = value
             kmin = max(1, kmin)
+            kmax = max(kmin, kmax)
             value = (kmin, kmax)
         self._krange = value
     
@@ -197,7 +198,7 @@ class sfHMMBase(GaussianHMM):
         elif method.lower() == "dirichlet":
             gmm_ = DPGMM(n_components=self.krange[1], n_init=1, 
                          random_state=random_state,
-                         covariance_prior=1,
+                         covariance_prior=0.02,
                          covariance_type=self.covariance_type)
             gmm_.fit(np.asarray(self.data_fil).reshape(-1, 1), norm_factor=self.sg0*5)
             self.gmm_opt = gmm_
