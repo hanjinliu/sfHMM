@@ -2,6 +2,7 @@ from __future__ import annotations
 import matplotlib.pyplot as plt
 import numpy as np
 from .base import sfHMMBase
+from warnings import warn
 from .utils import *
 
 __all__ = ["sfHMM1"]
@@ -103,6 +104,9 @@ class sfHMM1(sfHMMBase):
         """
         Step finding by extended version of Kalafut-Visscher's algorithm.
         """
+        if np.all(np.diff(self.data_raw) > 0):
+            msg = f"Data of {self.name} is monotonically increasing. Isn't it a time axis?"
+            warn(msg, UserWarning)
         self.step = self.StepClass(self.data_raw, self.psf)
         self.step.multi_step_finding()
         self.psf = getattr(self.step, "p", -1)

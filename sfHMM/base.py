@@ -90,7 +90,7 @@ class sfHMMBase(GaussianHMM):
             raise TypeError("`model` must be string or BaseStep instance, "
                             f"but got {type(s)}")
             
-    def get_params(self, deep=True):
+    def get_params(self, deep:bool=True):
         out = super().get_params(deep=deep)
         out.pop("data_raw", None) # This is not parameter
         out.pop("name", None)     # This does not affect analysis
@@ -122,7 +122,6 @@ class sfHMMBase(GaussianHMM):
         for func in ["step_finding", "denoising", "gmmfit", "hmmfit"]:
             if func not in logs:
                 getattr(self, func)()
-
         plot and self.plot()
         
         return self
@@ -192,16 +191,15 @@ class sfHMMBase(GaussianHMM):
         if method.lower() in ("aic", "bic"):
             gmm_ = GMMs(self.data_fil, self.krange, min_interval=sg0_*1.5,  min_sg=sg0_*0.8, 
                         covariance_type=self.covariance_type)
-            gmm_.fit(n_init=n_init, random_state=random_state)
+            gmm_.fit(n_init=n_init, random_state=random_state, norm_factor=self.sg0*5)
             self.gmm = gmm_
             self.gmm_opt = self.gmm.get_optimal(method)
         elif method.lower() == "dirichlet":
             gmm_ = DPGMM(n_components=self.krange[1], n_init=1, 
                          random_state=random_state,
-                         mean_precision_prior=1/np.var(self.data_raw),
-                         covariance_prior=sg0_**2,
+                         covariance_prior=1,
                          covariance_type=self.covariance_type)
-            gmm_.fit(np.asarray(self.data_fil).reshape(-1,1))
+            gmm_.fit(np.asarray(self.data_fil).reshape(-1, 1), norm_factor=self.sg0*5)
             self.gmm_opt = gmm_
         else:
             raise ValueError(f"method: {method}")
@@ -260,4 +258,3 @@ class sfHMMBase(GaussianHMM):
         hasattr(self, "transmat_") or self._set_transmat()
         
         return None
-

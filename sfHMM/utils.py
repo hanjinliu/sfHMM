@@ -26,9 +26,8 @@ def append_log(func):
 def under_development(func):
     @wraps(func)
     def wrapper(self, *args, **kwargs):
-        warn(f"Method `{func.__name__}` is under development and its "
-             "behavior may be changed in the future.", 
-             FutureWarning)
+        msg = f"Method `{func.__name__}` is under development and its behavior may change in the future."
+        warn(msg, FutureWarning)
         return func(self, *args, **kwargs)
     return wrapper
     

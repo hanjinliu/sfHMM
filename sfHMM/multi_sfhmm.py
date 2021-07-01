@@ -136,7 +136,7 @@ class sfHMMn(sfHMMBase):
         return self
     
     @append_log
-    def delete(self, indices:int|list[int]|tuple[int]) -> None:
+    def delete(self, indices:int|Iterable[int]) -> None:
         """
         Delete sfHMM1 object(s) from the list.
 
