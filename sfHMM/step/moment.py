@@ -4,16 +4,19 @@ from scipy.special import gammaln, logsumexp
 
 # Ideally we should prepare `n = np.arange(1, len(data))` first, and view
 # it many times in get_optimal_splitter like n[:len(self.fw)], but this
-# does not improved efficiency so much.
+# did not improve efficiency so much.
 
 @dataclass
 class Moment:
     """
+    This class aims at splitting arrays in a way that moment can be calculated very
+    fast. 
+    
     fw          bw
-     0 * ****** 0
-     1 ** ***** 1
+     0 o ++++++ 0
+     1 oo +++++ 1
      : :      : :
-     n ****** * n
+     n oooooo + n
 
     When ndarray `data` is given by `self.init(data)`, self.fw[i,k] means
     np.sum(data[:k]**(i+1)), while self.bw[i,k] means np.sum(data[-k:]**(i+1)).
@@ -21,7 +24,7 @@ class Moment:
     """    
     fw: np.ndarray = None
     bw: np.ndarray = None
-    total: float = None
+    total: np.ndarray = None
     
     def __len__(self):
         """
@@ -33,6 +36,32 @@ class Moment:
         """
         Complement moment values.
         Calculate fw from bw, or vice versa.
+        
+        
+        fw      bw=None
+         0 o
+         1 oo
+         : :
+         k oooo
+                    +++++
+                     ++++
+                        :
+                        +
+              fw=None   bw
+        
+        becomes
+        
+        fw      bw
+         0 o ++++
+         1 oo +++
+         : :
+         k oooo +
+                  o +++++
+                  oo ++++
+                        :
+                  ooooo +
+                 fw     bw
+        
         """        
         if self.fw is None:
             self.fw = self.total.reshape(-1,1) - self.bw
@@ -46,6 +75,26 @@ class Moment:
         """
         Split a Moment object into to Moment objects at position i.
         This means :i-1 will be the former, and i: will be the latter.
+        
+        fw          bw
+         0 o ++++++++++++ 0
+         1 oo +++++++++++ 1
+         : :            : :
+           ooooooooooo ++ 
+         n oooooooooooo + n
+        
+        becomes
+        
+        fw      bw=None
+         0 o
+         1 oo
+         : :
+         k oooooo
+                  +++++++
+                   ++++++
+                        :
+                        +
+              fw=None   bw
         """
         m1 = self.__class__(self.fw[:,:i-1], None, self.fw[:,i-1])
         m2 = self.__class__(None, self.bw[:,i:], self.bw[:,i-1])

@@ -5,7 +5,7 @@ from scipy.stats import t as student_t
 from scipy.stats import norm
 import heapq
 
-"""
+r"""
     An efficient, extended version of step finding algorithm original in [1].
     Although similar summation of data is repeated many times during a single run, the 
 original algorithm did not make full use of the results obtained in previous iterations. 
@@ -55,7 +55,7 @@ class Heap:
 
 def estimate_sigma(data):
     p = norm.cdf(1) # = sigma for standard normal distribution.
-    return np.percentile(np.diff(data), p*100)/np.sqrt(2)
+    return np.quantile(np.diff(data), p)/np.sqrt(2)
     
     
 class BaseStep:

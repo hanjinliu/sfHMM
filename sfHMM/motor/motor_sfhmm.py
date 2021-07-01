@@ -5,6 +5,8 @@ from ..multi_sfhmm import sfHMMn
 from .base import sfHMMmotorBase
 from ..utils import *
 
+# TODO: estimate_krange is not a proper way to do so in sfHMMnMotor
+
 class sfHMM1Motor(sfHMMmotorBase, sfHMM1):
     def __init__(self, data_raw=None, *, sg0:float=-1, psf:float=-1, krange=None,
                  model:str="g", name:str="", max_stride:int=2):
