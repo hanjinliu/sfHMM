@@ -1,4 +1,4 @@
-__version__ = "0.4.3"
+__version__ = "0.5.0"
 
 from .single_sfhmm import sfHMM1
 from .multi_sfhmm import sfHMMn
@@ -38,3 +38,8 @@ Inheritance Map
      sfHMM1Motor    sfHMMnMotor
 
 """
+
+# TODO: hmmfit is not scalable now.
+# - sfHMMBase._normalize, that rescale self.means_, self.covars_ etc.
+# - sfHMMBase._hmmfit, that reshape and rescale data.
+# - Don't specify min_covar in _set_covar.
