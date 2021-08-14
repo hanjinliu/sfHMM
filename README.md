@@ -77,9 +77,9 @@ This module contains classes that inherit `sklearn.mixture.GaussianMixture` whil
   
 ### `sfHMM.io`
 This module contains **input/output** functions that are suitable for sfHMM data analysis or other one-dimensional signal processing.
-- `read` ... Load such as csv, txt, dat files, or the first sheet of Excel files.
+- `read` ... *Not recommended now. Use "read" method in sfHMM classes instead*
 - `read_excel` ... Load all the sheets from Excel files.
-- `save` ... Save sfHMM analysis results.
+- `save` ... *Not recommended now. Use "save" method in sfHMM classes instead*
 
 
 # Common Parameters
@@ -99,8 +99,10 @@ All the parameters are optional.
 - `denoising()` ... The standard deviation of noise is cut off to `sg0`.
 - `gmmfit()` ... Gaussian mixture model clustering.
 - `hmmfit()` ... HMM parameter initialization and optimization.
-- `plot()` ... visualize the results of sfHMM analysis.
-- `tdp()` ... show the results in pseudo transition density plot.
+- `plot()` ... Visualize the results of sfHMM analysis.
+- `tdp()` ... Show the results in pseudo transition density plot.
+- `read()` ... Load such as csv, txt, dat files, or the first sheet of Excel files.
+- `save()` ... Save sfHMM analysis results.
 
 # Citation
 If you found sfHMM useful, please consider citing our paper.
