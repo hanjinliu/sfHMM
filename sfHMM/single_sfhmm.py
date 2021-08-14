@@ -100,6 +100,20 @@ class sfHMM1(sfHMMBase):
             self.ylim = [np.min(self.data_raw), np.max(self.data_raw)]
 
     def read(self, path:str, sep:str=None, encoding:str=None, header:int=0, **kwargs):
+        """
+        Read a file using appropriate function, and import its data to sfHMM1 object. If
+        multiple trajectories are found, ValueError will be raised.
+
+        Parameters
+        ----------
+        path : str
+            Path to file.
+        sep, encoding, header
+            Important arguments in pd.read_csv. Default is header=0 rather than "infer" 
+            because header="infer" usually works in a wrong way.
+        **kwargs
+            Other keyword arguments that will passed to pd.read_csv() or pd.read_excel().
+        """   
         from .io import read
         out = read(path, sep=sep, encoding=encoding, header=header, **kwargs)
         if len(out._sf_list) > 1:

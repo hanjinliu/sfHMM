@@ -277,6 +277,19 @@ class sfHMMn(sfHMMBase):
         return self
     
     def read(self, path:str, sep:str=None, encoding:str=None, header:int=0, **kwargs):
+        """
+        Read a file using appropriate function, and import its data to sfHMMn object.
+
+        Parameters
+        ----------
+        path : str
+            Path to file.
+        sep, encoding, header
+            Important arguments in pd.read_csv. Default is header=0 rather than "infer" 
+            because header="infer" usually works in a wrong way.
+        **kwargs
+            Other keyword arguments that will passed to pd.read_csv() or pd.read_excel().
+        """   
         from .io import read
         read(path, out=self, sep=sep, encoding=encoding, header=header, **kwargs)
         self.source = path

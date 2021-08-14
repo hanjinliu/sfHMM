@@ -118,7 +118,7 @@ class sfHMMBase(GaussianHMM):
                 raise AttributeError("Data was not read by 'read' function so that the location of original data "
                                      "is unknown. 'path' argument is needed.")
             file, ext = os.path.splitext(source)
-            path = os.path.join(file, "-sfHMMresult", ext)
+            path = "".join([file, "-sfHMMresult", ext])
         if os.path.exists(path) and not overwrite:
             raise FileExistsError(f"File {path} already exists. Change the name or set 'overwrite=True'.")
         save(self, path)
