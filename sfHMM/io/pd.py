@@ -145,20 +145,20 @@ def _safe_read_excel(path, **kwargs):
 def _to_dataframes(obj:sfHMMBase, suffix:str="") -> list[pd.DataFrame]:
     if isinstance(obj, sfHMM1):
         df = pd.DataFrame(data=obj.data_raw, dtype=np.float64, 
-                          columns=[f"data_raw-{suffix}"],
+                          columns=[f"data_raw{suffix}"],
                           index=np.arange(obj.data_raw.size, dtype=np.int32))
         if obj.step is not None:
-            df[f"step finding-{suffix}"] = obj.step.fit
+            df[f"step finding{suffix}"] = obj.step.fit
         if obj.data_fil is not None:
-            df[f"denoised-{suffix}"] = obj.data_fil
+            df[f"denoised{suffix}"] = obj.data_fil
         if obj.viterbi is not None:
-            df[f"Viterbi path-{suffix}"] = obj.viterbi
+            df[f"Viterbi path{suffix}"] = obj.viterbi
         return [df]
     
     elif isinstance(obj, sfHMMn):
         df_list = []
         for i, sf in enumerate(obj):
-            df_list.append(_to_dataframes(sf, suffix=i)[0])
+            df_list.append(_to_dataframes(sf, suffix=f"-{i}")[0])
         return df_list
     else:
         raise TypeError(f"Only sfHMM objects can be converted to pd.DataFrame, but got {type(obj)}")
