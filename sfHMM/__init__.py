@@ -18,6 +18,7 @@ try:
 	from . import motor
 except ImportError as e:
     motor = ModuleInsufficient("motor", e)
+    
 
 from .sampling import hmm_sampling, motor_sampling
 
@@ -39,7 +40,11 @@ Inheritance Map
 
 """
 
-# TODO: hmmfit is not scalable now.
+# TODO: 
+# 1. hmmfit is not scalable now.
 # - sfHMMBase._normalize, that rescale self.means_, self.covars_ etc.
 # - sfHMMBase._hmmfit, that reshape and rescale data.
 # - Don't specify min_covar in _set_covar.
+# 2. GUI
+# - Currently %gui qt must be called first
+# - sfHMMn is not supported yet

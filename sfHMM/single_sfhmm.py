@@ -280,6 +280,20 @@ class sfHMM1(sfHMMBase):
         
         return None
     
+    def view_in_qt(self):
+        """
+        Open a Qt viewer and plot the results.
+        """        
+        from .viewer import TrajectoryViewer
+        data = dict()
+        self.data_raw is None or data.update({"raw data": self.data_raw})
+        self.step is None or data.update({"step finding": self.step.fit})
+        self.data_fil is None or data.update({"denoised": self.data_fil})
+        self.viterbi is None or data.update({"Viterbi path": self.viterbi})
+        app = TrajectoryViewer(data, self.__class__.styles, self.__class__.colors)
+        app.show()
+        return app
+    
     def accumulate_transitions(self) -> list[tuple[int, int]]:
         """
         Accumulate all the transitions occurred in `self.states`, and return them in
