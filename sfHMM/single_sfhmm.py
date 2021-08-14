@@ -99,6 +99,15 @@ class sfHMM1(sfHMMBase):
             self._data_raw = d
             self.ylim = [np.min(self.data_raw), np.max(self.data_raw)]
 
+    def read(self, path:str, sep:str=None, encoding:str=None, header:int=0, **kwargs):
+        from .io import read
+        out = read(path, sep=sep, encoding=encoding, header=header, **kwargs)
+        if len(out._sf_list) > 1:
+            raise ValueError("More than one trajectory found. Use sfHMMn instead.")
+        self.data_raw = out[0].data_raw
+        self.source = path
+        return self
+    
     @append_log
     def step_finding(self) -> sfHMM1:
         """

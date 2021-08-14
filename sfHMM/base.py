@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 from hmmlearn.hmm import GaussianHMM
@@ -96,7 +97,32 @@ class sfHMMBase(GaussianHMM):
         out.pop("data_raw", None) # This is not parameter
         out.pop("name", None)     # This does not affect analysis
         return out
-        
+    
+    def save(self, path:str=None, overwrite:bool=False):
+        """
+        Save the content.
+
+        Parameters
+        ----------
+        path : str, optional
+            Saving path. If not given, data will saved at the same directory where it was read.
+        overwrite : bool, default is False
+            Allow overwriting existing file.
+            
+        """        
+        from .io import save
+        if path is None:
+            try:
+                source = self.source
+            except AttributeError:
+                raise AttributeError("Data was not read by 'read' function so that the location of original data "
+                                     "is unknown. 'path' argument is needed.")
+            file, ext = os.path.splitext(source)
+            path = os.path.join(file, "-sfHMMresult", ext)
+        if os.path.exists(path) and not overwrite:
+            raise FileExistsError(f"File {path} already exists. Change the name or set 'overwrite=True'.")
+        save(self, path)
+        return None
 
     def step_finding(self): ...
     def denoising(self): ...

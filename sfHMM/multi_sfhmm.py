@@ -1,13 +1,13 @@
 from __future__ import annotations
+import re
+import copy
+from typing import Iterable
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from .utils import *
 from .single_sfhmm import sfHMM1
 from .base import sfHMMBase
-from typing import Iterable
-import re
-import copy
 
 __all__ = ["sfHMMn"]
 
@@ -274,6 +274,12 @@ class sfHMMn(sfHMMBase):
         if self.n_data == 0:
             raise ValueError("No data appended. Confirm that input DataFrame is in a correct format.")
         
+        return self
+    
+    def read(self, path:str, sep:str=None, encoding:str=None, header:int=0, **kwargs):
+        from .io import read
+        read(path, out=self, sep=sep, encoding=encoding, header=header, **kwargs)
+        self.source = path
         return self
  
     @append_log
