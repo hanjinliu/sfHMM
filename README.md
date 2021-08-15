@@ -81,6 +81,9 @@ This module contains **input/output** functions that are suitable for sfHMM data
 - `read_excel` ... Load all the sheets from Excel files.
 - `save` ... *Not recommended now. Use "save" method in sfHMM classes instead*
 
+### `sfHMM.viewer`
+This module contains **interactive multi-channel viewer** for 1-D data visualization (work in progress).
+- `TrajectoryViewer` ... Qt viewer object.
 
 # Common Parameters
 
@@ -103,6 +106,7 @@ All the parameters are optional.
 - `tdp()` ... Show the results in pseudo transition density plot.
 - `read()` ... Load such as csv, txt, dat files, or the first sheet of Excel files.
 - `save()` ... Save sfHMM analysis results.
+- `view_in_qt()` ... Open a `TrajectoryViewer` and interactively view the trajectories.
 
 # Citation
 If you found sfHMM useful, please consider citing our paper.

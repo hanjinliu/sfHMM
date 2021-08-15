@@ -1,4 +1,4 @@
-__version__ = "0.5.2"
+__version__ = "0.5.3"
 
 from .single_sfhmm import sfHMM1
 from .multi_sfhmm import sfHMMn
@@ -40,11 +40,10 @@ Inheritance Map
 
 """
 
-# TODO: 
+# TODO: --> v0.6.0
 # 1. hmmfit is not scalable now.
 # - sfHMMBase._normalize, that rescale self.means_, self.covars_ etc.
 # - sfHMMBase._hmmfit, that reshape and rescale data.
 # - Don't specify min_covar in _set_covar.
 # 2. GUI
 # - Currently %gui qt must be called first
-# - sfHMMn is not supported yet
