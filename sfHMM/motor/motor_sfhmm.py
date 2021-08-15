@@ -116,7 +116,6 @@ class sfHMMnMotor(sfHMMmotorBase, sfHMMn):
     def _set_covars(self):
         step_fit = np.array(concat([sf.step.fit for sf in self]))
         self.covars_ = [[np.var(self.data_raw - step_fit)]]
-        self.min_covar = np.min(self.covars_) * 0.015
         return None
     
     def _set_transmat(self):

@@ -160,6 +160,16 @@ class sfHMMBase(GaussianHMM):
         This function returns all the transitions occurred in the trajectory.
         """
     
+    def fit(self, X, lengths=None):
+        # overloaded to make it scalable.
+        scale = self.sg0*5
+        self.means_ /= scale
+        self._covars_ /= scale**2
+        super().fit(X/scale, lengths=lengths)
+        self.means_ *= scale
+        self._covars_ *= scale**2
+        return self
+    
     def _name(self):
         self.__class__.count += 1
         return f"{self.__class__.__name__}-{self.__class__.count - 1}"
@@ -219,7 +229,7 @@ class sfHMMBase(GaussianHMM):
         if method.lower() in ("aic", "bic"):
             gmm_ = GMMs(self.data_fil, self.krange, min_interval=sg0_*1.5,  min_sg=sg0_*0.8, 
                         covariance_type=self.covariance_type)
-            gmm_.fit(n_init=n_init, random_state=random_state, norm_factor=self.sg0*5)
+            gmm_.fit(n_init=n_init, random_state=random_state, scale=self.sg0*5)
             self.gmm = gmm_
             self.gmm_opt = self.gmm.get_optimal(method)
         elif method.lower() == "dirichlet":
@@ -227,7 +237,7 @@ class sfHMMBase(GaussianHMM):
                          random_state=random_state,
                          covariance_prior=0.02,
                          covariance_type=self.covariance_type)
-            gmm_.fit(np.asarray(self.data_fil).reshape(-1, 1), norm_factor=self.sg0*5)
+            gmm_.fit(np.asarray(self.data_fil).reshape(-1, 1), scale=self.sg0*5)
             self.gmm_opt = gmm_
         else:
             raise ValueError(f"method: {method}")

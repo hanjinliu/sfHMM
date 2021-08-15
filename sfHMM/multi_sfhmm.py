@@ -393,7 +393,6 @@ class sfHMMn(sfHMMBase):
 
     def _set_covars(self):
         self.covars_ = calc_covars(self.data_raw_all, concat(self.states_list), self.n_components)
-        self.min_covar = np.min(self.covars_) * 0.015
         return None
     
     def _set_means(self):

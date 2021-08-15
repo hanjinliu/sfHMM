@@ -45,5 +45,3 @@ Inheritance Map
 # - sfHMMBase._normalize, that rescale self.means_, self.covars_ etc.
 # - sfHMMBase._hmmfit, that reshape and rescale data.
 # - Don't specify min_covar in _set_covar.
-# 2. GUI
-# - Currently %gui qt must be called first

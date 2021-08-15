@@ -321,7 +321,6 @@ class sfHMM1(sfHMMBase):
             raise sfHMMAnalysisError("Cannot initialize 'covars_' because the state sequence " 
                                      "'states' hasyet been determined.")
         self.covars_ = calc_covars(self.data_raw, self.states, self.n_components)
-        self.min_covar = np.min(self.covars_) * 0.015
         return None
     
     def _set_means(self):

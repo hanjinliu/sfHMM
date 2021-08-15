@@ -12,22 +12,17 @@ class GMM1(mixture.GaussianMixture):
                          **kwargs)
         self.valid = False
     
-    def fit(self, data, norm_factor=1.0):
-        super().fit(data/norm_factor)
+    def fit(self, data, scale=1.0):
+        super().fit(data/scale)
         
         # sort all
         order = np.argsort(self.means_.flat)
         self.weights_ = self.weights_[order]
-        self.means_ = self.means_[order] * norm_factor
+        self.means_ = self.means_[order]
         if self.covariance_type == "spherical":
             self.covariances_ = self.covariances_[order]
             self.precisions_cholesky_ = self.precisions_cholesky_[order]
             self.precisions_ = self.precisions_[order]
-        
-        # rescale
-        self.covariances_ *= norm_factor ** 2
-        self.precisions_cholesky_ /= norm_factor
-        self.precisions_ /= norm_factor
         
         self.sigma_ = np.sqrt(self.covariances_.flat)
         self.valid = True
@@ -108,20 +103,21 @@ class GMMs:
         return None
             
     
-    def fit(self, n_init=1, random_state=0, norm_factor=1.0, **kwargs):
+    def fit(self, n_init=1, random_state=0, scale=1.0, **kwargs):
         """
         Fit data to k-state model, for every k in self.klist. Peak intervals and
         standard deviations are checked for every fitting.
 
         Parameters
         ----------
-        n_init : int, by default 1.
+        n_init : int, default is 1
             Number of initialization (Kmeans method depends on random initial values).
-        random_state : int, by default 0.
+        random_state : int, default is 0
             Random state used in Kmeans initialization.
-
+        scale : float, default is 1.0
+            Normalization factor to make fitting scalable.
         """        
-        d = np.asarray(self.data).reshape(-1, 1)
+        d = np.asarray(self.data).reshape(-1, 1)/scale
             
         self.results = {k: GMM1(k, n_init=n_init,
                                 random_state=random_state, 
@@ -130,7 +126,13 @@ class GMMs:
                         for k in self.klist}
         
         for gmm1 in self.results.values():
-            gmm1.fit(d, norm_factor=norm_factor)
+            gmm1.fit(d)
+            # rescale
+            gmm1.means_ *= scale
+            gmm1.covariances_ *= scale ** 2
+            gmm1.precisions_cholesky_ /= scale
+            gmm1.precisions_ /= scale
+            gmm1.sigma_ *= scale
             
             if self._interval_check(gmm1.means_) or self._sg_check(gmm1.sigma_):
                 gmm1.valid = False
@@ -237,8 +239,8 @@ class DPGMM(mixture.BayesianGaussianMixture):
                          random_state=random_state,
                          **kw)
     
-    def fit(self, data, norm_factor=1.0):
-        data = data/norm_factor
+    def fit(self, data, scale=1.0):
+        data = data/scale
         if self.mean_precision_prior is None:
             self.mean_precision_prior = 1/np.var(data)
         super().fit(data)
@@ -248,7 +250,7 @@ class DPGMM(mixture.BayesianGaussianMixture):
         self.n_components = len(unique_labels)
         
         # sort all
-        self.means_ = self.means_[unique_labels] * norm_factor
+        self.means_ = self.means_[unique_labels] * scale
         order = np.argsort(self.means_.flat)
         self.weights_ = self.weights_[unique_labels][order]
         self.means_ = self.means_[order]
@@ -265,9 +267,9 @@ class DPGMM(mixture.BayesianGaussianMixture):
             self.weight_concentration_ = self.weight_concentration_[unique_labels][order]
         
         # rescale
-        self.covariances_ *= norm_factor ** 2
-        self.precisions_cholesky_ /= norm_factor
-        self.precisions_ /= norm_factor
+        self.covariances_ *= scale ** 2
+        self.precisions_cholesky_ /= scale
+        self.precisions_ /= scale
         
         self.mean_precision_ = self.mean_precision_[unique_labels][order]
         self.sigma_ = np.sqrt(self.covariances_.flat)
