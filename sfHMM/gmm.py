@@ -103,7 +103,7 @@ class GMMs:
         return None
             
     
-    def fit(self, n_init=1, random_state=0, scale=1.0, **kwargs):
+    def fit(self, n_init:int=1, random_state:int=0, scale:float=1.0, **kwargs):
         """
         Fit data to k-state model, for every k in self.klist. Peak intervals and
         standard deviations are checked for every fitting.
@@ -117,6 +117,7 @@ class GMMs:
         scale : float, default is 1.0
             Normalization factor to make fitting scalable.
         """        
+        scale = 1.0 if scale <= 0 else scale
         d = np.asarray(self.data).reshape(-1, 1)/scale
             
         self.results = {k: GMM1(k, n_init=n_init,
@@ -131,7 +132,7 @@ class GMMs:
             gmm1.means_ *= scale
             gmm1.covariances_ *= scale ** 2
             gmm1.precisions_cholesky_ /= scale
-            gmm1.precisions_ /= scale
+            gmm1.precisions_ /= scale**2
             gmm1.sigma_ *= scale
             
             if self._interval_check(gmm1.means_) or self._sg_check(gmm1.sigma_):
@@ -139,7 +140,7 @@ class GMMs:
                 
         return self
         
-    def get_optimal(self, criterion="bic", only_valid=True):
+    def get_optimal(self, criterion:str="bic", only_valid:bool=True):
         """
         Determine the best model that minimize AIC or BIC.
 
@@ -239,7 +240,7 @@ class DPGMM(mixture.BayesianGaussianMixture):
                          random_state=random_state,
                          **kw)
     
-    def fit(self, data, scale=1.0):
+    def fit(self, data, scale:float=1.0):
         data = data/scale
         if self.mean_precision_prior is None:
             self.mean_precision_prior = 1/np.var(data)

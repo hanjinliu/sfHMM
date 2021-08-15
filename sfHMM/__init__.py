@@ -1,4 +1,4 @@
-__version__ = "0.5.3"
+__version__ = "0.6.0"
 
 from .single_sfhmm import sfHMM1
 from .multi_sfhmm import sfHMMn
@@ -19,7 +19,6 @@ try:
 except ImportError as e:
     motor = ModuleInsufficient("motor", e)
     
-
 from .sampling import hmm_sampling, motor_sampling
 
 
@@ -39,9 +38,3 @@ Inheritance Map
      sfHMM1Motor    sfHMMnMotor
 
 """
-
-# TODO: --> v0.6.0
-# 1. hmmfit is not scalable now.
-# - sfHMMBase._normalize, that rescale self.means_, self.covars_ etc.
-# - sfHMMBase._hmmfit, that reshape and rescale data.
-# - Don't specify min_covar in _set_covar.

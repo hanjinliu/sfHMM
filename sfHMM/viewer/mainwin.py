@@ -98,8 +98,13 @@ class TrajectoryViewer(QMainWindow):
             legend.remove()
         else:
             with plt.style.context(self.plot_style):
+                # temporary set all the lines visible. 
+                # Without this code, lines will not be displayed in legend.
+                for key in self.current_data.keys():
+                    self.lines[key].set_color(self.plot_color[key])
                 self.ax.legend()
-        self.fig.canvas.draw()
+        
+        self.update_plot()
         
     def show(self):
         super().show()

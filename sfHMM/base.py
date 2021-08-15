@@ -163,6 +163,8 @@ class sfHMMBase(GaussianHMM):
     def fit(self, X, lengths=None):
         # overloaded to make it scalable.
         scale = self.sg0*5
+        scale = 1.0 if scale <= 0 else scale
+        
         self.means_ /= scale
         self._covars_ /= scale**2
         super().fit(X/scale, lengths=lengths)
