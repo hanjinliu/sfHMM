@@ -1,82 +1,154 @@
 from __future__ import annotations
-from typing import Iterable
+from typing import Iterable, Union
 import numpy as np
 import pandas as pd
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-from qtpy.QtWidgets import (QGridLayout, QWidget, QCheckBox, QMainWindow, QDockWidget, QApplication)
+from qtpy.QtWidgets import (QGridLayout, QWidget, QCheckBox, QMainWindow, QDockWidget, QSpinBox, QAction)
 from qtpy.QtCore import Qt
 from .canvas import EventedCanvas
 
+DictLike = Union[dict, pd.DataFrame]
+
+def type_check(data) -> dict[str, np.ndarray]:
+    if isinstance(data, pd.DataFrame):
+        data = data.to_dict()
+    elif isinstance(data, dict):
+        data = {k: np.asarray(v) for k, v in data.items()}
+    else:
+        raise TypeError(f"data must be dict or pd.DataFrame, got {type(data)}")
+    return data
+    
+
 class TrajectoryViewer(QMainWindow):
-    def __init__(self, data:dict|pd.DataFrame|Iterable, styles:dict, colors:dict):
+    def __init__(self, data:DictLike|list[DictLike]|tuple[DictLike], styles:dict=None, colors:dict=None):
         super().__init__(parent=None)
-        
-        if isinstance(data, pd.DataFrame):
-            data = data.to_dict()
-        elif isinstance(data, dict):
-            data = {k: np.asarray(v) for k, v in data.items()}
+        # check input
+        if isinstance(data, (tuple, list)):
+            data = list(map(type_check, data))
         else:
-            data = {f"Data {i}": np.asarray(d) for i, d in enumerate(data)}
+            data = [type_check(data)]
         
         self.data = data
-        self.checkbox = CompositCheckBoxes(self, data.keys())        
-        self.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, self.checkbox)
+        self.checkbox = Controller(self, data[0].keys())     
+           
+        self.addDockWidget(Qt.BottomDockWidgetArea, self.checkbox)
         self.setUnifiedTitleAndToolBarOnMac(True)
         self.setWindowTitle("sfHMM plot")
-        self.plot_style = styles
+        self.plot_style = styles.copy() if styles is not None else {}
+        self.plot_style["legend.frameon"] = True
         self.plot_color = colors
-        self.lines = dict()
+        self.lines:dict[str, plt.Line2D] = dict()
+        self.current_index = 0
         # prepare a figure canvas
-        # To block additional figure opened, matplotlib backend must be changed temporary.
+        # To block additional figure being opened, matplotlib backend must be changed temporary.
         backend = mpl.get_backend()
         mpl.use("Agg")
         with plt.style.context(self.plot_style):
             self.fig = plt.figure()
             self.ax = self.fig.add_subplot(111)
+            for key, data in self.current_data.items():
+                self.lines[key] = self.ax.plot(data, color=self.plot_color[key], label=key)[0]
+            
         mpl.use(backend)
         
         self.setCentralWidget(EventedCanvas(self.fig))
-        
-        # First plot
-        for key, data in self.data.items():
-            self.lines[key] = self.ax.plot(data, color=self.plot_color[key])[0]
         self.fig.tight_layout()
-        self.fig.canvas.draw()        
+        self.fig.canvas.draw()
+        
+        self.menu = self.menuBar().addMenu("&Menu")
+        
+        show_legend = QAction("Show legend", parent=self, checkable=True, checked=False)
+        show_legend.triggered.connect(self.change_legend_visibility)
+        self.menu.addAction(show_legend)
+        
+        close = QAction("Close", parent=self)
+        close.triggered.connect(self.close)
+        self.menu.addAction(close)
+        
+    
+    @property
+    def current_data(self) -> dict[str, np.ndarray]:
+        """
+        Return the dataset dict that should be displayed. Independent of whether they are
+        visible or not.
+        """        
+        return self.data[self.current_index]
 
     def update_plot(self):
         checked = self.checkbox.isChecked()
-        for i, key in enumerate(self.data.keys()):
+        for i, key in enumerate(self.current_data.keys()):
             if checked[i]:
                 self.lines[key].set_color(self.plot_color[key])
             else:
                 self.lines[key].set_color([0,0,0,0])
                 
         self.fig.canvas.draw()
+    
+    def change_data(self):
+        for key, value in self.current_data.items():
+            self.lines[key].set_xdata(np.arange(len(value)))
+            self.lines[key].set_ydata(value)
             
-    def close(self):
-        self.checkbox.close()
-        del self.checkbox
-        super().close()
+        self.fig.canvas.draw()
+    
+    def change_legend_visibility(self):
+        legend = self.ax.get_legend()
+        if legend:
+            legend.remove()
+        else:
+            with plt.style.context(self.plot_style):
+                self.ax.legend()
+        self.fig.canvas.draw()
+        
+    def closeEvent(self, event):
+        """
+        When QMainWindow is closing, its dock widget will not automatically close when it is 
+        floating. We have to catch the close event and disable floating before actually close
+        the main window.
+        """        
+        for dock in self.findChildren(Controller):
+            dock.setFloating(False)
+        
+        event.accept()
 
-class CompositCheckBoxes(QDockWidget):
+class Controller(QDockWidget):
     def __init__(self, parent:TrajectoryViewer, names:Iterable[str]):
         super().__init__("Trajectories", parent=parent)
-        self.widget_list:list[QCheckBox] = []
-        self.checkboxeswidget = QWidget(self)
+        
+        self.setAllowedAreas(Qt.BottomDockWidgetArea | Qt.RightDockWidgetArea)
+        self.qcheckbox_list:list[QCheckBox] = []
+        
         layout = QGridLayout()
         layout.setAlignment(Qt.AlignCenter)
-        self.checkboxeswidget.setLayout(layout)
+        self.central_widget = QWidget(self)
+        self.central_widget.setLayout(layout)
         
+        self._set_checkboxes(names)
+        self._set_spinbox()
+        self.setWidget(self.central_widget)
+    
+    def isChecked(self):
+        return [widget.isChecked() for widget in self.qcheckbox_list]
+    
+    def _set_checkboxes(self, names):
         for name in names:
             checkbox = QCheckBox(self)
             checkbox.setText(name)
             checkbox.setChecked(True)
-            checkbox.stateChanged.connect(parent.update_plot)
-            self.widget_list.append(checkbox)
-            self.checkboxeswidget.layout().addWidget(checkbox)
+            checkbox.stateChanged.connect(self.parent().update_plot)
+            self.qcheckbox_list.append(checkbox)
+            self.central_widget.layout().addWidget(checkbox)
         
-        self.setWidget(self.checkboxeswidget)
-    
-    def isChecked(self):
-        return [wid.isChecked() for wid in self.widget_list]
+
+    def _set_spinbox(self):
+        if len(self.parent().data) == 1:
+            return None
+        self.spinbox = QSpinBox(parent=self)
+        self.spinbox.setRange(0, len(self.parent().data)-1)
+        @self.spinbox.valueChanged.connect
+        def _():
+            self.parent().current_index = int(self.spinbox.value())
+            self.parent().change_data()
+        
+        self.central_widget.layout().addWidget(self.spinbox)

@@ -492,6 +492,23 @@ class sfHMMn(sfHMMBase):
             plt.show()
         return None
     
+    def view_in_qt(self):
+        """
+        Open a Qt viewer and plot the results.
+        """        
+        from .viewer import TrajectoryViewer
+        datalist = []
+        for sf in self:
+            data = dict()
+            sf.data_raw is None or data.update({"raw data": sf.data_raw})
+            sf.step is None or data.update({"step finding": sf.step.fit})
+            sf.data_fil is None or data.update({"denoised": sf.data_fil})
+            sf.viterbi is None or data.update({"Viterbi path": sf.viterbi})
+            datalist.append(data)
+            
+        app = TrajectoryViewer(datalist, self.__class__.styles, self.__class__.colors)
+        app.show()
+        return app
     
     def accumulate_transitions(self) -> list[tuple[int, int]]:
         return concat([sf.accumulate_transitions() for sf in self])

@@ -1,9 +1,8 @@
 import matplotlib as mpl
-import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvas
 from matplotlib.backend_bases import MouseEvent, MouseButton
 
-__all__ = ["mpl", "plt_figure", "EventedCanvas", "StyledFigure"]
+__all__ = ["EventedCanvas"]
 
 class EventedCanvas(FigureCanvas):
     """

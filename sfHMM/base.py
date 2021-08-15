@@ -23,6 +23,7 @@ class sfHMMBase(GaussianHMM):
               "axes.grid": True,
               "axes.labelsize": 16,
               "grid.linewidth": 0.5,
+              "legend.framealpha": 0.8,
               "legend.frameon": False,
               "boxplot.meanprops.linewidth": 1,          
               }
