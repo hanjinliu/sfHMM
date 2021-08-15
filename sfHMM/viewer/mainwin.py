@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-from qtpy.QtWidgets import (QGridLayout, QWidget, QCheckBox, QMainWindow, QDockWidget, QSpinBox, QAction)
+from qtpy.QtWidgets import QGridLayout, QWidget, QCheckBox, QMainWindow, QDockWidget, QSpinBox, QAction
 from qtpy.QtCore import Qt
 from .canvas import EventedCanvas
 
@@ -100,6 +100,11 @@ class TrajectoryViewer(QMainWindow):
             with plt.style.context(self.plot_style):
                 self.ax.legend()
         self.fig.canvas.draw()
+        
+    def show(self):
+        super().show()
+        self.raise_()
+        self.activateWindow()
         
     def closeEvent(self, event):
         """

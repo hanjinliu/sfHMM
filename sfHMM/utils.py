@@ -1,4 +1,5 @@
 import numpy as np
+import sys
 from scipy.special import softmax
 from scipy.stats import entropy
 from scipy.optimize import minimize
@@ -123,3 +124,9 @@ def optimize_b(d1, d2, bins=None, range=None, bounds=None):
     result = minimize(calc_nmi, 0, args=(d1, d2), method="Powell", bounds=bounds)
     return 1, result.x
 
+def check_gui_state():
+    ipython = sys.modules.get("IPython", None)
+    if ipython is not None:
+        ipython_shell = ipython.get_ipython()
+        if getattr(ipython_shell, "active_eventloop", "qt") != "qt":
+            raise RuntimeError(r"Cannot start viewer. Run '%gui qt' magic first")
