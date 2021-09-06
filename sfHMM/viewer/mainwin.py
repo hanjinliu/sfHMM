@@ -4,11 +4,13 @@ import numpy as np
 import pandas as pd
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-from qtpy.QtWidgets import QGridLayout, QWidget, QCheckBox, QMainWindow, QDockWidget, QSpinBox, QAction
+from qtpy.QtWidgets import QGridLayout, QWidget, QCheckBox, QMainWindow, QDockWidget, QSpinBox, QAction, QApplication
 from qtpy.QtCore import Qt
 from .canvas import EventedCanvas
 
 DictLike = Union[dict, pd.DataFrame]
+
+APPLICATION = None
 
 def type_check(data) -> dict[str, np.ndarray]:
     if isinstance(data, pd.DataFrame):
@@ -22,6 +24,7 @@ def type_check(data) -> dict[str, np.ndarray]:
 
 class TrajectoryViewer(QMainWindow):
     def __init__(self, data:DictLike|list[DictLike]|tuple[DictLike], styles:dict=None, colors:dict=None):
+        get_app()
         super().__init__(parent=None)
         # check input
         if isinstance(data, (tuple, list)):
@@ -33,6 +36,8 @@ class TrajectoryViewer(QMainWindow):
         self.checkbox = Controller(self, data[0].keys())     
            
         self.addDockWidget(Qt.BottomDockWidgetArea, self.checkbox)
+        self.checkbox.visibilityChanged.connect(self.checkboxes_visibility_changed)
+        
         self.setUnifiedTitleAndToolBarOnMac(True)
         self.setWindowTitle("sfHMM plot")
         self.plot_style = styles.copy() if styles is not None else {}
@@ -62,6 +67,10 @@ class TrajectoryViewer(QMainWindow):
         show_legend.triggered.connect(self.change_legend_visibility)
         self.menu.addAction(show_legend)
         
+        self.show_controller = QAction("Show checkboxes", parent=self, checkable=True, checked=True)
+        self.show_controller.triggered.connect(self.change_checkboxes_visibility)
+        self.menu.addAction(self.show_controller)
+        
         close = QAction("Close", parent=self)
         close.triggered.connect(self.close)
         self.menu.addAction(close)
@@ -83,6 +92,7 @@ class TrajectoryViewer(QMainWindow):
             else:
                 self.lines[key].set_color([0,0,0,0])
                 
+        self.fig.tight_layout()
         self.fig.canvas.draw()
     
     def change_data(self):
@@ -90,7 +100,18 @@ class TrajectoryViewer(QMainWindow):
             self.lines[key].set_xdata(np.arange(len(value)))
             self.lines[key].set_ydata(value)
             
+        self.fig.tight_layout()
         self.fig.canvas.draw()
+    
+    def change_checkboxes_visibility(self):
+        if self.show_controller.isChecked():
+            self.checkbox.show()
+        else:
+            self.checkbox.hide()
+        
+    def checkboxes_visibility_changed(self):
+        self.show_controller.setChecked(self.checkbox.isVisible())
+        return None
     
     def change_legend_visibility(self):
         legend = self.ax.get_legend()
@@ -110,6 +131,7 @@ class TrajectoryViewer(QMainWindow):
         super().show()
         self.raise_()
         self.activateWindow()
+        exec_app()
         
     def closeEvent(self, event):
         """
@@ -162,3 +184,30 @@ class Controller(QDockWidget):
             self.parent().change_data()
         
         self.central_widget.layout().addWidget(self.spinbox)
+    
+
+def gui_qt():
+    try:
+        from IPython import get_ipython
+    except ImportError:
+        get_ipython = lambda: False
+
+    shell = get_ipython()
+    
+    if shell and shell.active_eventloop != "qt":
+        shell.enable_gui("qt")
+    return None
+
+def get_app():
+    gui_qt()
+    app = QApplication.instance()
+    if app is None:
+        app = QApplication([])
+    global APPLICATION
+    APPLICATION = app
+    return app
+
+def exec_app():
+    app = QApplication.instance()
+    app.exec_()
+    return None

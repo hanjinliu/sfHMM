@@ -495,7 +495,6 @@ class sfHMMn(sfHMMBase):
         """
         Open a Qt viewer and plot the results.
         """
-        check_gui_state()
         from .viewer import TrajectoryViewer
         datalist = []
         for sf in self:

@@ -284,7 +284,6 @@ class sfHMM1(sfHMMBase):
         """
         Open a Qt viewer and plot the results.
         """        
-        check_gui_state()
         from .viewer import TrajectoryViewer
         data = dict()
         self.data_raw is None or data.update({"raw data": self.data_raw})
