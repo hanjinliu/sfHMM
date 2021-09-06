@@ -42,6 +42,7 @@ class EventedCanvas(FigureCanvas):
             ax.set_ylim([(y1 + y0)/2 - (y1 - y0)/2*factor,
                          (y1 + y0)/2 + (y1 - y0)/2*factor])
             break
+        fig.tight_layout()
         fig.canvas.draw()
         return None
     
@@ -82,6 +83,7 @@ class EventedCanvas(FigureCanvas):
                 ax.set_ylim([y0, y1 - dy])
             break
 
+        fig.tight_layout()
         fig.canvas.draw()
         return None
 
