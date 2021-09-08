@@ -280,17 +280,20 @@ class sfHMM1(sfHMMBase):
         
         return None
     
-    def view_in_qt(self):
+    def view_in_qt(self, title:str|None=None):
         """
         Open a Qt viewer and plot the results.
         """        
         from .viewer import TrajectoryViewer
+        if title is None:
+            title = self.name
         data = dict()
         self.data_raw is None or data.update({"raw data": self.data_raw})
         self.step is None or data.update({"step finding": self.step.fit})
         self.data_fil is None or data.update({"denoised": self.data_fil})
         self.viterbi is None or data.update({"Viterbi path": self.viterbi})
         viewer = TrajectoryViewer(data, self.__class__.styles, self.__class__.colors)
+        viewer.setWindowTitle(title)
         viewer.show()
         return viewer
     

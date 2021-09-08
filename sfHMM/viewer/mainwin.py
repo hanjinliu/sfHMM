@@ -39,7 +39,7 @@ class TrajectoryViewer(QMainWindow):
         self.checkbox.visibilityChanged.connect(self.checkboxes_visibility_changed)
         
         self.setUnifiedTitleAndToolBarOnMac(True)
-        self.setWindowTitle("sfHMM plot")
+        
         self.plot_style = styles.copy() if styles is not None else {}
         self.plot_style["legend.frameon"] = True
         self.plot_color = colors
@@ -131,7 +131,7 @@ class TrajectoryViewer(QMainWindow):
         super().show()
         self.raise_()
         self.activateWindow()
-        exec_app()
+        return None
         
     def closeEvent(self, event):
         """
@@ -206,8 +206,3 @@ def get_app():
     global APPLICATION
     APPLICATION = app
     return app
-
-def exec_app():
-    app = QApplication.instance()
-    app.exec_()
-    return None
