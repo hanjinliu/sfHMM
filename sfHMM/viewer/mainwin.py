@@ -3,6 +3,7 @@ from typing import Iterable, Union
 import numpy as np
 import pandas as pd
 import matplotlib as mpl
+from matplotlib.axes import Axes
 import matplotlib.pyplot as plt
 from qtpy.QtWidgets import QGridLayout, QWidget, QCheckBox, QMainWindow, QDockWidget, QSpinBox, QAction, QApplication
 from qtpy.QtCore import Qt
@@ -23,8 +24,17 @@ def type_check(data) -> dict[str, np.ndarray]:
     
 
 class TrajectoryViewer(QMainWindow):
+    """
+    Show interactive multi-trajectory plot.
+    
+    >>> data = {"traj-1": np.array([...]),
+                "traj-2": np.array([...])
+                }
+    >>> viewer = TrajectoryViewer(data)
+    >>> viewer.show()
+    """    
     def __init__(self, data:DictLike|list[DictLike]|tuple[DictLike], styles:dict=None, colors:dict=None):
-        get_app()
+        app = get_app()
         super().__init__(parent=None)
         # check input
         if isinstance(data, (tuple, list)):
@@ -51,7 +61,7 @@ class TrajectoryViewer(QMainWindow):
         mpl.use("Agg")
         with plt.style.context(self.plot_style):
             self.fig = plt.figure()
-            self.ax = self.fig.add_subplot(111)
+            self.ax:Axes = self.fig.add_subplot(111)
             for key, data in self.current_data.items():
                 self.lines[key] = self.ax.plot(data, color=self.plot_color[key], label=key)[0]
             
@@ -85,7 +95,7 @@ class TrajectoryViewer(QMainWindow):
         return self.data[self.current_index]
 
     def update_plot(self):
-        checked = self.checkbox.isChecked()
+        checked = self.checkbox.isEachChecked()
         for i, key in enumerate(self.current_data.keys()):
             if checked[i]:
                 self.lines[key].set_color(self.plot_color[key])
@@ -160,7 +170,10 @@ class Controller(QDockWidget):
         self._set_spinbox()
         self.setWidget(self.central_widget)
     
-    def isChecked(self):
+    def parent(self) -> TrajectoryViewer: # for IDE
+        return super().parent()
+    
+    def isEachChecked(self) -> list[bool]:
         return [widget.isChecked() for widget in self.qcheckbox_list]
     
     def _set_checkboxes(self, names):
