@@ -1,4 +1,3 @@
-import matplotlib as mpl
 from matplotlib.backends.backend_qt5agg import FigureCanvas
 from matplotlib.backend_bases import MouseEvent, MouseButton
 
@@ -42,7 +41,7 @@ class EventedCanvas(FigureCanvas):
             ax.set_ylim([(y1 + y0)/2 - (y1 - y0)/2*factor,
                          (y1 + y0)/2 + (y1 - y0)/2*factor])
             break
-        fig.tight_layout()
+
         fig.canvas.draw()
         return None
     
@@ -83,7 +82,6 @@ class EventedCanvas(FigureCanvas):
                 ax.set_ylim([y0, y1 - dy])
             break
 
-        fig.tight_layout()
         fig.canvas.draw()
         return None
 
