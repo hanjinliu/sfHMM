@@ -72,9 +72,10 @@ class sfHMMn(sfHMMBase):
             _k = ":".join([str(key.start), str(key.stop), str(key.step or "")])
             if _k.endswith(":"):
                 _k = _k[:-1]
-            new = self.__class__(sg0=self.sg0, psf=self.psf, krage=self.krange,
+            new = self.__class__(sg0=self.sg0, psf=self.psf, krange=self.krange,
                                  model=self.model, name=f"{self.name}[{_k}]")
             new._sf_list = self._sf_list[key]
+            new.ylim = self.ylim
             new.n_data = len(new._sf_list)
             return new
         else:
@@ -462,7 +463,7 @@ class sfHMMn(sfHMMBase):
         
         # index list that satisfies filter_func
         if filter_func is None:
-            indices = np.arange(self.n_data)
+            indices = range(self.n_data)
         else:
             indices = [i for (i, sf) in enumerate(self) if filter_func(sf)]
         
