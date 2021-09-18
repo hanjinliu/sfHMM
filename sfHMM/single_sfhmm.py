@@ -42,8 +42,16 @@ class sfHMM1(sfHMMBase):
         Viterbi path of 'data_raw', while takes values in 'means_'.
     """
     
-    def __init__(self, data_raw:_S|None=None, *, sg0:float=-1, psf:float=-1, krange=None,
-                 model:str="g", name:str="", **kwargs):
+    def __init__(self, 
+                 data_raw:_S|None=None, 
+                 *, 
+                 sg0: float = -1, 
+                 psf: float = -1, 
+                 krange: int|tuple[int, int]|None = None,
+                 model: str = "g", 
+                 name: str = "", 
+                 **kwargs
+                 ):
         """
         Parameters
         ----------
@@ -211,7 +219,7 @@ class sfHMM1(sfHMMBase):
         return self
 
 
-    def plot(self, trange=None):
+    def plot(self, trange:int|tuple[int, int]|None=None):
         """        
         Plot figures of:
             [1] data_raw & step_fit      ||  layout

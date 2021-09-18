@@ -32,8 +32,16 @@ class sfHMMn(sfHMMBase):
         The i-th sfHMM object. See .\single_sfhmm.py.
     """
     
-    def __init__(self, data_raw:Iterable[_S]|None=None, *, sg0:float=-1, 
-                 psf:float=-1, krange=None, model:str="g", name:str="", **kwargs):
+    def __init__(self, 
+                 data_raw: Iterable[_S]|None = None, 
+                 *, 
+                 sg0:float = -1, 
+                 psf:float = -1, 
+                 krange: int|tuple[int, int] = None, 
+                 model:str = "g", 
+                 name:str = "", 
+                 **kwargs
+                 ):
         """
         Parameters
         ----------

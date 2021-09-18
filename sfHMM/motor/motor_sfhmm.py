@@ -1,13 +1,22 @@
 from __future__ import annotations
+from typing import Iterable
 import numpy as np
-from ..single_sfhmm import sfHMM1
-from ..multi_sfhmm import sfHMMn
 from .base import sfHMMmotorBase
+from ..single_sfhmm import sfHMM1, _S
+from ..multi_sfhmm import sfHMMn
 from ..utils import *
 
 class sfHMM1Motor(sfHMMmotorBase, sfHMM1):
-    def __init__(self, data_raw=None, *, sg0:float=-1, psf:float=-1, krange=None,
-                 model:str="g", name:str="", max_stride:int=2):
+    def __init__(self, 
+                 data_raw: _S = None, 
+                 *, 
+                 sg0: float = -1, 
+                 psf: float = -1,
+                 krange: int|tuple[int, int]|None = None,
+                 model: str = "g", 
+                 name: str = "", 
+                 max_stride: int = 2
+                 ):
         """
         Parameters
         ----------
@@ -57,7 +66,7 @@ class sfHMM1Motor(sfHMMmotorBase, sfHMM1):
         
         return None
     
-    def _estimate_krange(self, estimation):
+    def _estimate_krange(self, estimation:str):
         dy = self._accumulate_step_sizes()
         nsmall, nlarge = sorted(map(int, [np.sum(dy>0), np.sum(dy<0)]))
         if estimation == "fast":
@@ -70,8 +79,16 @@ class sfHMM1Motor(sfHMMmotorBase, sfHMM1):
     
     
 class sfHMMnMotor(sfHMMmotorBase, sfHMMn):
-    def __init__(self, data_raw=None, *, sg0:float=-1, psf:float=-1, krange=None, 
-                 model:str="g", name:str="", max_stride:int=2):
+    def __init__(self, 
+                 data_raw: Iterable[_S] = None, 
+                 *,
+                 sg0: float = -1, 
+                 psf: float = -1,
+                 krange: int|tuple[int, int]|None = None, 
+                 model: str = "g", 
+                 name: str = "", 
+                 max_stride: int = 2
+                 ):
         """
         Parameters
         ----------
@@ -101,7 +118,7 @@ class sfHMMnMotor(sfHMMmotorBase, sfHMMn):
             self.appendn(data_raw)
     
     @append_log
-    def append(self, data, name:str=None) -> sfHMMnMotor:
+    def append(self, data:_S, name:str=None) -> sfHMMnMotor:
         if name is None:
             name = self.name + f"[{self.n_data}]"
             
@@ -129,7 +146,7 @@ class sfHMMnMotor(sfHMMmotorBase, sfHMMn):
         
         return None
     
-    def _copy_params(self, sf):
+    def _copy_params(self, sf:sfHMM1Motor):
         if self.covariance_type == "spherical":
             sf.covars_ = self.covars_.ravel()
         else:
@@ -140,7 +157,7 @@ class sfHMMnMotor(sfHMMmotorBase, sfHMMn):
         sf.transmat_kernel = self.transmat_kernel
         return None
 
-    def _estimate_krange(self, estimation):
+    def _estimate_krange(self, estimation:str):
         nsmall = nlarge = 0
         for sf in self:
             dy = sf._accumulate_step_sizes()

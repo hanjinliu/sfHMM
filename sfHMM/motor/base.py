@@ -1,9 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from hmmlearn.utils import log_mask_zero, normalize
-from ..base import sfHMMBase
-from . import _hmmc_motor
 from scipy import special
+from . import _hmmc_motor
+from ..base import sfHMMBase
 
 class sfHMMmotorBase(sfHMMBase):
     """
