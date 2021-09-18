@@ -1,12 +1,12 @@
 from __future__ import annotations
 import re
 import copy
-from typing import Iterable
+from typing import Callable, Iterable, Iterator, overload
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from .utils import *
-from .single_sfhmm import sfHMM1
+from .single_sfhmm import sfHMM1, _S
 from .base import sfHMMBase
 
 __all__ = ["sfHMMn"]
@@ -32,8 +32,8 @@ class sfHMMn(sfHMMBase):
         The i-th sfHMM object. See .\single_sfhmm.py.
     """
     
-    def __init__(self, data_raw=None, *, sg0:float=-1, psf:float=-1, krange=None, 
-                 model:str="g", name:str="", **kwargs):
+    def __init__(self, data_raw:Iterable[_S]|None=None, *, sg0:float=-1, 
+                 psf:float=-1, krange=None, model:str="g", name:str="", **kwargs):
         """
         Parameters
         ----------
@@ -60,11 +60,27 @@ class sfHMMn(sfHMMBase):
         self.gmm_opt = None
         data_raw is None or self.appendn(data_raw)
     
+    @overload
+    def __getitem__(self, key:int) -> sfHMM1: ...
+    @overload
+    def __getitem__(self, key:slice) -> sfHMMn: ...
     
-    def __getitem__(self, key) -> sfHMM1:
-        return self._sf_list[key]
+    def __getitem__(self, key):
+        if isinstance(key, int):
+            return self._sf_list[key]
+        elif isinstance(key, slice):
+            _k = ":".join([str(key.start), str(key.stop), str(key.step or "")])
+            if _k.endswith(":"):
+                _k = _k[:-1]
+            new = self.__class__(sg0=self.sg0, psf=self.psf, krage=self.krange,
+                                 model=self.model, name=f"{self.name}[{_k}]")
+            new._sf_list = self._sf_list[key]
+            new.n_data = len(new._sf_list)
+            return new
+        else:
+            raise TypeError(f"Index key must be int or slice, got {type(key)}")
     
-    def __iter__(self):
+    def __iter__(self) -> Iterator[sfHMM1]:
         return iter(self._sf_list)
     
     def __add__(self, other:sfHMMn) -> sfHMMn:
@@ -89,7 +105,7 @@ class sfHMMn(sfHMMBase):
         return [sf.name for sf in self]
     
     @append_log
-    def append(self, data, name:str=None) -> sfHMMn:
+    def append(self, data:_S, name:str=None) -> sfHMMn:
         """
         Append a trajectory as sfHMM object.
 
@@ -112,7 +128,7 @@ class sfHMMn(sfHMMBase):
         return self
     
     
-    def appendn(self, datasets:Iterable) -> sfHMMn:
+    def appendn(self, datasets:Iterable[_S]) -> sfHMMn:
         """
         Append all the data in `datasets`.
 
@@ -158,7 +174,7 @@ class sfHMMn(sfHMMBase):
         
         return None
     
-    def deleteif(self, filter_func, *args) -> list[int]:
+    def deleteif(self, filter_func:Callable[[sfHMM1], bool]) -> list[int]:
         """
         Delete sfHMM1 object(s) from the list if certain conditions are
         satisfied.
@@ -166,9 +182,7 @@ class sfHMMn(sfHMMBase):
         Parameters
         ----------
         filter_func : callable
-            `filter_func(sf, *args)==True` then delete `sf`.
-        *args : 
-            Additional arguments that will be passed to `filter_func`.
+            `filter_func(sf)==True` then delete `sf`.
 
         Returns
         -------
@@ -178,9 +192,7 @@ class sfHMMn(sfHMMBase):
         if not callable(filter_func):
             raise TypeError("`filter_func` must be callable")
         
-        indices = []
-        for i, sf in enumerate(self):
-            filter_func(sf, *args) and indices.append(i)
+        indices = [i for i, sf in enumerate(self) if filter_func(sf)]
         
         len(indices) > 0 and self.delete(indices)
         
@@ -202,7 +214,7 @@ class sfHMMn(sfHMMBase):
         self.n_data -= 1
         return out
     
-    def from_dict(self, d:dict, like:str=None, regex:str=None):
+    def from_dict(self, d:dict[str, _S], like:str=None, regex:str=None):
         """
         Load datasets from dict.
 
@@ -426,7 +438,7 @@ class sfHMMn(sfHMMBase):
             plt.show()
         return None
         
-    def plot_traces(self, data:str="Viterbi path", filter_func=None, sharex=False):
+    def plot_traces(self, data:str="Viterbi path", filter_func:Callable=None, sharex:bool=False):
         """
         Plot all the trajectories. The figure will look like:
          __ __ __ __
@@ -522,7 +534,7 @@ class sfHMMn(sfHMMBase):
             raise sfHMMAnalysisError("Steps are not detected yet.")
         return np.array(concat([sf.step.step_size_list for sf in self]))
     
-    def _copy_params(self, sf):
+    def _copy_params(self, sf:sfHMM1):
         if self.covariance_type == "spherical":
             sf.covars_ = self.covars_.ravel()
         else:
@@ -535,7 +547,7 @@ class sfHMMn(sfHMMBase):
     
     @under_development
     @append_log
-    def align(self, bounds:tuple[float, float], bins:int=32, formula="y=ax") -> list:
+    def align(self, bounds:tuple[float, float], bins:int=32, formula:str="y=ax") -> list:
         """
         Align step finding results with `formula` transformation. The optimal parameter is 
         determined by minimizing normalized mutual information of two step finding results:

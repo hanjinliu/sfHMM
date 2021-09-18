@@ -17,7 +17,7 @@ from . import io
 try:
 	from . import motor
 except ImportError as e:
-    motor = ModuleInsufficient("motor", e)
+    motor = ModuleInsufficient("motor", e) # type: ignore
     
 from .sampling import hmm_sampling, motor_sampling
 

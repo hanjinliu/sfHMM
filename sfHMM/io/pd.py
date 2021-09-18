@@ -48,7 +48,7 @@ def read(path:str, out:sfHMMn=None, sep:str=None, encoding:str=None, header:int=
     return out
 
 def read_excel(path:str, ref:sfHMMBase=None, ignore_exceptions:bool=True, header:int=0, 
-               squeeze:bool=False, **kwargs) -> dict[str: sfHMMn] | sfHMMn:
+               squeeze:bool=False, **kwargs) -> dict[str, sfHMMn] | sfHMMn:
     """
     Read a Excel file using pandas.read_excel, and import its data to sfHMMn object. Every sheet
     must have only single trajectory.

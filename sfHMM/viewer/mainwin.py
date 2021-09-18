@@ -52,7 +52,7 @@ class TrajectoryViewer(QMainWindow):
         
         self.plot_style = styles.copy() if styles is not None else {}
         self.plot_style["legend.frameon"] = True
-        self.plot_color = colors
+        self.plot_color = colors.copy() if colors is not None else {}
         self.lines:dict[str, plt.Line2D] = dict()
         self.current_index = 0
         # prepare a figure canvas

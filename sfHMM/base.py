@@ -1,3 +1,4 @@
+from abc import abstractmethod
 import os
 import numpy as np
 import matplotlib.pyplot as plt
@@ -28,6 +29,11 @@ class sfHMMBase(GaussianHMM):
               "boxplot.meanprops.linewidth": 1,          
               }
     
+    means_: np.ndarray
+    startprob_: np.ndarray
+    covars_: np.ndarray
+    transmat_: np.ndarray
+    
     def __init__(self, sg0:float=-1, psf:float=-1, krange=None,
                  model:str="g", name:str="", **hmmlearn_params):
         self.sg0 = sg0
@@ -39,7 +45,7 @@ class sfHMMBase(GaussianHMM):
         super().__init__(self, **params)
         self.n_features = 1
         self.name = str(name) if name else self._name()
-        self._log = []
+        self._log: list[tuple[str, str, str]] = []
     
     @property
     def log(self):
@@ -125,10 +131,19 @@ class sfHMMBase(GaussianHMM):
         save(self, path)
         return None
 
+    @abstractmethod
     def step_finding(self): ...
+    
+    @abstractmethod
     def denoising(self): ...
-    def gmmfit(self, method): ...
+    
+    @abstractmethod
+    def gmmfit(self, method, n_init, random_state): ...
+    
+    @abstractmethod
     def hmmfit(self): ...
+    
+    @abstractmethod
     def plot(self): ...
     
     def run_all(self, plot:bool=True, continue_:bool=False):

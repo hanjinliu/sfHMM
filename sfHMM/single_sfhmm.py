@@ -1,11 +1,14 @@
 from __future__ import annotations
 import matplotlib.pyplot as plt
 import numpy as np
-from .base import sfHMMBase
 from warnings import warn
+from typing import TypeVar
+from .base import sfHMMBase
 from .utils import *
 
 __all__ = ["sfHMM1"]
+
+_S = TypeVar("_S") # array-like
 
 class sfHMM1(sfHMMBase):    
     """
@@ -39,7 +42,7 @@ class sfHMM1(sfHMMBase):
         Viterbi path of 'data_raw', while takes values in 'means_'.
     """
     
-    def __init__(self, data_raw=None, *, sg0:float=-1, psf:float=-1, krange=None,
+    def __init__(self, data_raw:_S|None=None, *, sg0:float=-1, psf:float=-1, krange=None,
                  model:str="g", name:str="", **kwargs):
         """
         Parameters
@@ -65,20 +68,20 @@ class sfHMM1(sfHMMBase):
         self.gmm_opt = None
         self.states = None
         self.viterbi = None
-        self._sg_list = []
+        self._sg_list: list[float] = []
         super().__init__(sg0, psf, krange, model, name, **kwargs)
         self.data_raw = data_raw
     
     @property
-    def size(self):
+    def size(self) -> int:
         return self.data_raw.size
     
     @property
-    def data_raw(self):
+    def data_raw(self) -> np.ndarray:
         return self._data_raw
     
     @data_raw.setter
-    def data_raw(self, value):
+    def data_raw(self, value:_S):
         if value is None:
             self._data_raw = None
         elif np.isscalar(value):
