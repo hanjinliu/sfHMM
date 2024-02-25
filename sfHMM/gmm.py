@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import numpy as np
 from sklearn import mixture
 import matplotlib.pyplot as plt
@@ -262,8 +264,10 @@ class DPGMM(mixture.BayesianGaussianMixture):
             self.degrees_of_freedom_ = self.degrees_of_freedom_[unique_labels][order]
             
         if self.weight_concentration_prior_type == "dirichlet_process":
-            self.weight_concentration_ = (self.weight_concentration_[0][unique_labels][order],
-                                          self.weight_concentration_[1][unique_labels][order])
+            self.weight_concentration_ = (
+                self.weight_concentration_[0][unique_labels][order],
+                self.weight_concentration_[1][unique_labels][order],
+            )
         else:
             self.weight_concentration_ = self.weight_concentration_[unique_labels][order]
         

@@ -1,41 +1,51 @@
 from abc import abstractmethod
 import os
 import numpy as np
+from numpy.typing import NDArray
 import matplotlib.pyplot as plt
 from hmmlearn.hmm import GaussianHMM
-from .utils import *
-from .gmm import GMMs, DPGMM
-from .step import GaussStep, PoissonStep, BaseStep
+from sfHMM.utils import gauss_mix
+from sfHMM.gmm import GMMs, DPGMM
+from sfHMM.step import GaussStep, PoissonStep, BaseStep
 
 class sfHMMBase(GaussianHMM):
     count = 0
-    colors = {"raw data": "#FF89F4", 
-              "step finding": "#335426",
-              "denoised": "#180CB4", 
-              "GMM": "#ED1111",
-              "GMM marker": "#FF81D8",
-              "Viterbi path": "#3B252B",
-              }
-    styles = {"font.size": 16, 
-              "lines.linewidth": 1,
-              "axes.titlesize": 24,
-              "font.family": "serif",
-              "font.serif": "Arial",
-              "axes.grid": True,
-              "axes.labelsize": 16,
-              "grid.linewidth": 0.5,
-              "legend.framealpha": 0.8,
-              "legend.frameon": False,
-              "boxplot.meanprops.linewidth": 1,          
-              }
+    colors = {
+        "raw data": "#FF89F4", 
+        "step finding": "#335426",
+        "denoised": "#180CB4", 
+        "GMM": "#ED1111",
+        "GMM marker": "#FF81D8",
+        "Viterbi path": "#3B252B",
+    }
+    styles = {
+        "font.size": 16, 
+        "lines.linewidth": 1,
+        "axes.titlesize": 24,
+        "font.family": "serif",
+        "font.serif": "Arial",
+        "axes.grid": True,
+        "axes.labelsize": 16,
+        "grid.linewidth": 0.5,
+        "legend.framealpha": 0.8,
+        "legend.frameon": False,
+        "boxplot.meanprops.linewidth": 1,          
+    }
     
-    means_: np.ndarray
-    startprob_: np.ndarray
-    covars_: np.ndarray
-    transmat_: np.ndarray
+    means_: NDArray[np.number]
+    startprob_: NDArray[np.number]
+    covars_: NDArray[np.number]
+    transmat_: NDArray[np.number]
     
-    def __init__(self, sg0:float=-1, psf:float=-1, krange=None,
-                 model:str="g", name:str="", **hmmlearn_params):
+    def __init__(
+        self,
+        sg0: float = -1,
+        psf: float = -1,
+        krange: "int | tuple[int, int] | None" = None,
+        model:str="g",
+        name:str="", 
+        **hmmlearn_params,
+    ):
         self.sg0 = sg0
         self.psf = psf
         self.krange = krange
@@ -105,7 +115,7 @@ class sfHMMBase(GaussianHMM):
         out.pop("name", None)     # This does not affect analysis
         return out
     
-    def save(self, path:str=None, overwrite:bool=False):
+    def save(self, path: str = None, overwrite: bool = False):
         """
         Save the content.
 
@@ -117,13 +127,16 @@ class sfHMMBase(GaussianHMM):
             Allow overwriting existing file.
             
         """        
-        from .io import save
+        from sfHMM.io import save
+
         if path is None:
             try:
                 source = self.source
             except AttributeError:
-                raise AttributeError("Data was not read by 'read' function so that the location of original data "
-                                     "is unknown. 'path' argument is needed.")
+                raise AttributeError(
+                    "Data was not read by 'read' function so that the location of "
+                    "original data is unknown. 'path' argument is needed."
+                )
             file, ext = os.path.splitext(source)
             path = "".join([file, "-sfHMMresult", ext])
         if os.path.exists(path) and not overwrite:
@@ -158,7 +171,7 @@ class sfHMMBase(GaussianHMM):
             If True, and sfHMM analysis is half-way, then only run the rest of analysis.
         """
         if continue_:
-            logs = [l[0] for l in self._log if l[2] == "Passed"]
+            logs = [_l[0] for _l in self._log if _l[2] == "Passed"]
         else:
             logs = []
         
@@ -225,9 +238,9 @@ class sfHMMBase(GaussianHMM):
         Initialize 'sg0' if it is negative.
         """        
         if self.sg0 < 0:
-            l = np.abs(self._accumulate_step_sizes())
-            if len(l) > 0:
-                self.sg0 = np.percentile(l, p) * 0.2
+            _l = np.abs(self._accumulate_step_sizes())
+            if len(_l) > 0:
+                self.sg0 = np.percentile(_l, p) * 0.2
             else:
                 self.sg0 = np.std(self.data_raw)
         

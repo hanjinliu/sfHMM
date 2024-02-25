@@ -1,11 +1,23 @@
 from __future__ import annotations
+
 import re
 import copy
-from typing import Callable, Iterable, Iterator, overload
+from typing import Callable, Iterable, Iterator, Literal, overload
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from .utils import *
+from .utils import (
+    append_log,
+    plot2,
+    concat,
+    calc_covars,
+    calc_startprob,
+    calc_transmat,
+    sfHMMAnalysisError,
+    optimize_ax,
+    optimize_b,
+    under_development,
+)
 from .single_sfhmm import sfHMM1, _S
 from .base import sfHMMBase
 
@@ -52,9 +64,11 @@ class sfHMMn(sfHMMBase):
             If <= 0, sg0 will be determined automatically.
         psf : float, optional
             Transition probability used in step finding algorithm.
-            if 0 < p < 0.5 is not satisfied, the original Kalafut-Visscher's algorithm is executed.
+            if 0 < p < 0.5 is not satisfied, the original Kalafut-Visscher's algorithm 
+            is executed.
         krange : int or (int, int)
-            Minimum and maximum number of states to search in GMM clustering. If it is integer, then
+            Minimum and maximum number of states to search in GMM clustering. If it is 
+            integer, then
             it will be interpretted as (krange, krange).
         model: str, by default "g" (= Gaussian)
             Distribution of noise. Gauss and Poisson distribution are available for now.
@@ -94,8 +108,8 @@ class sfHMMn(sfHMMBase):
     
     def __add__(self, other:sfHMMn) -> sfHMMn:
         """
-        `+` is supported for two sfHMMn objects. a+b makes a new sfHMMn object with concatenated
-        list of sfHMM1 objects.
+        `+` is supported for two sfHMMn objects. a+b makes a new sfHMMn object with 
+        concatenated list of sfHMM1 objects.
         """        
         if self is other:
             new = self.__class__(sg0=self.sg0, psf=self.psf, krage=self.krange,
@@ -143,15 +157,16 @@ class sfHMMn(sfHMMBase):
 
         Parameters
         ----------
-        datasets : dict, list or any iterable objects except for np.ndarray or pd.DataFrame.
+        datasets : dict, list or iterable objects except for np.ndarray or pd.DataFrame.
             Datasets to be appended. If it is dict, then keys are interpreted as names.
         """        
         if isinstance(datasets, dict):
             self.from_dict(datasets)
         elif isinstance(datasets, np.ndarray):
-            raise TypeError("Datasets of ndarray is ambiguious. Please use self.append(a) for 1-D "
-                            "ndarray, or explicitly specify along which axis to iterate by such as "
-                            "list(a) or np.split(a, axis=1).")
+            raise TypeError(
+                "Datasets of ndarray is ambiguious. Please use self.append(a) for 1-D "
+                "ndarray, or explicitly specify along which axis to iterate by such as "
+                "list(a) or np.split(a, axis=1).")
         elif isinstance(datasets, pd.DataFrame):
             self.from_pandas(datasets)
         else:
@@ -238,7 +253,7 @@ class sfHMMn(sfHMMBase):
         """    
         for name, data in d.items():
             # only keys matched like or regex requirement are appended.
-            if like and not like in name:
+            if like and like not in name:
                 continue
             if regex and not re.match(regex, name):
                 continue
@@ -246,11 +261,19 @@ class sfHMMn(sfHMMBase):
             self.append(data, name=str(name))
         
         if self.n_data == 0:
-            raise ValueError("No data appended. Confirm that input dict is in a correct format.")
+            raise ValueError(
+                "No data appended. Confirm that input dict is in a correct format."
+            )
         
         return self
         
-    def from_pandas(self, df:pd.DataFrame, like:str=None, regex:str=None, melt:bool|str="infer") -> sfHMMn:
+    def from_pandas(
+        self,
+        df: pd.DataFrame,
+        like: str | None = None,
+        regex: str | None = None,
+        melt: bool | Literal["infer"] = "infer",
+    ) -> sfHMMn:
         """
         Load datasets from pandas.DataFrame.
 
@@ -263,7 +286,8 @@ class sfHMMn(sfHMMBase):
         regex : regular expression, optional
             If given, dataset that matches this regular expression is appended.
         melt : bool or "infer", optional
-            If input DataFrame is melted, which is automatically determined when melt is "infer".
+            If input DataFrame is melted, which is automatically determined when melt is
+            "infer".
         """        
         if melt == "infer":
             # Determine if df is melted or not
@@ -275,11 +299,13 @@ class sfHMMn(sfHMMBase):
         
         if melt:
             if df.shape[1] != 2:
-                raise ValueError("For melted DataFrame, it must composed of two columns, with names "
-                                 "in the first and values in the second.")
+                raise ValueError(
+                    "For melted DataFrame, it must composed of two columns, with names "
+                    "in the first and values in the second."
+                )
             name_col, value_col = df.columns
             for name in df[name_col].unique():
-                if like and not like in name:
+                if like and like not in name:
                     continue
                 elif regex and not re.match(regex, name):
                     continue
@@ -293,7 +319,9 @@ class sfHMMn(sfHMMBase):
                 self.append(data, name)  # append data
         
         if self.n_data == 0:
-            raise ValueError("No data appended. Confirm that input DataFrame is in a correct format.")
+            raise ValueError(
+                "No data appended. Confirm that input DataFrame is in a correct format."
+            )
         
         return self
     
@@ -309,7 +337,7 @@ class sfHMMn(sfHMMBase):
             Important arguments in pd.read_csv. Default is header=0 rather than "infer" 
             because header="infer" usually works in a wrong way.
         **kwargs
-            Other keyword arguments that will passed to pd.read_csv() or pd.read_excel().
+            Other keyword arguments that will passed to pd.read_csv or pd.read_excel.
         """   
         from .io import read
         read(path, out=self, sep=sep, encoding=encoding, header=header, **kwargs)
@@ -375,8 +403,8 @@ class sfHMMn(sfHMMBase):
     @append_log
     def hmmfit(self) -> sfHMMn:
         """
-        HMM paramter optimization by Forward-Backward algorithm, and state inference by Viterbi 
-        algorithm.
+        HMM paramter optimization by Forward-Backward algorithm, and state inference by 
+        Viterbi algorithm.
         """
         if self.n_data <= 0:
             raise sfHMMAnalysisError("Cannot start analysis before appending data.")
@@ -413,7 +441,11 @@ class sfHMMn(sfHMMBase):
         return self
 
     def _set_covars(self):
-        self.covars_ = calc_covars(self.data_raw_all, concat(self.states_list), self.n_components)
+        self.covars_ = calc_covars(
+            self.data_raw_all, 
+            concat(self.states_list),
+            self.n_components,
+        )
         return None
     
     def _set_means(self):
@@ -447,7 +479,12 @@ class sfHMMn(sfHMMBase):
             plt.show()
         return None
         
-    def plot_traces(self, data:str="Viterbi path", filter_func:Callable=None, sharex:bool=False):
+    def plot_traces(
+        self,
+        data: str = "Viterbi path",
+        filter_func: Callable | None = None,
+        sharex: bool = False,
+    ):
         """
         Plot all the trajectories. The figure will look like:
          __ __ __ __
@@ -463,7 +500,8 @@ class sfHMMn(sfHMMBase):
         data : str, default is "Viterbi path"
             Which data to plot over the raw data trajectories.
         filter_func : callable or None, optional
-            If not None, only sfHMM objects that satisfy filter_func(sf)==True are plotted.
+            If not None, only sfHMM objects that satisfy filter_func(sf)==True are 
+            plotted.
         sharex : bool, default is False
             If True, all the subplots will share x-limits.
         """
@@ -529,7 +567,9 @@ class sfHMMn(sfHMMBase):
             sf.viterbi is None or data.update({"Viterbi path": sf.viterbi})
             datalist.append(data)
             
-        viewer = TrajectoryViewer(datalist, self.__class__.styles, self.__class__.colors)
+        viewer = TrajectoryViewer(
+            datalist, self.__class__.styles, self.__class__.colors
+        )
         viewer.setWindowTitle(title)
         viewer.show()
         return viewer
@@ -556,11 +596,17 @@ class sfHMMn(sfHMMBase):
     
     @under_development
     @append_log
-    def align(self, bounds:tuple[float, float], bins:int=32, formula:str="y=ax") -> list:
+    def align(
+        self,
+        bounds: tuple[float, float], 
+        bins: int = 32,
+        formula: Literal["ax", "y=ax", "b", "y=x+b"] = "y=ax",
+    ) -> list:
         """
-        Align step finding results with `formula` transformation. The optimal parameter is 
-        determined by minimizing normalized mutual information of two step finding results:
-        `self[0].step.fit` as the reference and `a * self[i].step.fit + b` as the variable.
+        Align step finding results with `formula` transformation. The optimal parameter
+        is determined by minimizing normalized mutual information of two step finding
+        results: `self[0].step.fit` as the reference and `a * self[i].step.fit + b` as 
+        the variable.
         
         (1) y = ax
           __                  __    __
@@ -576,8 +622,8 @@ class sfHMMn(sfHMMBase):
         Parameters
         ----------
         bounds : tuple of floats
-            Bounds of parameter $a$ or $b$, i.e. optimal parameter is searched in the range from
-            `bounds[0]` to `bounds[1]`.
+            Bounds of parameter $a$ or $b$, i.e. optimal parameter is searched in the 
+            range from `bounds[0]` to `bounds[1]`.
         bins : int, default is 32
             Bin number for calculating shannon entropy and mutual information.
         formula: str, default is "y=ax"

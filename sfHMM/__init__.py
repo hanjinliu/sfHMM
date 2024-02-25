@@ -1,7 +1,9 @@
-__version__ = "0.6.3"
+__version__ = "0.6.4"
 
-from .single_sfhmm import sfHMM1
-from .multi_sfhmm import sfHMMn
+from sfHMM.single_sfhmm import sfHMM1
+from sfHMM.multi_sfhmm import sfHMMn
+from sfHMM import io
+from sfHMM.sampling import hmm_sampling, motor_sampling
 
 class ModuleInsufficient:
     def __init__(self, module_name:str, error:ImportError):
@@ -12,29 +14,25 @@ class ModuleInsufficient:
         raise ImportError(f"Cannot use {self.name} module due to following "
                           f"ImportError: {self.error}")
         
-from . import io
 
 try:
-	from . import motor
+	from sfHMM import motor
 except ImportError as e:
-    motor = ModuleInsufficient("motor", e) # type: ignore
+    motor = ModuleInsufficient("motor", e)  # type: ignore
     
-from .sampling import hmm_sampling, motor_sampling
 
+# Inheritance Map
+# ---------------
 
-r"""
-Inheritance Map
----------------
+#       (hmmlearn.hmm.GaussianHMM)
+#                   |
+#                   |
+#              (sfHMMBase)
+#            /      |      \
+#          /        |        \
+#    sfHMM1  (sfHMMmotorBase)  sfHMMn
+#        \        /   \        /
+#         \     /       \     /
+#      sfHMM1Motor    sfHMMnMotor
 
-      (hmmlearn.hmm.GaussianHMM)
-                  |
-                  |
-             (sfHMMBase)
-           /      |      \
-         /        |        \
-   sfHMM1  (sfHMMmotorBase)  sfHMMn
-       \        /   \        /
-        \     /       \     /
-     sfHMM1Motor    sfHMMnMotor
-
-"""
+__all__ = ["sfHMM1", "sfHMMn", "io", "hmm_sampling", "motor_sampling", "motor"]

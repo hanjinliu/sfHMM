@@ -42,7 +42,7 @@ python setup.py build_ext --inplace
 
 I've tested the codes with following versions but may work in older ones.
 
-- python &ge; 3.7.0
+- python &ge; 3.7, &lt; 3.12
 - [hmmlearn](https://github.com/hmmlearn/hmmlearn) &ge; 0.2.3
 - [scikit-learn](https://github.com/scikit-learn/scikit-learn) &ge; 0.24.1
 - [pandas](https://github.com/pandas-dev/pandas) &ge; 1.1.5

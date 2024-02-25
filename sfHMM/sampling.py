@@ -1,10 +1,20 @@
+from __future__ import annotations
+
 from hmmlearn import hmm
 import numpy as np
 
 __all__ = ["hmm_sampling", "motor_sampling"]
 
-def hmm_sampling(dim:int=3, n_data:int=500, trs:float=0.05, sigma:float=0.5, rand:int=None, 
-                 ans:bool=False, scale:float=1, poi:bool=False):
+def hmm_sampling(
+    dim: int = 3,
+    n_data: int = 500,
+    trs: float = 0.05,
+    sigma: float = 0.5,
+    rand: int | None = None, 
+    ans: bool = False,
+    scale: float = 1,
+    poi: bool = False,
+):
     """
     Sampline function.py
 
@@ -29,7 +39,10 @@ def hmm_sampling(dim:int=3, n_data:int=500, trs:float=0.05, sigma:float=0.5, ran
 
     """    
     startprob= np.full(dim, 1.0/dim)
-    transmat = np.full((dim,dim), trs/(dim-1)) + np.identity(dim)*(1.0 - trs/(dim-1) - trs)
+    transmat = (
+        np.full((dim, dim), trs / (dim - 1))
+        + np.identity(dim) * (1.0 - trs / (dim - 1) - trs)
+    )
     means = np.arange(1, dim+1).reshape(-1,1)*scale
     covars = np.full(dim, sigma*sigma)*scale*scale
     
@@ -55,11 +68,17 @@ def hmm_sampling(dim:int=3, n_data:int=500, trs:float=0.05, sigma:float=0.5, ran
     else:
         return data_1
 
-def motor_sampling(pdf=[0.005, -1, 0.015], sigma:float=0.5, n_data:int=500, rand:int=None, ans:bool=False):
+def motor_sampling(
+    pdf=[0.005, -1, 0.015],
+    sigma: float = 0.5,
+    n_data: int = 500,
+    rand: int | None = None,
+    ans: bool = False,
+):
     """
     pdf: probability distribution
-    [... , 2_steps_backward, 1_step_backward, stay, 1_step_forward, 2_steps_forward, ...]
-    one of pdf can be -1
+        [... , 2_steps_backward, 1_step_backward, stay, 1_step_forward, 2_steps_forward,
+        ...]. one of pdf can be -1
     """
     pdf = np.array(pdf)
     if np.any(pdf == -1):

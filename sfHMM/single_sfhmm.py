@@ -1,10 +1,13 @@
 from __future__ import annotations
+
 import matplotlib.pyplot as plt
 import numpy as np
 from warnings import warn
 from typing import TypeVar
 from .base import sfHMMBase
-from .utils import *
+from .utils import (
+    append_log, plot2, calc_covars, calc_startprob, calc_transmat, sfHMMAnalysisError
+)
 
 __all__ = ["sfHMM1"]
 
@@ -35,9 +38,9 @@ class sfHMM1(sfHMMBase):
     n_components : int
         The optimal number of states. Same as 'gmm_opt.n_components'.
     states : np.ndarray
-        The optimal state sequence. Before HMM fitting, this is determined from the results
-        of step finding and GMM clustering. After HMM fitting, this is Viterbi path with
-        values {0, 1, 2, ...}.
+        The optimal state sequence. Before HMM fitting, this is determined from the 
+        results of step finding and GMM clustering. After HMM fitting, this is Viterbi 
+        path with values {0, 1, 2, ...}.
     viterbi : np.ndarray
         Viterbi path of 'data_raw', while takes values in 'means_'.
     """
@@ -62,10 +65,11 @@ class sfHMM1(sfHMMBase):
             If <= 0, sg0 will be determined automatically.
         psf : float, optional
             Transition probability used in step finding algorithm.
-            if 0 < p < 0.5 is not satisfied, the original Kalafut-Visscher's algorithm is executed.
+            if 0 < p < 0.5 is not satisfied, the original Kalafut-Visscher's algorithm 
+            is executed.
         krange : int or (int, int)
-            Minimum and maximum number of states to search in GMM clustering. If it is integer, then
-            it will be interpretted as (krange, krange).
+            Minimum and maximum number of states to search in GMM clustering. If it is 
+            integer, then it will be interpretted as (krange, krange).
         model: str, by default "g" (= Gaussian)
             Distribution of noise. Gauss and Poisson distribution are available for now.
         name : str, optional
@@ -123,7 +127,7 @@ class sfHMM1(sfHMMBase):
             Important arguments in pd.read_csv. Default is header=0 rather than "infer" 
             because header="infer" usually works in a wrong way.
         **kwargs
-            Other keyword arguments that will passed to pd.read_csv() or pd.read_excel().
+            Other keyword arguments that will passed to pd.read_csv or pd.read_excel.
         """   
         from .io import read
         out = read(path, sep=sep, encoding=encoding, header=header, **kwargs)
@@ -139,8 +143,12 @@ class sfHMM1(sfHMMBase):
         Step finding by extended version of Kalafut-Visscher's algorithm.
         """
         if np.all(np.diff(self.data_raw) > 0):
-            msg = f"Data of {self.name} is monotonically increasing. Isn't it a time axis?"
-            warn(msg, UserWarning)
+            warn(
+                f"Data of {self.name} is monotonically increasing. "
+                "Isn't it a time axis?",
+                UserWarning,
+                stacklevel=2,
+            )
         self.step = self.StepClass(self.data_raw, self.psf)
         self.step.multi_step_finding()
         self.psf = getattr(self.step, "p", -1)
@@ -173,8 +181,9 @@ class sfHMM1(sfHMMBase):
     @append_log
     def gmmfit(self, method:str="bic", n_init:int=1, random_state:int=0) -> sfHMM1:
         """
-        Fit the denoised data to Gaussian mixture model, and the optimal number of states
-        will be determined. After that, state sequence 'states' will be initialized.
+        Fit the denoised data to Gaussian mixture model, and the optimal number of 
+        states will be determined. After that, state sequence 'states' will be
+        initialized.
 
         Parameters
         ----------
@@ -194,8 +203,8 @@ class sfHMM1(sfHMMBase):
         # Start GMM clustering and determine optimal number of states.
         self._gmmfit(method, n_init, random_state)
         
-        # If denoising is conducted without step finding, state sequence will be inferred
-        # using 'self.data_fil'.
+        # If denoising is conducted without step finding, state sequence will be 
+        # inferred using 'self.data_fil'.
         if self.step is not None:
             self.states = self.gmm_opt.predict(np.asarray(self.step.fit).reshape(-1, 1))
         else:
@@ -243,7 +252,10 @@ class sfHMM1(sfHMMBase):
             sl = trange
             ylim = np.min(self.data_raw[sl]), np.max(self.data_raw[sl])
         else:
-            raise TypeError(f"`trange` must be a slice or an array-like object, but got {type(trange)}")
+            raise TypeError(
+                "`trange` must be a slice or an array-like object, but got "
+                f"{type(trange)}."
+            )
         
         tasks = []
         showhist = self.gmm_opt is not None
@@ -261,7 +273,12 @@ class sfHMM1(sfHMMBase):
                 i += 1
                 plt.subplot(n_row, n_col, (i-1)*n_col + 1)
                 i == 1 and plt.title(self.name, fontweight="bold")
-                kw = dict(ylim=ylim, color1=c_raw, color=self.__class__.colors[task], label=task)
+                kw = dict(
+                    ylim=ylim,
+                    color1=c_raw,
+                    color=self.__class__.colors[task],
+                    label=task
+                )
                 if task == "step finding":
                     plot2(self.data_raw[sl], self.step.fit[sl], **kw)
                 elif task == "denoised":
@@ -277,7 +294,11 @@ class sfHMM1(sfHMMBase):
             if trange is not None:
                 ax = plt.subplot(6,4,7)
                 ax.plot(self.data_raw, color="gray", alpha=0.3)
-                ax.plot(np.arange(sl.start, sl.stop), self.data_raw[sl], color=self.__class__.colors["raw data"])
+                ax.plot(
+                    np.arange(sl.start, sl.stop),
+                    self.data_raw[sl], 
+                    color=self.__class__.colors["raw data"],
+                )
                 ax.set_xlim(0, self.size)
                 ax.set_ylim(self.ylim)
                 ax.plot([sl.start, sl.stop, sl.stop, sl.start, sl.start],
@@ -331,29 +352,37 @@ class sfHMM1(sfHMMBase):
     
     def _set_covars(self):
         if self.states is None:
-            raise sfHMMAnalysisError("Cannot initialize 'covars_' because the state sequence " 
-                                     "'states' hasyet been determined.")
+            raise sfHMMAnalysisError(
+                "Cannot initialize 'covars_' because the state sequence " 
+                "'states' hasyet been determined."
+            )
         self.covars_ = calc_covars(self.data_raw, self.states, self.n_components)
         return None
     
     def _set_means(self):
         if self.gmm_opt is None:
-            raise sfHMMAnalysisError("Cannot initialize 'means_'. You must run gmmfit() before "
-                                     "hmmfit() or set 'means_' manually.")
+            raise sfHMMAnalysisError(
+                "Cannot initialize 'means_'. You must run gmmfit() before "
+                "hmmfit() or set 'means_' manually."
+            )
         self.means_ = self.gmm_opt.means_.copy()
         return None
     
     def _set_startprob(self):
         if self.gmm_opt is None:
-            raise sfHMMAnalysisError("Cannot initialize 'startprob_'. You must run gmmfit() "
-                                     "before hmmfit() or set 'startprob_' manually.")
+            raise sfHMMAnalysisError(
+                "Cannot initialize 'startprob_'. You must run gmmfit() "
+                "before hmmfit() or set 'startprob_' manually."
+            )
         self.startprob_ = calc_startprob([self.data_raw[0]], self.gmm_opt)
         return None
     
     def _set_transmat(self):
         if self.states is None:
-            raise sfHMMAnalysisError("Cannot initialize 'transmat_' because the state sequence " 
-                                     "'states' has yet been determined.")
+            raise sfHMMAnalysisError(
+                "Cannot initialize 'transmat_' because the state sequence " 
+                "'states' has yet been determined."
+            )
         self.transmat_ = calc_transmat([self.states], self.n_components)
         return None
     

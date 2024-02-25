@@ -1,9 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from hmmlearn.utils import log_mask_zero, normalize
+from hmmlearn.utils import normalize
 from scipy import special
-from . import _hmmc_motor
-from ..base import sfHMMBase
+from sfHMM.motor import _hmmc_motor
+from sfHMM.base import sfHMMBase
 
 class sfHMMmotorBase(sfHMMBase):
     """
@@ -11,10 +11,19 @@ class sfHMMmotorBase(sfHMMBase):
     stepping trajectories. The attribute `transmat_` is generated from `transmat_kernel`
     every time it is called. Also, during M-step transmat_kernel is updated.
     """
-    def __init__(self, sg0:float=-1, psf:float=-1, krange=None,
-                 model:str="g", name:str="", max_stride:int=2):
-        super().__init__(sg0=sg0, psf=psf, krange=krange, model=model, name=name,
-                         covariance_type="tied")
+    def __init__(
+        self,
+        sg0: float = -1,
+        psf: float = -1,
+        krange: "int | tuple[int, int] | None" = None,
+        model: str = "g",
+        name: str = "", 
+        max_stride: int = 2,
+    ):
+        super().__init__(
+            sg0=sg0, psf=psf, krange=krange, model=model, name=name,
+            covariance_type="tied",
+        )
         self.max_stride = max_stride
         
     @property
@@ -220,3 +229,7 @@ class sfHMMmotorBase(sfHMMBase):
                 "tied": nf * (nf + 1) // 2,
             }[self.covariance_type],
         }
+
+def log_mask_zero(a):
+    with np.errstate(divide="ignore"):
+        return np.log(a)
