@@ -1,10 +1,10 @@
 from __future__ import annotations
 from typing import Iterable
 import numpy as np
-from .base import sfHMMmotorBase
-from ..single_sfhmm import sfHMM1, _S
-from ..multi_sfhmm import sfHMMn
-from ..utils import *
+from sfHMM.motor.base import sfHMMmotorBase
+from sfHMM.single_sfhmm import sfHMM1, _S
+from sfHMM.multi_sfhmm import sfHMMn
+from sfHMM.utils import *
 
 class sfHMM1Motor(sfHMMmotorBase, sfHMM1):
     def __init__(self, 
