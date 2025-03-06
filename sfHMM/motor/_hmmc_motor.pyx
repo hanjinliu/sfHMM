@@ -56,7 +56,7 @@ def _forward(int n_samples, int n_components,
      : /     -> forward algorithm
      i
      :
-    """    
+    """
     cdef int t, i, j, p
     cdef dtype_t[::view.contiguous] work_buffer = np.zeros(len(log_transmat_kernel))
 
@@ -137,8 +137,8 @@ def _compute_log_xi_sum(int n_samples, int n_components,
                                             + framelogprob[t + 1, j]
                                             + bwdlattice[t + 1, j]
                                             - logprob)
-                    
-            
+
+
             for i in range(n_components):
                 for j in range(i-max_stride, i+max_stride+1):
                     if 0 <= j and j < n_components:
@@ -191,7 +191,7 @@ def _viterbi(int n_samples, int n_components,
                                     + log_transmat_kernel[p])
                 else:
                     work_buffer[p] = -INFINITY
-                    
+
             state_sequence[t] = where_from = - _argmax(work_buffer) + max_stride + where_from
 
     return np.asarray(state_sequence), logprob
