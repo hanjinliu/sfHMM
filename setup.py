@@ -1,6 +1,7 @@
 from setuptools import find_packages, setup, Extension
 from setuptools.command.build_ext import build_ext
-import os, sys
+import os
+import sys
 
 # search for version
 with open("sfHMM/__init__.py", encoding="utf-8") as f:
@@ -10,6 +11,7 @@ with open("sfHMM/__init__.py", encoding="utf-8") as f:
             break
 
 if sys.version_info < (3, 12):
+
     class build_ext(build_ext):
         def finalize_options(self):
             from Cython.Build import cythonize
@@ -18,12 +20,12 @@ if sys.version_info < (3, 12):
             sourcefiles = ["_hmmc_motor.pyx"]
             sourcefiles = [os.path.join("sfHMM", "motor", f) for f in sourcefiles]
             ext = Extension(
-                "sfHMM.motor._hmmc_motor", 
-                sources=sourcefiles, 
-                include_dirs = ["sfHMM.motor", numpy.get_include()],
+                "sfHMM.motor._hmmc_motor",
+                sources=sourcefiles,
+                include_dirs=["sfHMM.motor", numpy.get_include()],
             )
             self.distribution.ext_modules[:] = cythonize(ext)
-            
+
             import numpy.distutils as npdist
 
             for ext in self.distribution.ext_modules:
@@ -31,6 +33,7 @@ if sys.version_info < (3, 12):
                     setattr(ext, k, v)
                 ext.include_dirs = [numpy.get_include()]
             super().finalize_options()
+
 
 kwargs = dict(
     name="sfHMM",
@@ -49,7 +52,7 @@ kwargs = dict(
         "matplotlib",
         "pandas>=1",
     ],
-    python_requires=">=3.7"
+    python_requires=">=3.7",
 )
 
 setup(**kwargs)

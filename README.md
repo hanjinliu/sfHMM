@@ -63,7 +63,7 @@ This module contains sfHMM classes aiming at analyzing **motor-stepping** or oth
 - `sfHMM1Motor` ... sfHMM for single motor-stepping trajectory.
 - `sfHMMnMotor` ... sfHMM for multiple motor-stepping trajectories.
 
-### `sfHMM.step` 
+### `sfHMM.step`
 This module contains several **step finding algorithms** in the same API. My efficient implementation enables analysis of **100,000** data points within **~1 sec**!
 - `GaussStep` ... step finding for Gauss distribution [1].
 - `PoissonStep` ... step finding for Poisson distribution.
@@ -74,7 +74,7 @@ This module contains several **step finding algorithms** in the same API. My eff
 ### `sfHMM.gmm`
 This module contains classes that inherit `sklearn.mixture.GaussianMixture` while making **Gaussian mixture model clustering** much easier.
 - `GMMs` ... Fitting Gaussian mixtures and model selection.
-  
+
 ### `sfHMM.io`
 This module contains **input/output** functions that are suitable for sfHMM data analysis or other one-dimensional signal processing.
 - `read` ... *Not recommended now. Use "read" method in sfHMM classes instead*
