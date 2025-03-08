@@ -1,0 +1,13 @@
+[package]
+name = "sfHMM"
+version = "0.7.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+name = "_sfhmm_ext"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = "0.22.6"
+numpy = "0.22.1"  # NOTE: numpy=0.23.0 fails to compile in some OS

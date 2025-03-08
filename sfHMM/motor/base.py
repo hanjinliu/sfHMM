@@ -2,16 +2,20 @@ import numpy as np
 import matplotlib.pyplot as plt
 from hmmlearn.utils import normalize
 from scipy import special
-from sfHMM.motor import _hmmc_motor
+from sfHMM._sfhmm_ext import forward, backward, viterbi, compute_log_xi_sum
 from sfHMM.base import sfHMMBase
 
 
 class sfHMMmotorBase(sfHMMBase):
+    """Base class for sfHMM for motor stepping.
+
+    This base class enables sparse transition probability matrix aiming at analyzing
+    motor stepping trajectories. The attribute `transmat_` is generated from
+    `transmat_kernel` every time it is called. Also, during M-step transmat_kernel is
+    updated.
     """
-    This base class enables sparse transition probability matrix aiming at analyzing motor
-    stepping trajectories. The attribute `transmat_` is generated from `transmat_kernel`
-    every time it is called. Also, during M-step transmat_kernel is updated.
-    """
+
+    transmat_kernel: "np.ndarray"
 
     def __init__(
         self,
@@ -103,9 +107,7 @@ class sfHMMmotorBase(sfHMMBase):
         return None
 
     def _init_sg0(self, p: float = 50):
-        """
-        Initialize 'sg0' if sg0 is negative.
-        """
+        """Initialize 'sg0' if sg0 is negative."""
         return super()._init_sg0(p=p)
 
     def _check(self):
@@ -185,9 +187,9 @@ class sfHMMmotorBase(sfHMMBase):
                     cvweight + stats["post"][:, None, None]
                 )
 
-    def _do_viterbi_pass(self, framelogprob):
+    def _do_viterbi_pass(self, framelogprob: np.ndarray):
         n_samples, n_components = framelogprob.shape
-        state_sequence, logprob = _hmmc_motor._viterbi(
+        state_sequence, logprob = viterbi(
             n_samples,
             n_components,
             log_mask_zero(self.startprob_),
@@ -197,31 +199,26 @@ class sfHMMmotorBase(sfHMMBase):
         )
         return logprob, state_sequence
 
-    def _do_forward_pass(self, framelogprob):
+    def _do_forward_pass(self, framelogprob: np.ndarray):
         n_samples, n_components = framelogprob.shape
-        fwdlattice = np.zeros((n_samples, n_components))
-        _hmmc_motor._forward(
+        fwdlattice = forward(
             n_samples,
             n_components,
             log_mask_zero(self.startprob_),
             log_mask_zero(self.transmat_kernel),
             framelogprob,
-            fwdlattice,
             self.max_stride,
         )
         with np.errstate(under="ignore"):
             return special.logsumexp(fwdlattice[-1]), fwdlattice
 
-    def _do_backward_pass(self, framelogprob):
+    def _do_backward_pass(self, framelogprob: np.ndarray):
         n_samples, n_components = framelogprob.shape
-        bwdlattice = np.zeros((n_samples, n_components))
-        _hmmc_motor._backward(
+        bwdlattice = backward(
             n_samples,
             n_components,
-            log_mask_zero(self.startprob_),
             log_mask_zero(self.transmat_kernel),
             framelogprob,
-            bwdlattice,
             self.max_stride,
         )
         return bwdlattice
@@ -239,15 +236,13 @@ class sfHMMmotorBase(sfHMMBase):
             if n_samples <= 1:
                 return
 
-            log_xi_sum = np.full((n_components, n_components), -np.inf)
-            _hmmc_motor._compute_log_xi_sum(
+            log_xi_sum = compute_log_xi_sum(
                 n_samples,
                 n_components,
                 fwdlattice,
                 log_mask_zero(self.transmat_kernel),
                 bwdlattice,
                 framelogprob,
-                log_xi_sum,
                 self.max_stride,
             )
             with np.errstate(under="ignore"):

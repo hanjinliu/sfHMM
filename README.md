@@ -14,40 +14,28 @@ You can also use sfHMM just for step finding or AIC/BIC based Gaussian mixture m
 
 - pip installation
 
-Working in a new environment is highly recommended. For example, if you are using Anaconda and Jupyter:
+Working in a new environment is highly recommended. For example, if you are using Anaconda:
 
-```
+``` shell
 conda create -n myenv python
 conda activate myenv
-conda install jupyter
 ```
 
 then it's ready to install sfHMM.
 
-```
+``` shell
 pip install git+https://github.com/hanjinliu/sfHMM
 ```
 
 - cloning from the source
 
-If you want to clone from the source, you need to compile pyx file, or you cannot use `sfHMM.motor` module. You may need to download C++ build tools for this purpose.
+If you want to clone from the source, you need Rust installed in your local environment.
 
-```
+``` shell
 git clone https://github.com/hanjinliu/sfHMM
 cd sfHMM
-python setup.py build_ext --inplace
+pip install -e .
 ```
-
-# Dependencies
-
-I've tested the codes with following versions but may work in older ones.
-
-- python &ge; 3.7, &lt; 3.12
-- [hmmlearn](https://github.com/hmmlearn/hmmlearn) &ge; 0.2.3
-- [scikit-learn](https://github.com/scikit-learn/scikit-learn) &ge; 0.24.1
-- [pandas](https://github.com/pandas-dev/pandas) &ge; 1.1.5
-- [scipy](https://github.com/scipy/scipy) &ge; 1.6.1 (at least 1.2.0 because `scipy.special.softmax` must be available)
-- [matplotlib](https://github.com/matplotlib/matplotlib) &ge; 3.3.4
 
 # Contents
 
