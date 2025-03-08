@@ -8,6 +8,32 @@ from sfHMM.utils import append_log, concat, sfHMMAnalysisError
 
 
 class sfHMM1Motor(sfHMMmotorBase, sfHMM1):
+    """sfHMM for motor stepping.
+
+    Parameters
+    ----------
+    data_raw : array like, optional
+        Data for analysis.
+    sg0 : float, optional
+        Parameter used in filtering method. Expected to be 20% of signal change.
+        If <= 0, sg0 will be determined automatically.
+    psf : float, optional
+        Transition probability used in step finding algorithm.
+        if 0 < p < 0.5 is not satisfied, the original Kalafut-Visscher's algorithm is
+        executed.
+    krange : int or (int, int)
+        Minimum and maximum number of states to search in GMM clustering. If it is
+        integer, then it will be interpretted as (krange, krange).
+    model: str, default "g" (= Gaussian)
+        Distribution of noise. Gauss and Poisson distribution are available for now.
+    name : str, optional
+        Name of the object.
+    max_strides : int, default 2
+        The largest step of motor. If max_stride = 2, then from 2-step backward to
+        2-step forward steps are considered. Larger value results in longer calculation
+        time.
+    """
+
     def __init__(
         self,
         data_raw: _S = None,
@@ -19,28 +45,6 @@ class sfHMM1Motor(sfHMMmotorBase, sfHMM1):
         name: str = "",
         max_stride: int = 2,
     ):
-        """
-        Parameters
-        ----------
-        data_raw : array like, optional
-            Data for analysis.
-        sg0 : float, optional
-            Parameter used in filtering method. Expected to be 20% of signal change.
-            If <= 0, sg0 will be determined automatically.
-        psf : float, optional
-            Transition probability used in step finding algorithm.
-            if 0 < p < 0.5 is not satisfied, the original Kalafut-Visscher's algorithm is executed.
-        krange : int or (int, int)
-            Minimum and maximum number of states to search in GMM clustering. If it is integer, then
-            it will be interpretted as (krange, krange).
-        model: str, by default "g" (= Gaussian)
-            Distribution of noise. Gauss and Poisson distribution are available for now.
-        name : str, optional
-            Name of the object.
-        max_strides : int, default is 2.
-            The largest step of motor. If max_stride = 2, then from 2-step backward to 2-step
-            forward steps are considered. Larger value results in longer calculation time.
-        """
         super().__init__(sg0=sg0, psf=psf, krange=krange, model=model, name=name)
         self.data_raw = data_raw
         self.max_stride = max_stride
@@ -85,6 +89,30 @@ class sfHMM1Motor(sfHMMmotorBase, sfHMM1):
 
 
 class sfHMMnMotor(sfHMMmotorBase, sfHMMn):
+    """sfHMM for multi-trajectory motor stepping.
+
+    Parameters
+    ----------
+    data_raw : iterable, optional
+        Datasets to be added.
+    sg0 : float, optional
+        Parameter used in filtering method. Expected to be 20% of signal change.
+        If <= 0, sg0 will be determined automatically.
+    psf : float, optional
+        Transition probability used in step finding algorithm.
+        if 0 < p < 0.5 is not satisfied, the original Kalafut-Visscher's algorithm is executed.
+    krange : int or (int, int)
+        Minimum and maximum number of states to search in GMM clustering. If it is integer, then
+        it will be interpretted as (krange, krange).
+    model: str, by default "g" (= Gaussian)
+        Distribution of noise. Gauss and Poisson distribution are available for now.
+    name : str, optional
+        Name of the object.
+    max_strides : int, default is 2.
+        The largest step of motor. If max_stride = 2, then from 2-step backward to 2-step
+        forward steps are considered. Larger value results in longer calculation time.
+    """
+
     def __init__(
         self,
         data_raw: Iterable[_S] = None,
@@ -96,28 +124,6 @@ class sfHMMnMotor(sfHMMmotorBase, sfHMMn):
         name: str = "",
         max_stride: int = 2,
     ):
-        """
-        Parameters
-        ----------
-        data_raw : iterable, optional
-            Datasets to be added.
-        sg0 : float, optional
-            Parameter used in filtering method. Expected to be 20% of signal change.
-            If <= 0, sg0 will be determined automatically.
-        psf : float, optional
-            Transition probability used in step finding algorithm.
-            if 0 < p < 0.5 is not satisfied, the original Kalafut-Visscher's algorithm is executed.
-        krange : int or (int, int)
-            Minimum and maximum number of states to search in GMM clustering. If it is integer, then
-            it will be interpretted as (krange, krange).
-        model: str, by default "g" (= Gaussian)
-            Distribution of noise. Gauss and Poisson distribution are available for now.
-        name : str, optional
-            Name of the object.
-        max_strides : int, default is 2.
-            The largest step of motor. If max_stride = 2, then from 2-step backward to 2-step
-            forward steps are considered. Larger value results in longer calculation time.
-        """
         super().__init__(sg0=sg0, psf=psf, krange=krange, model=model, name=name)
         self.max_stride = max_stride
         self.covariance_type = "tied"

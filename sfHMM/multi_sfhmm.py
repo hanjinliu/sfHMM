@@ -2,9 +2,8 @@ from __future__ import annotations
 
 import re
 import copy
-from typing import Callable, Iterable, Iterator, Literal, overload
+from typing import Callable, Iterable, Iterator, Literal, overload, TYPE_CHECKING
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 from .utils import (
     append_log,
@@ -20,6 +19,9 @@ from .utils import (
 )
 from .single_sfhmm import sfHMM1, _S
 from .base import sfHMMBase
+
+if TYPE_CHECKING:
+    import pandas as pd
 
 __all__ = ["sfHMMn"]
 
@@ -173,14 +175,15 @@ class sfHMMn(sfHMMBase):
         return self
 
     def appendn(self, datasets: Iterable[_S]) -> sfHMMn:
-        """
-        Append all the data in `datasets`.
+        """Append all the data in `datasets`.
 
         Parameters
         ----------
         datasets : dict, list or iterable objects except for np.ndarray or pd.DataFrame.
             Datasets to be appended. If it is dict, then keys are interpreted as names.
         """
+        import pandas as pd
+
         if isinstance(datasets, dict):
             self.from_dict(datasets)
         elif isinstance(datasets, np.ndarray):
