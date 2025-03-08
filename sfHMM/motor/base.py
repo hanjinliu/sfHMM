@@ -7,10 +7,12 @@ from sfHMM.base import sfHMMBase
 
 
 class sfHMMmotorBase(sfHMMBase):
-    """
-    This base class enables sparse transition probability matrix aiming at analyzing motor
-    stepping trajectories. The attribute `transmat_` is generated from `transmat_kernel`
-    every time it is called. Also, during M-step transmat_kernel is updated.
+    """Base class for sfHMM for motor stepping.
+
+    This base class enables sparse transition probability matrix aiming at analyzing
+    motor stepping trajectories. The attribute `transmat_` is generated from
+    `transmat_kernel` every time it is called. Also, during M-step transmat_kernel is
+    updated.
     """
 
     transmat_kernel: "np.ndarray"
@@ -105,9 +107,7 @@ class sfHMMmotorBase(sfHMMBase):
         return None
 
     def _init_sg0(self, p: float = 50):
-        """
-        Initialize 'sg0' if sg0 is negative.
-        """
+        """Initialize 'sg0' if sg0 is negative."""
         return super()._init_sg0(p=p)
 
     def _check(self):
@@ -201,14 +201,12 @@ class sfHMMmotorBase(sfHMMBase):
 
     def _do_forward_pass(self, framelogprob: np.ndarray):
         n_samples, n_components = framelogprob.shape
-        fwdlattice = np.zeros((n_samples, n_components))
         fwdlattice = forward(
             n_samples,
             n_components,
             log_mask_zero(self.startprob_),
             log_mask_zero(self.transmat_kernel),
             framelogprob,
-            fwdlattice,
             self.max_stride,
         )
         with np.errstate(under="ignore"):
@@ -216,13 +214,11 @@ class sfHMMmotorBase(sfHMMBase):
 
     def _do_backward_pass(self, framelogprob: np.ndarray):
         n_samples, n_components = framelogprob.shape
-        bwdlattice = np.zeros((n_samples, n_components))
         bwdlattice = backward(
             n_samples,
             n_components,
             log_mask_zero(self.transmat_kernel),
             framelogprob,
-            bwdlattice,
             self.max_stride,
         )
         return bwdlattice
@@ -240,7 +236,6 @@ class sfHMMmotorBase(sfHMMBase):
             if n_samples <= 1:
                 return
 
-            log_xi_sum = np.full((n_components, n_components), -np.inf)
             log_xi_sum = compute_log_xi_sum(
                 n_samples,
                 n_components,
@@ -248,7 +243,6 @@ class sfHMMmotorBase(sfHMMBase):
                 log_mask_zero(self.transmat_kernel),
                 bwdlattice,
                 framelogprob,
-                log_xi_sum,
                 self.max_stride,
             )
             with np.errstate(under="ignore"):

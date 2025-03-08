@@ -52,18 +52,16 @@ pub fn forward<'py>(
     log_startprob: PyReadonlyArray1<Dtype>,
     log_transmat_kernel: PyReadonlyArray1<Dtype>,
     framelogprob: PyReadonlyArray2<Dtype>,
-    fwdlattice: PyReadonlyArray2<Dtype>,
     max_stride: isize,
 ) -> PyResult<Py<PyArray2<Dtype>>> {
-    let fwdlattice = fwdlattice.as_array();
     let log_transmat_kernel = log_transmat_kernel.as_array();
     let log_startprob = log_startprob.as_array();
     let framelogprob = framelogprob.as_array();
-    let mut out = Array2::<Dtype>::zeros(fwdlattice.raw_dim());
+    let mut fwdlattice = Array2::zeros((n_samples, n_components));
     let mut work_buffer = Array1::zeros(log_transmat_kernel.len());
 
     for i in 0..n_components {
-        out[[0, i]] = log_startprob[i] + framelogprob[[0, i]];
+        fwdlattice[[0, i]] = log_startprob[i] + framelogprob[[0, i]];
     }
 
     for t in 1..n_samples {
@@ -72,16 +70,15 @@ pub fn forward<'py>(
             for i in (j_isize - max_stride)..=(j_isize + max_stride) {
                 let p = (j_isize - i + max_stride) as usize;
                 if i >= 0 && i < n_components as isize {
-                    let i: usize = i.try_into().unwrap();
-                    work_buffer[p] = fwdlattice[[t - 1, i]] + log_transmat_kernel[p];
+                    work_buffer[p] = fwdlattice[[t - 1, i as usize]] + log_transmat_kernel[p];
                 } else {
                     work_buffer[p] = -INFINITY;
                 }
             }
-            out[[t, j]] = logsumexp(work_buffer.view()) + framelogprob[[t, j]];
+            fwdlattice[[t, j]] = logsumexp(work_buffer.view()) + framelogprob[[t, j]];
         }
     }
-    Ok(out.into_pyarray_bound(py).unbind())
+    Ok(fwdlattice.into_pyarray_bound(py).unbind())
 }
 
 #[pyfunction]
@@ -91,17 +88,15 @@ pub fn backward<'py>(
     n_components: usize,
     log_transmat_kernel: PyReadonlyArray1<Dtype>,
     framelogprob: PyReadonlyArray2<Dtype>,
-    bwdlattice: PyReadonlyArray2<Dtype>,
     max_stride: isize,
 ) -> PyResult<Py<PyArray2<Dtype>>> {
     let framelogprob = framelogprob.as_array();
     let log_transmat_kernel = log_transmat_kernel.as_array();
-    let bwdlattice = bwdlattice.as_array();
-    let mut out = Array2::zeros(bwdlattice.raw_dim());
+    let mut bwdlattice = Array2::zeros((n_samples, n_components));
     let mut work_buffer = Array1::zeros(log_transmat_kernel.len());
 
     for i in 0..n_components {
-        out[[n_samples - 1, i]] = 0.0;
+        bwdlattice[[n_samples - 1, i]] = 0.0;
     }
 
     for t in (0..n_samples - 1).rev() {
@@ -117,10 +112,10 @@ pub fn backward<'py>(
                     work_buffer[p] = -INFINITY;
                 }
             }
-            out[[t, i as usize]] = logsumexp(work_buffer.view());
+            bwdlattice[[t, i as usize]] = logsumexp(work_buffer.view());
         }
     }
-    Ok(out.into_pyarray_bound(py).unbind())
+    Ok(bwdlattice.into_pyarray_bound(py).unbind())
 }
 
 #[pyfunction]
@@ -132,16 +127,14 @@ pub fn compute_log_xi_sum<'py>(
     log_transmat_kernel: PyReadonlyArray1<Dtype>,
     bwdlattice: PyReadonlyArray2<Dtype>,
     framelogprob: PyReadonlyArray2<Dtype>,
-    log_xi_sum: PyReadonlyArray2<Dtype>,
     max_stride: usize,
 ) -> PyResult<Py<PyArray2<Dtype>>> {
     let fwdlattice = fwdlattice.as_array();
     let log_transmat_kernel = log_transmat_kernel.as_array();
     let bwdlattice = bwdlattice.as_array();
     let framelogprob = framelogprob.as_array();
-    let log_xi_sum = log_xi_sum.as_array();
-    let mut out = Array2::zeros(log_xi_sum.raw_dim());
     let mut work_buffer = Array2::from_elem((n_components, n_components), -INFINITY);
+    let mut out = Array2::from_elem((n_components, n_components), -INFINITY);
     let logprob = logsumexp(fwdlattice.row(n_samples - 1));
 
     for t in 0..n_samples - 1 {
@@ -163,7 +156,7 @@ pub fn compute_log_xi_sum<'py>(
             for j in (i as isize - max_stride as isize)..=(i as isize + max_stride as isize) {
                 if j >= 0 && j < n_components as isize {
                     out[[i, j as usize]] = logaddexp(
-                        log_xi_sum[[i, j as usize]], work_buffer[[i, j as usize]]
+                        out[[i, j as usize]], work_buffer[[i, j as usize]]
                     );
                 }
             }
