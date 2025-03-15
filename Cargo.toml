@@ -9,5 +9,5 @@ name = "_sfhmm_ext"
 crate-type = ["cdylib"]
 
 [dependencies]
-pyo3 = "0.22.6"
-numpy = "0.22.1"  # NOTE: numpy=0.23.0 fails to compile in some OS
+pyo3 = "0.24.0"
+numpy = "0.24.0"

@@ -78,7 +78,7 @@ pub fn forward<'py>(
             fwdlattice[[t, j]] = logsumexp(work_buffer.view()) + framelogprob[[t, j]];
         }
     }
-    Ok(fwdlattice.into_pyarray_bound(py).unbind())
+    Ok(fwdlattice.into_pyarray(py).unbind())
 }
 
 #[pyfunction]
@@ -115,7 +115,7 @@ pub fn backward<'py>(
             bwdlattice[[t, i as usize]] = logsumexp(work_buffer.view());
         }
     }
-    Ok(bwdlattice.into_pyarray_bound(py).unbind())
+    Ok(bwdlattice.into_pyarray(py).unbind())
 }
 
 #[pyfunction]
@@ -162,7 +162,7 @@ pub fn compute_log_xi_sum<'py>(
             }
         }
     }
-    Ok(out.into_pyarray_bound(py).unbind())
+    Ok(out.into_pyarray(py).unbind())
 }
 
 #[pyfunction]
@@ -222,5 +222,5 @@ pub fn viterbi<'py>(
         state_sequence[t] = where_from as i32;
     }
 
-    Ok((state_sequence.into_pyarray_bound(py).unbind(), logprob))
+    Ok((state_sequence.into_pyarray(py).unbind(), logprob))
 }
