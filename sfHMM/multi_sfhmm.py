@@ -623,6 +623,20 @@ class sfHMMn(sfHMMBase):
         viewer.show()
         return viewer
 
+    def clone(self) -> sfHMMn:
+        """Clone the current object and return it."""
+        sf = sfHMMn(
+            sg0=self.sg0,
+            psf=self.psf,
+            krange=self.krange,
+            model=self.model,
+            name=self.name,
+        )
+        sf._sf_list = self._sf_list.copy()
+        sf.n_data = len(sf._sf_list)
+        sf.ylim = self.ylim.copy()
+        return sf
+
     def accumulate_transitions(self) -> list[tuple[int, int]]:
         return concat([sf.accumulate_transitions() for sf in self])
 

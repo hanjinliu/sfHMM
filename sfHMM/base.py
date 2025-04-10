@@ -1,3 +1,4 @@
+from typing import TYPE_CHECKING
 from abc import abstractmethod
 import os
 import numpy as np
@@ -7,6 +8,9 @@ from hmmlearn.hmm import GaussianHMM
 from sfHMM.utils import gauss_mix
 from sfHMM.gmm import GMMs, DPGMM
 from sfHMM.step import GaussStep, PoissonStep, BaseStep
+
+if TYPE_CHECKING:
+    from typing import Self
 
 
 class sfHMMBase(GaussianHMM):
@@ -47,7 +51,11 @@ class sfHMMBase(GaussianHMM):
         name: str = "",
         **hmmlearn_params,
     ):
+        if sg0 is None:
+            sg0 = -1
         self.sg0 = sg0
+        if psf is None:
+            psf = -1
         self.psf = psf
         self.krange = krange
         self.model = model
@@ -163,9 +171,11 @@ class sfHMMBase(GaussianHMM):
     @abstractmethod
     def plot(self): ...
 
+    @abstractmethod
+    def clone(self) -> "Self": ...
+
     def run_all(self, plot: bool = True, continue_: bool = False):
-        """
-        Conduct all the processes with default settings.
+        """Conduct all the processes with default settings.
 
         Parameters
         ----------

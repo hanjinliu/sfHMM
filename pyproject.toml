@@ -20,6 +20,7 @@ dependencies = [
     "scikit-learn>=1.4.2",
     "matplotlib>=3.10.0",
 ]
+
 [tool.maturin]
 features = ["pyo3/extension-module"]
 include = [
@@ -27,3 +28,16 @@ include = [
     "*.pyi",
 ]
 module-name = "sfHMM._sfhmm_ext"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+]
+himena = [
+    "himena>=0.0.8",
+    "cmap>=0.6.0",
+]
+
+[project.entry-points."himena.plugin"]
+Tools = "sfHMM.himena"

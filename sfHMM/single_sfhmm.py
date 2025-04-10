@@ -369,6 +369,19 @@ class sfHMM1(sfHMMBase):
             if self.states[i] != self.states[i + 1]
         ]
 
+    def clone(self) -> sfHMM1:
+        """Clone the current object and return it."""
+        sf = sfHMM1(
+            data_raw=self.data_raw,
+            sg0=self.sg0,
+            psf=self.psf,
+            krange=self.krange,
+            model=self.model,
+            name=self.name,
+        )
+        sf.ylim = self.ylim.copy()
+        return sf
+
     def _accumulate_step_sizes(self):
         if self.step is None:
             raise sfHMMAnalysisError("Steps are not detected yet.")
