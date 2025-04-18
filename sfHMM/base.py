@@ -77,7 +77,7 @@ class sfHMMBase(GaussianHMM):
         return out
 
     @property
-    def krange(self):
+    def krange(self) -> tuple[int, int] | None:
         return self._krange
 
     @krange.setter
@@ -298,7 +298,7 @@ class sfHMMBase(GaussianHMM):
             )
             gmm_.fit(n_init=n_init, random_state=random_state, scale=self.sg0 * 5)
             self.gmm = gmm_
-            self.gmm_opt = self.gmm.get_optimal(method)
+            self.gmm_opt = self.gmm.get_optimal(method.lower())
         elif method.lower() == "dirichlet":
             gmm_ = DPGMM(
                 n_components=self.krange[1],

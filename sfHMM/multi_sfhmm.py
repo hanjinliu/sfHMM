@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import re
-import copy
 from typing import Callable, Iterable, Iterator, Literal, overload, TYPE_CHECKING
 import numpy as np
 import matplotlib.pyplot as plt
@@ -82,9 +81,12 @@ class sfHMMn(sfHMMBase):
         self.n_data = 0
         super().__init__(sg0, psf, krange, model, name, **kwargs)
         self.ylim = [np.inf, -np.inf]
-        self._sf_list = []
+        self._sf_list: list[sfHMM1] = []
         self.gmm_opt = None
         data_raw is None or self.appendn(data_raw)
+        self._step_finding_done = False
+        self._denoise_done = False
+        self._hmm_done = False
 
     @overload
     def __getitem__(self, key: int) -> sfHMM1: ...
@@ -115,6 +117,9 @@ class sfHMMn(sfHMMBase):
     def __iter__(self) -> Iterator[sfHMM1]:
         return iter(self._sf_list)
 
+    def __len__(self) -> int:
+        return len(self._sf_list)
+
     def __add__(self, other: sfHMMn) -> sfHMMn:
         """
         `+` is supported for two sfHMMn objects. a+b makes a new sfHMMn object with
@@ -133,7 +138,9 @@ class sfHMMn(sfHMMBase):
                 min(self.ylim[0], other.ylim[0]),
                 max(self.ylim[1], other.ylim[1]),
             ]
-            new._sf_list = copy.deepcopy(self._sf_list) + copy.deepcopy(other._sf_list)
+            new._sf_list = [each.clone() for each in self._sf_list] + [
+                each.clone() for each in other._sf_list
+            ]
             return new
         else:
             raise TypeError(
@@ -389,6 +396,7 @@ class sfHMMn(sfHMMBase):
         for sf in self:
             sf.psf = self.psf
             sf.step_finding()
+        self._step_finding_done = True
         return self
 
     @append_log
@@ -405,7 +413,7 @@ class sfHMMn(sfHMMBase):
         for sf in self:
             sf.sg0 = self.sg0
             sf.denoising()
-
+        self._denoise_done = True
         return self
 
     @append_log
@@ -456,6 +464,7 @@ class sfHMMn(sfHMMBase):
             sf.states = sf.predict(np.asarray(sf.data_raw).reshape(-1, 1))
             sf.viterbi = sf.means_[sf.states, 0]
         del self.data_raw_all, self.states_list
+        self._hmm_done = True
         return self
 
     def run_all_separately(self, plot_every: int = 0) -> sfHMMn:
@@ -623,7 +632,7 @@ class sfHMMn(sfHMMBase):
         viewer.show()
         return viewer
 
-    def clone(self) -> sfHMMn:
+    def clone(self, deep: bool = False) -> sfHMMn:
         """Clone the current object and return it."""
         sf = sfHMMn(
             sg0=self.sg0,
@@ -632,9 +641,19 @@ class sfHMMn(sfHMMBase):
             model=self.model,
             name=self.name,
         )
-        sf._sf_list = self._sf_list.copy()
+        if deep:
+            sf._sf_list = [each.clone() for each in self._sf_list]
+        else:
+            sf._sf_list = self._sf_list.copy()
         sf.n_data = len(sf._sf_list)
         sf.ylim = self.ylim.copy()
+        sf._step_finding_done = self._step_finding_done
+        sf._denoise_done = self._denoise_done
+        sf._hmm_done = self._hmm_done
+        if hasattr(self, "gmm"):
+            sf.gmm = self.gmm  # TODO: copy this
+        sf.gmm_opt = self.gmm_opt
+        sf.n_components = self.n_components
         return sf
 
     def accumulate_transitions(self) -> list[tuple[int, int]]:
