@@ -9,7 +9,7 @@ from himena import (
     create_model,
     create_dataframe_model,
 )
-from himena.plugins import register_function, configure_gui
+from himena.plugins import register_function, configure_gui, configure_submenu
 from himena.standards import plotting as hplt
 from himena_builtins.tools.conversions import table_to_dataframe
 
@@ -21,6 +21,7 @@ from sfHMM.himena.consts import Types
 from sfHMM.utils import gauss_mix
 
 MENUS = ["tools/sfHMM"]
+configure_submenu(MENUS, "sfHMM")
 
 
 @register_function(

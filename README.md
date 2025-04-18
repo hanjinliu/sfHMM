@@ -6,7 +6,7 @@
 - high noise
 - sparse transition
 
-![ex1](animation.gif)
+![ex1](assets/animation.gif)
 
 You can also use sfHMM just for step finding or AIC/BIC based Gaussian mixture model selection. Please refer to "example.ipynb" for basic usages.
 
@@ -94,9 +94,30 @@ All the parameters are optional.
 - `tdp()` ... Show the results in pseudo transition density plot.
 - `read()` ... Load such as csv, txt, dat files, or the first sheet of Excel files.
 - `save()` ... Save sfHMM analysis results.
-- `view_in_qt()` ... Open a `TrajectoryViewer` and interactively view the trajectories.
+
+# Use sfHMM in GUI
+
+Since v0.8, sfHMM is now available as a [himena](https://github.com/hanjinliu/himena) plugin, which means that you can run sfHMM algorithms along with the powerful GUI and any other himena plugins.
+
+![himena](assets/himena-window.png)
+
+You can install himena and sfHMM plugin as follows:
+
+``` shell
+pip install himena[recommended]
+himena --install sfHMM
+```
+
+and start himena application:
+
+``` shell
+himena
+```
+
+Now, you can create sfHMM window from `Tools > sfHMM` menu.
 
 # Citation
+
 If you found sfHMM useful, please consider citing our paper.
 
     A fast and objective hidden Markov modeling for accurate analysis of biophysical data with numerous states
@@ -104,6 +125,7 @@ If you found sfHMM useful, please consider citing our paper.
     bioRxiv 2021.05.30.446337; doi: https://doi.org/10.1101/2021.05.30.446337
 
 # References
+
 [1] Kalafut, B., & Visscher, K. (2008). An objective, model-independent method for detection of non-uniform steps in noisy signals. Computer Physics Communications, 179(10), 716-723.
 
 [2] Shuang, B., Cooper, D., Taylor, J. N., Kisley, L., Chen, J., Wang, W., ... & Landes, C. F. (2014). Fast step transition and state identification (STaSI) for discrete single-molecule data analysis. The journal of physical chemistry letters, 5(18), 3157-3161.
