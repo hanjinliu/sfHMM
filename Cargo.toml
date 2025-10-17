@@ -1,6 +1,6 @@
 [package]
 name = "sfHMM"
-version = "0.8.0"
+version = "0.8.1"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -9,5 +9,5 @@ name = "_sfhmm_ext"
 crate-type = ["cdylib"]
 
 [dependencies]
-pyo3 = "0.24.1"
-numpy = "0.24.0"
+pyo3 = "0.26.0"
+numpy = "0.26.0"
